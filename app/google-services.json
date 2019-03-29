@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "665475513149",
+    "firebase_url": "https://onestopclick-25ca7.firebaseio.com",
+    "project_id": "onestopclick-25ca7",
+    "storage_bucket": "onestopclick-25ca7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665475513149:android:90fefcefe600ec54",
+        "android_client_info": {
+          "package_name": "com.example.mitrais.onestopclick"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665475513149-o65uvuffluoguvb5vnlf2b0jgfppml3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mitrais.onestopclick",
+            "certificate_hash": "ff28865e01eb8995a5e4f1373d2a0fb88a1bac62"
+          }
+        },
+        {
+          "client_id": "665475513149-6tbkh6j6u5jeg0g2e6kc3g4fvdfdsic7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWjcPqdTdGLkXvxWPpEdm0ZT3b4m9u-3I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665475513149-6tbkh6j6u5jeg0g2e6kc3g4fvdfdsic7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
