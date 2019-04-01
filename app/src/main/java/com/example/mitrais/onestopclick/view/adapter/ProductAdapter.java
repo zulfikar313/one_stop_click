@@ -20,6 +20,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
+    private Listener listener;
+
+    public interface Listener {
+        void onLikeClicked(String productId);
+
+        void onDislikeClicked(String productId);
+
+        void onShareClicked(String productId);
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
     public ProductAdapter() {
         super(new DiffUtil.ItemCallback<Product>() {
             @Override
@@ -79,8 +93,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_dislike_counter)
         TextView txtDislikeCounter;
 
-
-        public ProductViewHolder(@NonNull View itemView) {
+        ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -115,17 +128,29 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
         @OnClick(R.id.img_like)
         void onLikeImageClicked() {
-
+            int position = getAdapterPosition();
+            if (listener != null && position != RecyclerView.NO_POSITION) {
+                Product product = getItem(position);
+                listener.onLikeClicked(product.getId());
+            }
         }
 
         @OnClick(R.id.img_dislike)
         void onDislikeImageClicked() {
-
+            int position = getAdapterPosition();
+            if (listener != null && position != RecyclerView.NO_POSITION) {
+                Product product = getItem(position);
+                listener.onDislikeClicked(product.getId());
+            }
         }
 
         @OnClick(R.id.img_share)
         void onShareImageClicked() {
-
+            int position = getAdapterPosition();
+            if (listener != null && position != RecyclerView.NO_POSITION) {
+                Product product = getItem(position);
+                listener.onShareClicked(product.getId());
+            }
         }
     }
 }

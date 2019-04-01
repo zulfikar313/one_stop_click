@@ -148,7 +148,6 @@
                 android:text="@string/share"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:textColor="#000" />
-
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

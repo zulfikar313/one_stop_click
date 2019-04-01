@@ -104,6 +104,7 @@ public class ProductRepository {
     //endregion
 
     // region firestore
+    // get all products
     public Task<QuerySnapshot> getAllProducts() {
         return productService.getAllProducts().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
@@ -112,6 +113,16 @@ public class ProductRepository {
                 insertProduct(product);
             }
         });
+    }
+
+    // add product like count
+    public Task<Void> addLike(String productId) {
+        return productService.addLike(productId);
+    }
+
+    // add product dislike count
+    public Task<Void> addDislike(String productId) {
+        return productService.addDislike(productId);
     }
 
     // add products listener

@@ -57,4 +57,6 @@
     <string name="sync">Sync</string>
     <string name="product_sync_in_progress">Product sync in progress</string>
     <string name="product_sync_success">Product sync success</string>
+    <string name="add_like_in_progress">Add like in progress</string>
+    <string name="add_dislike_in_progress">Add dislike in progress</string>
 </resources>
