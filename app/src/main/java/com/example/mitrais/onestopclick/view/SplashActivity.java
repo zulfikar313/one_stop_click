@@ -35,22 +35,17 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-
-        // initialize dagger injection
-        SplashActivityComponent component = DaggerSplashActivityComponent.builder()
-                .splashActivity(this)
-                .build();
-        component.inject(this);
+        initDagger();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        user = viewModel.getCurrentUser();
+        user = viewModel.getUser();
         if (user != null && user.isEmailVerified()) // check if user is logged in and verified
             goToMainPage();
         else {
-            boolean isLoggedOnOnce = App.prefs.getBoolean(Constant.PREF_IS_LOGGED_ON_ONCE, false);
+            boolean isLoggedOnOnce = App.prefs.getBoolean(Constant.PREF_IS_LOGGED_ON_ONCE);
             if (isLoggedOnOnce)
                 goToLoginPage();
             else
@@ -64,17 +59,24 @@ public class SplashActivity extends AppCompatActivity {
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
+    // initialize dagger injection
+    private void initDagger() {
+        SplashActivityComponent component = DaggerSplashActivityComponent.builder()
+                .splashActivity(this)
+                .build();
+        component.inject(this);
+    }
+
     // go to login page
     private void goToLoginPage() {
         progressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(() -> {
             finish();
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
             progressBar.setVisibility(View.INVISIBLE);
         }, Constant.PROGRESS_DELAY);
-
     }
 
     // go to main page

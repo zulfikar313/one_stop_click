@@ -1,11 +1,9 @@
 package com.example.mitrais.onestopclick.view;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,10 +20,6 @@ import com.example.mitrais.onestopclick.dagger.component.DaggerProfileFragmentCo
 import com.example.mitrais.onestopclick.dagger.component.ProfileFragmentComponent;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.viewmodel.ProfileViewModel;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -45,7 +39,6 @@ public class ProfileFragment extends Fragment {
     private Task<Uri> profileImageUploadTask;
     private Task<Void> updateUserTask;
     private Task<Void> saveProfileTask;
-    private Task<Void> addProfileTask;
     private Profile profile;
 
     @Inject
@@ -72,34 +65,8 @@ public class ProfileFragment extends Fragment {
         getActivity().setTitle(getString(R.string.profile));
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-
-        // initialize dagger injection
-        ProfileFragmentComponent component = DaggerProfileFragmentComponent.builder()
-                .profileFragment(this)
-                .build();
-        component.inject(this);
-
-        viewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
-        user = viewModel.getUser();
-        if (user != null) {
-            // bind user
-            txtEmail.setText(user.getEmail());
-            txtDisplayName.getEditText().setText(user.getDisplayName());
-
-            viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
-                this.profile = profile;
-                if (profile != null) {
-                    // bind profile
-                    txtAddress.getEditText().setText(profile.getAddress());
-                    String uri = profile.getProfileImageUri();
-                    if (!uri.isEmpty())
-                        Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
-                } else {
-                    txtAddress.getEditText().setText("");
-                    imgProfile.setImageResource(R.drawable.ic_launcher_background);
-                }
-            });
-        }
+        initDagger();
+        bindData();
 
         return view;
     }
@@ -108,16 +75,18 @@ public class ProfileFragment extends Fragment {
     void onSaveProfileButtonClicked() {
         if (isAddressValid() & isDisplayNameValid()) {
             if (isProfileImageUploadInProgress() || isUpdateUserInProgress() || isSaveProfileInProgress())
-                Toasty.info(getActivity(), getString(R.string.update_profile_is_in_progress), Toast.LENGTH_SHORT).show();
-            else {
+                Toasty.info(getActivity(), getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+            else
                 saveProfile();
-            }
         }
     }
 
     @OnClick(R.id.img_profile)
     void onProfileImageClicked() {
-        openImageFileChooser();
+        if (isProfileImageUploadInProgress() || isUpdateUserInProgress() || isSaveProfileInProgress())
+            Toasty.info(getActivity(), getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+        else
+            openImageFileChooser();
     }
 
     @Override
@@ -144,7 +113,7 @@ public class ProfileFragment extends Fragment {
         profileImageUploadTask = viewModel.saveProfileImage(imageUri, fileName)
                 .addOnSuccessListener(uri -> {
                     // save user
-                    updateUserTask = viewModel.updateUser(uri)
+                    updateUserTask = viewModel.saveUser(uri)
                             .addOnSuccessListener(aVoid -> {
                                 // save profile
                                 Profile profile = new Profile(user.getEmail(), uri.toString(), fileName, "");
@@ -156,7 +125,7 @@ public class ProfileFragment extends Fragment {
                                         .addOnFailureListener(e -> {
                                             // add profile if profile not exist yet
                                             if (((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
-                                                addProfileTask = viewModel.addProfile(profile)
+                                                saveProfileTask = viewModel.addProfile(profile)
                                                         .addOnCompleteListener(task -> {
                                                             progressBar.setVisibility(View.INVISIBLE);
                                                         })
@@ -180,6 +149,38 @@ public class ProfileFragment extends Fragment {
     }
 
     // region private methods
+    // initialize dagger injection
+    private void initDagger() {
+        ProfileFragmentComponent component = DaggerProfileFragmentComponent.builder()
+                .profileFragment(this)
+                .build();
+        component.inject(this);
+    }
+
+    // bind data to view
+    private void bindData() {
+        user = viewModel.getUser();
+        if (user != null) {
+            // bind user
+            txtEmail.setText(user.getEmail());
+            txtDisplayName.getEditText().setText(user.getDisplayName());
+
+            viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
+                this.profile = profile;
+                if (profile != null) {
+                    // bind profile
+                    txtAddress.getEditText().setText(profile.getAddress());
+                    String uri = profile.getProfileImageUri();
+                    if (!uri.isEmpty())
+                        Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
+                } else {
+                    txtAddress.getEditText().setText("");
+                    imgProfile.setImageResource(R.drawable.ic_launcher_background);
+                }
+            });
+        }
+    }
+
     // save profile
     private void saveProfile() {
         progressBar.setVisibility(View.VISIBLE);
@@ -188,7 +189,7 @@ public class ProfileFragment extends Fragment {
         String address = txtAddress.getEditText().getText().toString().trim();
 
         // save user
-        updateUserTask = viewModel.updateUser(displayName)
+        updateUserTask = viewModel.saveUser(displayName)
                 .addOnSuccessListener(aVoid -> {
                     // save profile
                     Profile profile = new Profile(user.getEmail(), "", "", address);
@@ -200,7 +201,7 @@ public class ProfileFragment extends Fragment {
                             .addOnFailureListener(e -> {
                                 // add profile if profile not exist yet
                                 if (((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
-                                    addProfileTask = viewModel.addProfile(profile)
+                                    saveProfileTask = viewModel.addProfile(profile)
                                             .addOnCompleteListener(task -> {
                                                 progressBar.setVisibility(View.INVISIBLE);
                                             })
@@ -269,11 +270,5 @@ public class ProfileFragment extends Fragment {
     private boolean isSaveProfileInProgress() {
         return saveProfileTask != null && !saveProfileTask.isComplete();
     }
-
-    // return true if add profile is in progress
-    private boolean isAddProfileInProgress() {
-        return addProfileTask != null && !addProfileTask.isComplete();
-    }
-
     // endregion
 }

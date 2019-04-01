@@ -30,30 +30,26 @@ public class ProductRepository {
     ProductService productService;
 
     public ProductRepository(Application application) {
-        // initialize dagger injection
-        ProductRepositoryComponent component = DaggerProductRepositoryComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
+        initDagger(application);
 
         if (productListenerRegistration == null)
             setProductsListener();
     }
 
     // region room
-    // insert local product
-    public void insertLocalProduct(Product product) {
-        new InsertLocalProductAsyncTask(productDao).execute(product);
+    // insert product
+    private void insertProduct(Product product) {
+        new InsertProductAsyncTask(productDao).execute(product);
     }
 
-    // update local product
-    public void updateLocalProduct(Product product) {
-        new UpdateLocalProductAsyncTask(productDao).execute(product);
+    // update product
+    public void updateProduct(Product product) {
+        new UpdateProductAsyncTask(productDao).execute(product);
     }
 
-    // delete local product
-    public void deleteLocalProduct(Product product) {
-        new DeleteLocalProductAsyncTask(productDao).execute(product);
+    // delete product
+    public void deleteProduct(Product product) {
+        new DeleteProductAsyncTask(productDao).execute(product);
     }
 
     // get all local products
@@ -62,10 +58,10 @@ public class ProductRepository {
     }
 
     // insert local product in background
-    static class InsertLocalProductAsyncTask extends AsyncTask<Product, Void, Void> {
+    static class InsertProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        public InsertLocalProductAsyncTask(ProductDao productDao) {
+        InsertProductAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
@@ -77,10 +73,10 @@ public class ProductRepository {
     }
 
     // update local product in background
-    static class UpdateLocalProductAsyncTask extends AsyncTask<Product, Void, Void> {
+    static class UpdateProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        public UpdateLocalProductAsyncTask(ProductDao productDao) {
+        UpdateProductAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
@@ -92,10 +88,10 @@ public class ProductRepository {
     }
 
     // delete local product in background
-    static class DeleteLocalProductAsyncTask extends AsyncTask<Product, Void, Void> {
+    static class DeleteProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        public DeleteLocalProductAsyncTask(ProductDao productDao) {
+        DeleteProductAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
@@ -113,7 +109,7 @@ public class ProductRepository {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
-                insertLocalProduct(product);
+                insertProduct(product);
             }
         });
     }
@@ -121,22 +117,24 @@ public class ProductRepository {
     // add products listener
     private void setProductsListener() {
         productListenerRegistration = ProductService.getProductRef().addSnapshotListener((queryDocumentSnapshots, e) -> {
-            for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                DocumentSnapshot documentSnapshot = dc.getDocument();
-                Product product = documentSnapshot.toObject(Product.class);
-                product.setId(documentSnapshot.getId());
-                switch (dc.getType()) {
-                    case ADDED: {
-                        insertLocalProduct(product);
-                        break;
-                    }
-                    case MODIFIED: {
-                        insertLocalProduct(product);
-                        break;
-                    }
-                    case REMOVED: {
-                        deleteLocalProduct(product);
-                        break;
+            if (queryDocumentSnapshots != null) {
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                    DocumentSnapshot documentSnapshot = dc.getDocument();
+                    Product product = documentSnapshot.toObject(Product.class);
+                    product.setId(documentSnapshot.getId());
+                    switch (dc.getType()) {
+                        case ADDED: {
+                            insertProduct(product);
+                            break;
+                        }
+                        case MODIFIED: {
+                            insertProduct(product);
+                            break;
+                        }
+                        case REMOVED: {
+                            deleteProduct(product);
+                            break;
+                        }
                     }
                 }
             }
@@ -144,4 +142,11 @@ public class ProductRepository {
     }
     // endregion
 
+    // initialize dagger injection
+    private void initDagger(Application application) {
+        ProductRepositoryComponent component = DaggerProductRepositoryComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
+    }
 }

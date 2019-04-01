@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class Preferences {
-    public static final String SHARED_PREFS = "sharedPrefs";
+    private static final String SHARED_PREFS = "sharedPrefs";
     private static Preferences instance;
     private static SharedPreferences prefs;
 
@@ -17,24 +17,20 @@ public class Preferences {
         return instance;
     }
 
-    // Put string value to shared prefs
     public void putString(String key, String value) {
         prefs.edit().putString(key, value).apply();
     }
 
-    // Get string value from shared prefs
-    public String getString(String key, String defValue) {
-        return prefs.getString(key, defValue);
+    public String getString(String key) {
+        return prefs.getString(key, "");
     }
 
-    // Put boolean value to shared prefs
     public void putBoolean(String key, boolean value) {
         prefs.edit().putBoolean(key, value).apply();
     }
 
-    //  Get boolean value from shared prefs
-    public boolean getBoolean(String key, boolean defValue) {
-        return prefs.getBoolean(key, defValue);
+    public boolean getBoolean(String key) {
+        return prefs.getBoolean(key, false);
     }
 }
 

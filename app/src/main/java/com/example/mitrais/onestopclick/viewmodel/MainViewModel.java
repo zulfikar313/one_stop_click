@@ -55,6 +55,6 @@ public class MainViewModel extends AndroidViewModel {
 
     // get profile live data
     public LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepository.getLocalProfileByEmail(email);
+        return profileRepository.retrieveProfileByEmail(email);
     }
 }

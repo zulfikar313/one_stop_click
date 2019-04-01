@@ -11,31 +11,14 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 public class AuthService {
     private static AuthService instance;
     private static FirebaseAuth auth;
-    private static ResultListener listener;
-
-    public interface ResultListener {
-        void onAuthChanged(FirebaseUser user);
-    }
 
     public static AuthService getInstance() {
         if (instance == null) {
             instance = new AuthService();
             auth = FirebaseAuth.getInstance();
-
-            auth.addAuthStateListener(firebaseAuth -> {
-                if (listener != null) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    listener.onAuthChanged(user);
-                }
-            });
-
         }
 
         return instance;
-    }
-
-    public void setListener(ResultListener listener) {
-        AuthService.listener = listener;
     }
 
     // login to firebase auth using email and password
@@ -53,7 +36,7 @@ public class AuthService {
         auth.signOut();
     }
 
-    // send email verification
+    // send email verification to user email address
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
         return user.sendEmailVerification();
     }
@@ -68,16 +51,16 @@ public class AuthService {
         return auth.getCurrentUser();
     }
 
-    // update user
-    public Task<Void> updateUser(String displayName) {
+    // save user display name
+    public Task<Void> saveUser(String displayName) {
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build();
         return getUser().updateProfile(request);
     }
 
-    // update user
-    public Task<Void> updateUser(Uri photoUri) {
+    // save user photo uri
+    public Task<Void> saveUser(Uri photoUri) {
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
                 .setPhotoUri(photoUri)
                 .build();

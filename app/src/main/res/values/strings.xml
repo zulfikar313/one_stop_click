@@ -44,7 +44,7 @@
     <string name="address">Address</string>
     <string name="profile_update_success">Profile update success</string>
     <string name="error_empty_address">Address can\'t be empty</string>
-    <string name="update_profile_is_in_progress">Update profile is in progress</string>
+    <string name="save_profile_is_in_progress">Save profile is in progress</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

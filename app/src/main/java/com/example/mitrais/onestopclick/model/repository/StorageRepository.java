@@ -14,14 +14,18 @@ public class StorageRepository {
     StorageService storageService;
 
     public StorageRepository() {
-        // initialize dagger injection
-        StorageRepositoryComponent component = DaggerStorageRepositoryComponent.builder()
-                .build();
-        component.inject(this);
+        initDagger();
     }
 
     // add profile image
     public Task<Uri> saveProfileImage(Uri uri, String fileName) {
         return storageService.saveProfileImage(uri, fileName);
+    }
+
+    // initialize dagger injection
+    private void initDagger() {
+        StorageRepositoryComponent component = DaggerStorageRepositoryComponent.builder()
+                .build();
+        component.inject(this);
     }
 }

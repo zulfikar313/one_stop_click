@@ -1,6 +1,5 @@
 package com.example.mitrais.onestopclick.view;
 
-import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import com.example.mitrais.onestopclick.dagger.component.ForgotPasswordActivityC
 import com.example.mitrais.onestopclick.view.dialog.CheckEmailToResetPasswordDialog;
 import com.example.mitrais.onestopclick.viewmodel.ForgotPasswordViewModel;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -29,10 +27,9 @@ import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
-public class ForgotPasswordActivity extends AppCompatActivity implements ForgotPasswordViewModel.ResultListener {
+public class ForgotPasswordActivity extends AppCompatActivity {
     private static final String TAG = "ForgotPasswordActivity";
-    private FirebaseUser user;
-    private Task<Void> sendPasswordResetEmailTask;
+    private Task<Void> sendEmailTask;
 
     @Inject
     ForgotPasswordViewModel viewModel;
@@ -49,28 +46,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         setContentView(R.layout.activity_forgot_password);
         setTitle(getString(R.string.forgot_password));
         ButterKnife.bind(this);
-
-        // Initialize dagger injection
-        ForgotPasswordActivityComponent component = DaggerForgotPasswordActivityComponent.builder()
-                .forgotPasswordActivity(this)
-                .build();
-        component.inject(this);
-
-        viewModel.setListener(this);
+        initDagger();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        user = viewModel.getCurrentUser();
-        if (user != null && user.isEmailVerified())
-            goToMainPage();
     }
 
     @Override
@@ -85,11 +67,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         finish();
     }
 
-
     @OnClick(R.id.btn_reset_password)
     void onResetPasswordButtonClicked() {
         if (isEmailValid()) {
-            if (isSendPasswordResetEmailInProgress())
+            if (isSendEmailInProgress())
                 Toasty.info(this, getString(R.string.send_reset_password_is_in_progress), Toast.LENGTH_SHORT).show();
             else {
                 String email = Objects.requireNonNull(txtEmail.getEditText(), getString(R.string.error_no_edit_text)).getText().toString().trim();
@@ -99,33 +80,19 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         }
     }
 
-    @Override
-    public void onLoginSuccess() {
-        user = viewModel.getCurrentUser();
-        if (user != null && user.isEmailVerified())
-            goToMainPage();
-        else
-            Toasty.error(this, getString(R.string.error_unverified_email), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onLoginFailed(Exception e) {
-        Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-    }
-
     // region private methods
-    // go to main page
-    private void goToMainPage() {
-        finish();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    // initialize dagger injection
+    private void initDagger() {
+        ForgotPasswordActivityComponent component = DaggerForgotPasswordActivityComponent.builder()
+                .forgotPasswordActivity(this)
+                .build();
+        component.inject(this);
     }
 
     // send password reset email
     private void sendPasswordResetEmail(String email) {
         progressBar.setVisibility(View.VISIBLE);
-        sendPasswordResetEmailTask = viewModel.sendPasswordResetEmail(email)
+        sendEmailTask = viewModel.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
                 .addOnSuccessListener(aVoid -> {
                     showCheckEmailToResetPasswordDialog();
@@ -158,11 +125,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         return true;
     }
 
-    // return true if send password reset email in progress
-    private boolean isSendPasswordResetEmailInProgress() {
-        return sendPasswordResetEmailTask != null && !sendPasswordResetEmailTask.isComplete();
+    // return true if send email in progress
+    private boolean isSendEmailInProgress() {
+        return sendEmailTask != null && !sendEmailTask.isComplete();
     }
     //endregion
-
-
 }

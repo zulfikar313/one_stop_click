@@ -7,12 +7,11 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 
-
 @Entity(tableName = "profile")
 public class Profile {
     @PrimaryKey
     @NonNull
-    private String email;
+    private String email = "";
     private String profileImageUri;
     private String profileImageFileName;
     private String address;
@@ -29,11 +28,12 @@ public class Profile {
     }
 
     @Exclude
-    public void setEmail(String email) {
+    public void setEmail(@NonNull String email) {
         this.email = email;
     }
 
     @Exclude
+    @NonNull
     public String getEmail() {
         return email;
     }

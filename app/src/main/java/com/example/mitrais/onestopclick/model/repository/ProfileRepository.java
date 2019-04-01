@@ -27,45 +27,48 @@ public class ProfileRepository {
     ProfileService profileService;
 
     public ProfileRepository(Application application) {
-        // initialize dagger injection
+        initDagger(application);
+    }
+
+    // initialize dagger injection
+    private void initDagger(Application application) {
         ProfileRepositoryComponent component = DaggerProfileRepositoryComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);
-
     }
 
     // region room
     // insert local profile
-    private void insertLocalProfile(Profile profile) {
-        new InsertLocalProfileAsyncTask(profileDao).execute(profile);
+    private void insertProfile(Profile profile) {
+        new InsertProfileAsyncTask(profileDao).execute(profile);
     }
 
-    // update local profile
-    public void updateLocalProfile(Profile profile) {
-        new UpdateLocalProfileAsyncTask(profileDao).execute(profile);
+    // update profile
+    public void updateProfile(Profile profile) {
+        new UpdateProfileAsyncTask(profileDao).execute(profile);
     }
 
-    // delete local profile
-    private void deleteLocalProfile(Profile profile) {
-        new DeleteLocalProfileAsyncTask(profileDao).execute(profile);
+    // delete profile
+    private void deleteProfile(Profile profile) {
+        new DeleteProfileAsyncTask(profileDao).execute(profile);
     }
 
     // delete local profile by email
-    private void deleteLocalProfileByEmail(String email) {
-        new DeleteLocalProfileByEmailAsyncTask(profileDao).execute(email);
+    private void deleteProfileByEmail(String email) {
+        new DeleteProfileByEmailAsyncTask(profileDao).execute(email);
     }
 
-    // get local profile by email
-    public LiveData<Profile> getLocalProfileByEmail(String email) {
+    // retrieve local profile by email
+    public LiveData<Profile> retrieveProfileByEmail(String email) {
         return profileDao.getProfileByEmail(email);
     }
 
     // insert profile in background
-    static class InsertLocalProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
+    static class InsertProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
         private final ProfileDao profileDao;
 
-        InsertLocalProfileAsyncTask(ProfileDao profileDao) {
+        InsertProfileAsyncTask(ProfileDao profileDao) {
             this.profileDao = profileDao;
         }
 
@@ -77,10 +80,10 @@ public class ProfileRepository {
     }
 
     // update profile in background
-    static class UpdateLocalProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
+    static class UpdateProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
         private final ProfileDao profileDao;
 
-        UpdateLocalProfileAsyncTask(ProfileDao profileDao) {
+        UpdateProfileAsyncTask(ProfileDao profileDao) {
             this.profileDao = profileDao;
         }
 
@@ -92,10 +95,10 @@ public class ProfileRepository {
     }
 
     // delete profile in background
-    static class DeleteLocalProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
+    static class DeleteProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
         private final ProfileDao profileDao;
 
-        DeleteLocalProfileAsyncTask(ProfileDao profileDao) {
+        DeleteProfileAsyncTask(ProfileDao profileDao) {
             this.profileDao = profileDao;
         }
 
@@ -107,10 +110,10 @@ public class ProfileRepository {
     }
 
     // delete local profile by email in background
-    static class DeleteLocalProfileByEmailAsyncTask extends AsyncTask<String, Void, Void> {
+    static class DeleteProfileByEmailAsyncTask extends AsyncTask<String, Void, Void> {
         private final ProfileDao profileDao;
 
-        DeleteLocalProfileByEmailAsyncTask(ProfileDao profileDao) {
+        DeleteProfileByEmailAsyncTask(ProfileDao profileDao) {
             this.profileDao = profileDao;
         }
 
@@ -141,12 +144,6 @@ public class ProfileRepository {
         return profileService.saveProfileImageData(profile);
     }
 
-    // delete profile in firestore
-    public Task<Void> deleteProfile(Profile profile) {
-        addProfileListener(profile.getEmail());
-        return profileService.deleteProfile(profile);
-    }
-
     // get profile by email from firestore
     public Task<DocumentSnapshot> getProfileByEmail(String email) {
         addProfileListener(email);
@@ -154,7 +151,7 @@ public class ProfileRepository {
             Profile profile = documentSnapshot.toObject(Profile.class);
             if (profile != null) {
                 profile.setEmail(documentSnapshot.getId());
-                insertLocalProfile(profile);
+                insertProfile(profile);
             }
         });
     }
@@ -169,9 +166,9 @@ public class ProfileRepository {
                     Profile profile = documentSnapshot.toObject(Profile.class);
                     if (profile != null) {
                         profile.setEmail(documentSnapshot.getId());
-                        insertLocalProfile(profile);
+                        insertProfile(profile);
                     } else
-                        deleteLocalProfileByEmail(email);
+                        deleteProfileByEmail(email);
                 }
             });
         }

@@ -13,57 +13,34 @@ import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
-public class RegistrationViewModel extends AndroidViewModel implements AuthRepository.LoginListener {
-    private ResultListener listener;
-
-    public interface ResultListener {
-        void onLoginSuccess();
-
-        void onLoginFailed(Exception e);
-    }
-
-    public void setListener(ResultListener listener) {
-        this.listener = listener;
-    }
-
+public class RegistrationViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
 
     public RegistrationViewModel(@NonNull Application application) {
         super(application);
+        initDagger();
+    }
 
-        // // Initialize dagger injection
+    // initialize dagger injection
+    private void initDagger() {
         RegistrationViewModelComponent component = DaggerRegistrationViewModelComponent.builder()
                 .build();
         component.inject(this);
-
-        authRepository.setLoginListener(this);
-    }
-
-    @Override
-    public void onLoginSuccess() {
-        if (listener != null)
-            listener.onLoginSuccess();
-    }
-
-    @Override
-    public void onLoginFailed(Exception e) {
-        if (listener != null)
-            listener.onLoginFailed(e);
     }
 
     // region public methods
-    // Get currently logged in user
+    // get logged in user
     public FirebaseUser getCurrentUser() {
         return authRepository.getUser();
     }
 
-    // Register new user with email and password
+    // register new user with email and password
     public Task<AuthResult> register(String email, String password) {
         return authRepository.register(email, password);
     }
 
-    // Send email verification to user email address
+    // send email verification to user email address
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
         return authRepository.sendVerificationEmail(user);
     }

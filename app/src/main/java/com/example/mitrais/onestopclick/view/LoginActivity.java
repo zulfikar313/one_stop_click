@@ -2,11 +2,8 @@ package com.example.mitrais.onestopclick.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -19,7 +16,6 @@ import com.example.mitrais.onestopclick.dagger.component.DaggerLoginActivityComp
 import com.example.mitrais.onestopclick.dagger.component.LoginActivityComponent;
 import com.example.mitrais.onestopclick.view.dialog.EmailNotVerifiedDialog;
 import com.example.mitrais.onestopclick.viewmodel.LoginViewModel;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private FirebaseUser user;
     private Task<AuthResult> loginTask;
-    private Task<Void> sendVerificationEmailTask;
+    private Task<Void> sendEmailTask;
     private Task<DocumentSnapshot> syncDataTask;
 
     @Inject
@@ -58,23 +54,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setTitle(getString(R.string.login));
         ButterKnife.bind(this);
+        initDagger();
 
-        // Initialize dagger
-        LoginActivityComponent component = DaggerLoginActivityComponent.builder()
-                .loginActivity(this)
-                .build();
-        component.inject(this);
-
-        // Set last logged in email value if any
-        txtEmail.getEditText().setText(App.prefs.getString(Constant.PREF_LAST_LOGGED_IN_EMAIL, ""));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        user = viewModel.getCurrentUser();
-        if (user != null && user.isEmailVerified())
-            goToMainPage();
+        // set last logged in email
+        txtEmail.getEditText().setText(App.prefs.getString(Constant.PREF_LAST_LOGGED_IN_EMAIL));
     }
 
     @Override
@@ -95,15 +78,29 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.txt_register)
     void onRegisterTextClicked() {
-        goToRegistrationPage();
+        if (isLoginInProgress() || isSyncDataInProgress()) {
+            Toasty.info(this, getString(R.string.login_process_is_running), Toast.LENGTH_SHORT).show();
+        } else
+            goToRegistrationPage();
     }
 
     @OnClick(R.id.txt_forgot_password)
     void onForgotPasswordTextClicked() {
-        goToForgotPasswordPage();
+        if (isLoginInProgress() || isSyncDataInProgress()) {
+            Toasty.info(this, getString(R.string.login_process_is_running), Toast.LENGTH_SHORT).show();
+        } else
+            goToForgotPasswordPage();
     }
 
     // region private methods
+    // initialize dagger injection
+    private void initDagger() {
+        LoginActivityComponent component = DaggerLoginActivityComponent.builder()
+                .loginActivity(this)
+                .build();
+        component.inject(this);
+    }
+
     // login using email and password
     private void doLogin() {
         progressBar.setVisibility(View.VISIBLE);
@@ -132,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
     // send verification email
     private void sendVerificationEmail(FirebaseUser user) {
         progressBar.setVisibility(View.VISIBLE);
-        sendVerificationEmailTask = viewModel.sendVerificationEmail(user)
+        sendEmailTask = viewModel.sendVerificationEmail(user)
                 .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
                 .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.message_verification_email_sent), Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
@@ -216,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // return true if send verification email in progress
     private boolean isSendVerificationEmailInProgress() {
-        return sendVerificationEmailTask != null && !sendVerificationEmailTask.isComplete();
+        return sendEmailTask != null && !sendEmailTask.isComplete();
     }
     //endregion
 }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
+import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductViewModelComponent;
 import com.example.mitrais.onestopclick.model.Product;
@@ -20,16 +21,19 @@ public class ProductViewModel extends AndroidViewModel {
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
-
-        // initialize dagger injection
-        ProductViewModelComponent component = DaggerProductViewModelComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
+        initDagger(application);
     }
 
     // return products live data
     public LiveData<List<Product>> getAllProducts() {
-       return productRepository.getAllLocalProducts();
+        return productRepository.getAllLocalProducts();
+    }
+
+    // initialize dagger injection
+    private void initDagger(Application application) {
+        ProductViewModelComponent component = DaggerProductViewModelComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
     }
 }

@@ -1,10 +1,8 @@
 package com.example.mitrais.onestopclick.view;
 
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -66,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        initDagger();
 
         View navHeaderView = navView.getHeaderView(0);
         imgProfile = navHeaderView.findViewById(R.id.img_profile);
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.main_menu));
 
-        // Initialize drawer toggle
+        // initialize drawer toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_bar_open, R.string.navigation_bar_close);
         drawer.addDrawerListener(toggle);
@@ -82,27 +81,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navView.setNavigationItemSelectedListener(this);
 
-        // Initialize first shown fragment
+        // initialize first shown fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
             navView.setCheckedItem(R.id.movie);
         }
 
-        // Initialize dagger injection
-        MainActivityComponent component = DaggerMainActivityComponent.builder()
-                .mainActivity(this)
-                .build();
-        component.inject(this);
-
-        // Initialize user profile
+        // initialize user profile
         FirebaseUser user = viewModel.getCurrentUser();
-        viewModel.getProfileByEmail(user.getEmail()).observe(this, new Observer<Profile>() {
-            @Override
-            public void onChanged(@Nullable Profile profile) {
-                if(profile != null){
-                    txtEmail.setText(profile.getEmail());
-                    Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
-                }
+        viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
+            if (profile != null) {
+                txtEmail.setText(profile.getEmail());
+                Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
             }
         });
     }
@@ -162,7 +152,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    // Go to login page
+    // initialize dagger injection
+    private void initDagger() {
+        MainActivityComponent component = DaggerMainActivityComponent.builder()
+                .mainActivity(this)
+                .build();
+        component.inject(this);
+    }
+
+    // go to login page
     public void goToLoginPage() {
         progressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {

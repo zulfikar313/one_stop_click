@@ -28,11 +28,11 @@ import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
-public class RegistrationActivity extends AppCompatActivity implements RegistrationViewModel.ResultListener {
+public class RegistrationActivity extends AppCompatActivity {
     private static final String TAG = "RegistrationActivity";
     private FirebaseUser user;
     private Task<AuthResult> registerTask;
-    private Task<Void> sendVerificationEmailTask;
+    private Task<Void> sendEmailTask;
 
     @Inject
     RegistrationViewModel viewModel;
@@ -55,12 +55,7 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         setContentView(R.layout.activity_registration);
         setTitle(getString(R.string.registration));
         ButterKnife.bind(this);
-
-        // Initialize dagger injection
-        RegistrationActivityComponent component = DaggerRegistrationActivityComponent.builder()
-                .registrationActivity(this)
-                .build();
-        component.inject(this);
+        initDagger();
     }
 
     @Override
@@ -69,18 +64,10 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        user = viewModel.getCurrentUser();
-        if (user != null && user.isEmailVerified())
-            goToMainPage();
-    }
-
     @OnClick(R.id.btn_register)
     void onRegisterButtonClicked() {
         if (isEmailValid() & isPasswordValid() & isConfirmPasswordValid()) {
-            if (isRegistrationInProgress())
+            if (isRegistrationInProgress() || isSendEmailInProgress())
                 Toasty.info(this, getString(R.string.registration_is_in_progress), Toast.LENGTH_SHORT).show();
             else
                 doRegistration();
@@ -92,22 +79,17 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         goToLoginPage();
     }
 
-    @Override
-    public void onLoginSuccess() {
-        user = viewModel.getCurrentUser();
-        if (user != null && user.isEmailVerified())
-            goToMainPage();
-        else
-            Toasty.error(this, getString(R.string.error_unverified_email), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onLoginFailed(Exception e) {
-        Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-    }
-
     // region private methods
-    // Register new user using email and password
+    // initialize dagger injection
+    private void initDagger() {
+        // Initialize dagger injection
+        RegistrationActivityComponent component = DaggerRegistrationActivityComponent.builder()
+                .registrationActivity(this)
+                .build();
+        component.inject(this);
+    }
+
+    // register new user using email and password
     private void doRegistration() {
         progressBar.setVisibility(View.VISIBLE);
         String email = txtEmail.getEditText().getText().toString().trim();
@@ -174,7 +156,7 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
 
     // send verification email to user email address
     private void sendVerificationEmail(FirebaseUser user) {
-        sendVerificationEmailTask = viewModel.sendVerificationEmail(user)
+        sendEmailTask = viewModel.sendVerificationEmail(user)
                 .addOnSuccessListener(aVoid -> showCheckEmailForVerificationDialog())
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
@@ -186,17 +168,14 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    // go to main page
-    private void goToMainPage() {
-        finish();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-    }
-
     // return true if registration in progress
     private boolean isRegistrationInProgress() {
         return registerTask != null && !registerTask.isComplete();
+    }
+
+    // return true if send email in progress
+    private boolean isSendEmailInProgress() {
+        return sendEmailTask != null && !sendEmailTask.isComplete();
     }
     //endregion
 }

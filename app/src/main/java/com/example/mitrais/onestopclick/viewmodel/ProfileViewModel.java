@@ -29,23 +29,16 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
-
-        // initialize dagger injection
-        ProfileViewModelComponent component = DaggerProfileViewModelComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
-
-        storageRepository = new StorageRepository();
+        initDagger(application);
     }
 
+    // region public methods
     // get profile by email
     public LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepository.getLocalProfileByEmail(email);
+        return profileRepository.retrieveProfileByEmail(email);
     }
 
-    // region firebase
-    // get currently logged in user
+    // get logged in user
     public FirebaseUser getUser() {
         return authRepository.getUser();
     }
@@ -55,14 +48,14 @@ public class ProfileViewModel extends AndroidViewModel {
         return storageRepository.saveProfileImage(uri, fileName);
     }
 
-    // update user
-    public Task<Void> updateUser(String displayName) {
-        return authRepository.updateUser(displayName);
+    // save user display name
+    public Task<Void> saveUser(String displayName) {
+        return authRepository.saveUser(displayName);
     }
 
-    // update user
-    public Task<Void> updateUser(Uri photoUri) {
-        return authRepository.updateUser(photoUri);
+    // save user photo uri
+    public Task<Void> saveUser(Uri photoUri) {
+        return authRepository.saveUser(photoUri);
     }
 
     // add profile
@@ -70,14 +63,22 @@ public class ProfileViewModel extends AndroidViewModel {
         return profileRepository.addProfile(profile);
     }
 
-    // save profile
+    // update profile
     public Task<Void> saveProfile(Profile profile) {
         return profileRepository.saveProfile(profile);
     }
 
-    // save profile image data
+    // update profile image data
     public Task<Void> saveProfileImageData(Profile profile) {
         return profileRepository.saveProfileImageData(profile);
     }
     // endregion
+
+    // initialize dagger injection
+    private void initDagger(Application application) {
+        ProfileViewModelComponent component = DaggerProfileViewModelComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
+    }
 }

@@ -23,24 +23,27 @@ public class SplashViewModel extends AndroidViewModel {
 
     public SplashViewModel(@NonNull Application application) {
         super(application);
-
-        // Initialize dagger injection
-        SplashViewModelComponent component = DaggerSplashViewModelComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
+        initDagger(application);
     }
 
-    // Get currently logged in user
-    public FirebaseUser getCurrentUser() {
+    // gets logged in user
+    public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
-    // Sync data with firebase
+    // sync data with firebase
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
             return profileRepository.getProfileByEmail(user.getEmail());
         else
             return null;
+    }
+
+    // initialize dagger injection
+    private void initDagger(Application application) {
+        SplashViewModelComponent component = DaggerSplashViewModelComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
     }
 }

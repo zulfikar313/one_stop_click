@@ -11,7 +11,7 @@ import com.google.firebase.firestore.Exclude;
 public class Product {
     @PrimaryKey
     @NonNull
-    private String id;
+    private String id = "";
     private String title;
     private String description;
     private String type;
@@ -46,6 +46,7 @@ public class Product {
     }
 
     @Exclude
+    @NonNull
     public String getId() {
         return id;
     }

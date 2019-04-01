@@ -24,30 +24,33 @@ public class LoginViewModel extends AndroidViewModel {
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
+        initDagger(application);
+    }
 
-        // initialize dagger injection
+    // initialize dagger injection
+    private void initDagger(Application application) {
         LoginViewModelComponent component = DaggerLoginViewModelComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);
     }
 
-    // Login with email and password
+    // login with email and password
     public Task<AuthResult> login(String email, String password) {
         return authRepository.login(email, password);
     }
 
-    // Get currently logged id user
+    // get logged in øuser
     public FirebaseUser getCurrentUser() {
         return authRepository.getUser();
     }
 
-    // Send email verification to user email address
+    // send email verification to user email address
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
         return authRepository.sendVerificationEmail(user);
     }
 
-    // Sync data with firebase
+    // sync data with firebase
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
             return profileRepository.getProfileByEmail(user.getEmail());

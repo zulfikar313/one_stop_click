@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class ProductService {
-    public static final String REF_PRODUCT = "product";
+    private static final String REF_PRODUCT = "product";
     private static ProductService instance;
     private static FirebaseFirestore firestore;
     private static CollectionReference productRef;
@@ -26,6 +26,7 @@ public class ProductService {
         return productRef.get();
     }
 
+    // return product reference
     public static CollectionReference getProductRef() {
         return productRef;
     }

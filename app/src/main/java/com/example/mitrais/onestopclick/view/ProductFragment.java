@@ -35,13 +35,22 @@ public class ProductFragment extends Fragment {
         getActivity().setTitle(getString(R.string.product_list));
         View view = inflater.inflate(R.layout.fragment_product, container, false);
         ButterKnife.bind(this, view);
+        initDagger();
+        initRecyclerView();
 
-        // initialize dagger injection
+        return view;
+    }
+
+    // initialize dagger injection
+    private void initDagger() {
         ProductFragmentComponent component = DaggerProductFragmentComponent.builder()
                 .productFragment(this)
                 .build();
         component.inject(this);
+    }
 
+    // initialize recycler view
+    private void initRecyclerView() {
         productAdapter = new ProductAdapter();
         recProduct.setHasFixedSize(true);
         recProduct.setAdapter(productAdapter);
@@ -49,7 +58,5 @@ public class ProductFragment extends Fragment {
         viewModel.getAllProducts().observe(this, products -> {
             productAdapter.submitList(products);
         });
-
-        return view;
     }
 }
