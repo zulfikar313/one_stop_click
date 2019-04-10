@@ -33,7 +33,7 @@ public class Product {
         this.id = id;
         this.title = title = title == null ? " " : title;
         this.description = description == null ? "" : description;
-        this.type = type == null ? "" : title;
+        this.type = type == null ? "" : type;
         this.artist = artist == null ? "" : artist;
         this.author = author == null ? "" : author;
         this.director = director == null ? "" : director;
@@ -102,5 +102,37 @@ public class Product {
 
     public int getDislike() {
         return dislike;
+    }
+
+    public void setThumbnailUri(String thumbnailUri) {
+        this.thumbnailUri = thumbnailUri;
+    }
+
+    public void setThumbnailFileName(String thumbnailFileName) {
+        this.thumbnailFileName = thumbnailFileName;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
     }
 }

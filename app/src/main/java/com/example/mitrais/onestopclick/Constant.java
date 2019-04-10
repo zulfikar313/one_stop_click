@@ -15,4 +15,7 @@ public class Constant {
     public static final String PRODUCT_TYPE_BOOK = "book";
     public static final String PRODUCT_TYPE_MUSIC = "music";
     public static final String PRODUCT_TYPE_MOVIE = "movie";
+
+    // extras
+    public static final String EXTRA_PRODUCT_ID = "EXTRA_PRODUCT_ID";
 }

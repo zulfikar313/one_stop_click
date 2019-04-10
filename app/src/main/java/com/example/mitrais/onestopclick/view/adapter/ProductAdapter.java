@@ -23,6 +23,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     private Listener listener;
 
     public interface Listener {
+        void onItemClicked(String productId);
+
         void onLikeClicked(String productId);
 
         void onDislikeClicked(String productId);
@@ -96,6 +98,13 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    Product product = getItem(position);
+                    listener.onItemClicked(product.getId());
+                }
+            });
         }
 
         // bind product to view

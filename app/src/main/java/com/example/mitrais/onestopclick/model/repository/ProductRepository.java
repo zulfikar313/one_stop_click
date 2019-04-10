@@ -33,31 +33,31 @@ public class ProductRepository {
         initDagger(application);
 
         if (productListenerRegistration == null)
-            setProductsListener();
+            setProductListener();
     }
 
     // region room
-    // insert product
     private void insertProduct(Product product) {
         new InsertProductAsyncTask(productDao).execute(product);
     }
 
-    // update product
     public void updateProduct(Product product) {
         new UpdateProductAsyncTask(productDao).execute(product);
     }
 
-    // delete product
     public void deleteProduct(Product product) {
         new DeleteProductAsyncTask(productDao).execute(product);
     }
 
-    // get all local products
     public LiveData<List<Product>> getAllLocalProducts() {
         return productDao.getAllProducts();
     }
 
-    // insert local product in background
+    public LiveData<Product> getProductById(String id) {
+        return productDao.getProductById(id);
+    }
+
+    // insert product in background
     static class InsertProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
@@ -72,7 +72,7 @@ public class ProductRepository {
         }
     }
 
-    // update local product in background
+    // update product in background
     static class UpdateProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
@@ -87,7 +87,7 @@ public class ProductRepository {
         }
     }
 
-    // delete local product in background
+    // delete  product in background
     static class DeleteProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
@@ -104,8 +104,7 @@ public class ProductRepository {
     //endregion
 
     // region firestore
-    // get all products
-    public Task<QuerySnapshot> getAllProducts() {
+    public Task<QuerySnapshot> retrieveAllProducts() {
         return productService.getAllProducts().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
@@ -115,18 +114,23 @@ public class ProductRepository {
         });
     }
 
-    // add product like count
     public Task<Void> addLike(String productId) {
         return productService.addLike(productId);
     }
 
-    // add product dislike count
     public Task<Void> addDislike(String productId) {
         return productService.addDislike(productId);
     }
 
-    // add products listener
-    private void setProductsListener() {
+    public Task<Void> saveProductImageData(Product product) {
+        return productService.saveProductImageData(product);
+    }
+
+    public Task<Void> saveProductDetails(Product product) {
+        return productService.saveProduct(product);
+    }
+
+    private void setProductListener() {
         productListenerRegistration = ProductService.getProductRef().addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null) {
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {

@@ -17,9 +17,14 @@ public class StorageRepository {
         initDagger();
     }
 
-    // add profile image
+    // save profile image
     public Task<Uri> saveProfileImage(Uri uri, String fileName) {
         return storageService.saveProfileImage(uri, fileName);
+    }
+
+    // save product image
+    public Task<Uri> saveProductImage(Uri uri, String fileName) {
+        return storageService.saveProductImage(uri, fileName);
     }
 
     // initialize dagger injection

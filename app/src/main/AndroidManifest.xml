@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".view.ProductDetailActivity"
+            android:parentActivityName=".view.MainActivity" />
+        <activity
             android:name=".view.ForgotPasswordActivity"
             android:parentActivityName=".view.LoginActivity" />
         <activity android:name=".view.RegistrationActivity" />

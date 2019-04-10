@@ -38,22 +38,18 @@ public class MainViewModel extends AndroidViewModel {
         component.inject(this);
     }
 
-    // logout from current user
     public void logout() {
         authRepository.logout();
     }
 
-    // get currently logged in user
     public FirebaseUser getCurrentUser() {
         return authRepository.getUser();
     }
 
-    // synchronize product data
     public Task<QuerySnapshot> syncProductData() {
-        return productRepository.getAllProducts();
+        return productRepository.retrieveAllProducts();
     }
 
-    // get profile live data
     public LiveData<Profile> getProfileByEmail(String email) {
         return profileRepository.retrieveProfileByEmail(email);
     }

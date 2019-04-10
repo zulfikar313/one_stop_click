@@ -59,4 +59,18 @@
     <string name="product_sync_success">Product sync success</string>
     <string name="add_like_in_progress">Add like in progress</string>
     <string name="add_dislike_in_progress">Add dislike in progress</string>
+    <string name="product_id">Product Id</string>
+    <string name="save">Save</string>
+    <string name="error_product_not_found">Product not found</string>
+    <string name="artist">Artist</string>
+    <string name="director">Director</string>
+    <string name="error_empty_title">Title can\'t be empty</string>
+    <string name="error_empty_author">Author can\'t be empty</string>
+    <string name="error_empty_artist">Artist can\'t be empty</string>
+    <string name="error_empty_director">Director can\'t be empty</string>
+    <string name="error_empty_description">Description can\'t be empty</string>
+    <string name="save_image_is_in_progress">Save image is in progress</string>
+    <string name="image_has_been_saved">Image has been saved</string>
+    <string name="save_product_is_in_progress">Save product is in progress</string>
+    <string name="product_has_been_saved">Product has been saved</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.mitrais.onestopclick.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductFragmentComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductFragmentComponent;
@@ -72,6 +74,11 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     }
 
     @Override
+    public void onItemClicked(String productId) {
+        goToProductDetailPage(productId);
+    }
+
+    @Override
     public void onLikeClicked(String productId) {
         if (isAddLikeInProgress())
             Toasty.info(getActivity(), getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
@@ -100,6 +107,13 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     @Override
     public void onShareClicked(String productId) {
 
+    }
+
+    // Go to product detail page
+    private void goToProductDetailPage(String productId) {
+        Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+        intent.putExtra(Constant.EXTRA_PRODUCT_ID, productId);
+        startActivity(intent);
     }
 
     // return true if add like in progress
