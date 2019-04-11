@@ -11,6 +11,7 @@ import com.example.mitrais.onestopclick.model.firestore.ProductService;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -127,7 +128,15 @@ public class ProductRepository {
     }
 
     public Task<Void> saveProductDetails(Product product) {
-        return productService.saveProduct(product);
+        return productService.saveProductDetails(product);
+    }
+
+    public Task<DocumentReference> addProductImageData(Product product) {
+        return productService.addProductImageData(product);
+    }
+
+    public Task<DocumentReference> addProductDetails(Product product) {
+        return productService.addProductDetails(product);
     }
 
     private void setProductListener() {

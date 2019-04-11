@@ -22,8 +22,13 @@ import com.example.mitrais.onestopclick.dagger.component.ProductDetailActivityCo
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -34,11 +39,14 @@ import es.dmoral.toasty.Toasty;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private static final int REQUEST_CHOOSE_IMAGE = 1;
+    private boolean isProductObserved = false;
     private String productId;
     private Product product;
     private Task<Uri> saveImageTask;
     private Task<Void> saveImageDataTask;
     private Task<Void> saveProductDetailsTask;
+    private Task<DocumentReference> addImageDataTask;
+    private Task<DocumentReference> addProductDetailsTask;
 
     @Inject
     ProductDetailViewModel viewModel;
@@ -85,16 +93,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         rbBook.setChecked(true); // check book by default
         productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
-        if (!productId.isEmpty()) {
-            viewModel.getProductById(productId).observe(this, product -> {
-                if (product != null) {
-                    this.product = product;
-                    bindView(product);
-                } else {
-                    Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        observeProduct(productId);
     }
 
     @Override
@@ -177,6 +176,21 @@ public class ProductDetailActivity extends AppCompatActivity {
         component.inject(this);
     }
 
+    // observe product if product id exist
+    private void observeProduct(String productId) {
+        if (!productId.isEmpty() && !isProductObserved) {
+            isProductObserved = true;
+            viewModel.getProductById(productId).observe(this, product -> {
+                if (product != null) {
+                    this.product = product;
+                    bindView(product);
+                } else {
+                    Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
     // bind data to view
     private void bindView(Product product) {
         if (!product.getThumbnailUri().isEmpty())
@@ -219,12 +233,33 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         saveImageTask = viewModel.saveProductImage(imageUri, fileName)
                 .addOnSuccessListener(uri -> {
+
+                    Product product = new Product();
                     product.setThumbnailUri(uri.toString());
                     product.setThumbnailFileName(fileName);
-                    saveImageDataTask = viewModel.saveProductImageData(product)
-                            .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
-                            .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(e -> Toasty.error(ProductDetailActivity.this, e.toString(), Toast.LENGTH_LONG).show());
+
+                    if (!productId.isEmpty()) { // product already exist
+                        product.setId(productId);
+                        saveImageDataTask = viewModel.saveProductImageData(product)
+                                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                                .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
+                                .addOnFailureListener(e -> Toasty.error(ProductDetailActivity.this, e.toString(), Toast.LENGTH_LONG).show());
+                    } else {
+                        addImageDataTask = viewModel.addProductImageData(product)
+                                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                                .addOnSuccessListener(documentReference -> {
+                                    // set productId to recently made product
+                                    documentReference.addSnapshotListener((documentSnapshot, e) -> {
+                                        if (documentSnapshot != null) {
+                                            productId = documentSnapshot.getId();
+                                            observeProduct(productId);
+                                        }
+                                    });
+
+                                    Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
+                    }
 
                 })
                 .addOnFailureListener(e -> {
@@ -235,9 +270,9 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     // save product details
     private void saveProductDetails() {
-        if (isSaveImageInProgress() || isSaveImageDataInProgress())
+        if (isSaveImageInProgress() || isSaveImageDataInProgress() || isAddImageDataInProgress())
             Toasty.info(this, getString(R.string.save_image_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isSaveProductDetailsInProgress())
+        else if (isSaveProductDetailsInProgress() || isAddProductDetailsInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else {
             progressBar.setVisibility(View.VISIBLE);
@@ -248,36 +283,46 @@ public class ProductDetailActivity extends AppCompatActivity {
             String director = txtDirector.getEditText().getText().toString().trim();
             String description = txtDescription.getEditText().getText().toString().trim();
 
+            Product product = new Product();
+            product.setTitle(title);
+            switch (rgType.getCheckedRadioButtonId()) {
+                case R.id.rb_book: {
+                    product.setType(Constant.PRODUCT_TYPE_BOOK);
+                    product.setAuthor(author);
+                    break;
+                }
+                case R.id.rb_music: {
+                    product.setType(Constant.PRODUCT_TYPE_MUSIC);
+                    product.setArtist(artist);
+                    break;
+                }
+                case R.id.rb_movie: {
+                    product.setType(Constant.PRODUCT_TYPE_MOVIE);
+                    product.setDirector(director);
+                    break;
+                }
+            }
+            product.setDescription(description);
 
             if (!productId.isEmpty()) { // save existing product
-                Product product = new Product();
                 product.setId(productId);
-                product.setTitle(title);
 
-                switch (rgType.getCheckedRadioButtonId()) {
-                    case R.id.rb_book: {
-                        product.setType(Constant.PRODUCT_TYPE_BOOK);
-                        product.setAuthor(author);
-                        break;
-                    }
-                    case R.id.rb_music: {
-                        product.setType(Constant.PRODUCT_TYPE_MUSIC);
-                        product.setArtist(artist);
-                        break;
-                    }
-                    case R.id.rb_movie: {
-                        product.setType(Constant.PRODUCT_TYPE_MOVIE);
-                        product.setDirector(director);
-                        break;
-                    }
-                }
-                product.setDescription(description);
                 saveProductDetailsTask = viewModel.saveProductDetails(product)
                         .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
                         .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
             } else { // add new product
-                // TODO: add new product
+                addProductDetailsTask = viewModel.addProductDetails(product)
+                        .addOnCompleteListener(task ->
+                                progressBar.setVisibility(View.INVISIBLE))
+                        .addOnSuccessListener(documentReference -> {
+                            documentReference.addSnapshotListener((documentSnapshot, e) -> {
+                                productId = documentSnapshot.getId();
+                                observeProduct(productId);
+                            });
+                            Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
             }
         }
     }
@@ -365,6 +410,16 @@ public class ProductDetailActivity extends AppCompatActivity {
     // return true if save product details data in progress
     private boolean isSaveProductDetailsInProgress() {
         return saveProductDetailsTask != null && !saveProductDetailsTask.isComplete();
+    }
+
+    // return true if add image data in progress
+    private boolean isAddImageDataInProgress() {
+        return addImageDataTask != null && !addImageDataTask.isComplete();
+    }
+
+    // return true if add product details data in progress
+    private boolean isAddProductDetailsInProgress() {
+        return addProductDetailsTask != null && !addProductDetailsTask.isComplete();
     }
 
     // set view for book product

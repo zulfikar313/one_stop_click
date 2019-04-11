@@ -79,7 +79,7 @@ public class ProductService {
     }
 
     // save existing product non image data
-    public Task<Void> saveProduct(Product product) {
+    public Task<Void> saveProductDetails(Product product) {
         DocumentReference reference = productRef.document(product.getId());
 
         Map<String, Object> productMap = new HashMap<>();
@@ -91,6 +91,28 @@ public class ProductService {
         productMap.put(KEY_TYPE, product.getType());
 
         return reference.update(productMap);
+    }
+
+    // add new product image data
+    public Task<DocumentReference> addProductImageData(Product product) {
+        Map<String, Object> productMap = new HashMap<>();
+        productMap.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
+        productMap.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
+
+        return productRef.add(productMap);
+    }
+
+    // add product non image data
+    public Task<DocumentReference> addProductDetails(Product product) {
+        Map<String, Object> productMap = new HashMap<>();
+        productMap.put(KEY_TITLE, product.getTitle());
+        productMap.put(KEY_AUTHOR, product.getAuthor());
+        productMap.put(KEY_ARTIST, product.getArtist());
+        productMap.put(KEY_DIRECTOR, product.getDirector());
+        productMap.put(KEY_DESCRIPTION, product.getDescription());
+        productMap.put(KEY_TYPE, product.getType());
+
+        return productRef.add(productMap);
     }
 
     // return product reference

@@ -12,6 +12,7 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 
 import javax.inject.Inject;
 
@@ -44,13 +45,19 @@ public class ProductDetailViewModel extends AndroidViewModel {
         return storageRepository.saveProductImage(uri, fileName);
     }
 
-    // save product image information
     public Task<Void> saveProductImageData(Product product) {
         return productRepository.saveProductImageData(product);
     }
 
-    // save product details
     public Task<Void> saveProductDetails(Product product) {
         return productRepository.saveProductDetails(product);
+    }
+
+    public Task<DocumentReference> addProductImageData(Product product) {
+        return productRepository.addProductImageData(product);
+    }
+
+    public Task<DocumentReference> addProductDetails(Product product) {
+        return productRepository.addProductDetails(product);
     }
 }
