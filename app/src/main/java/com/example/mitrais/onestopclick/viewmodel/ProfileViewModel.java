@@ -45,7 +45,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
     // save profile image
     public Task<Uri> saveProfileImage(Uri uri, String fileName) {
-        return storageRepository.saveProfileImage(uri, fileName);
+        return storageRepository.uploadProfileImage(uri, fileName);
     }
 
     // save user display name

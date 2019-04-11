@@ -15,6 +15,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import javax.inject.Inject;
 
+/**
+ * LoginViewModel class handle data lifecycle for LoginActivity
+ */
 public class LoginViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
@@ -22,12 +25,21 @@ public class LoginViewModel extends AndroidViewModel {
     @Inject
     ProfileRepository profileRepository;
 
+    /**
+     * LoginViewModel constructor
+     *
+     * @param application application to inject repository class
+     */
     public LoginViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject repository class
+     */
     private void initDagger(Application application) {
         LoginViewModelComponent component = DaggerLoginViewModelComponent.builder()
                 .application(application)
@@ -35,25 +47,43 @@ public class LoginViewModel extends AndroidViewModel {
         component.inject(this);
     }
 
-    // login with email and password
+    /**
+     * log user in
+     *
+     * @param email    user email address
+     * @param password user password
+     * @return login task
+     */
     public Task<AuthResult> login(String email, String password) {
         return authRepository.login(email, password);
     }
 
-    // get logged in øuser
+    /**
+     * @return logged in user
+     */
     public FirebaseUser getCurrentUser() {
         return authRepository.getUser();
     }
 
-    // send email verification to user email address
+    /**
+     * send verification email
+     *
+     * @param user logged in user
+     * @return send verification email task
+     */
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
         return authRepository.sendVerificationEmail(user);
     }
 
-    // sync data with firebase
+    /**
+     * synchronize user data
+     *
+     * @param user logged in user
+     * @return sync data task
+     */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.getProfileByEmail(user.getEmail());
+            return profileRepository.retrieveProfileByEmail(user.getEmail());
         else
             return null;
     }

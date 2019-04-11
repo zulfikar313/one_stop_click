@@ -24,26 +24,26 @@ public class StorageRepository {
     }
 
     /**
-     * save profile image and returns save profile image task
+     * upload profile image and returns save profile image task
      * with image uri within
      *
      * @param uri      profile image uri
      * @param filename profile image filename
      * @return save profile image task and image uri
      */
-    public Task<Uri> saveProfileImage(Uri uri, String filename) {
+    public Task<Uri> uploadProfileImage(Uri uri, String filename) {
         return storageService.setProfileImage(uri, filename);
     }
 
     /**
-     * save product image and returns save product image task
+     * upload product image and returns save product image task
      * with image uri within
      *
      * @param uri      product image uri
      * @param filename product image filename
      * @return save product image task and image uri
      */
-    public Task<Uri> saveProductImage(Uri uri, String filename) {
+    public Task<Uri> uploadProductImage(Uri uri, String filename) {
         return storageService.setProductImage(uri, filename);
     }
 

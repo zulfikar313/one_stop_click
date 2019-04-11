@@ -23,12 +23,8 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -231,7 +227,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             fileName = product.getThumbnailFileName();
         }
 
-        saveImageTask = viewModel.saveProductImage(imageUri, fileName)
+        saveImageTask = viewModel.uploadProductImage(imageUri, fileName)
                 .addOnSuccessListener(uri -> {
 
                     Product product = new Product();
@@ -240,12 +236,12 @@ public class ProductDetailActivity extends AppCompatActivity {
 
                     if (!productId.isEmpty()) { // product already exist
                         product.setId(productId);
-                        saveImageDataTask = viewModel.saveProductImageData(product)
+                        saveImageDataTask = viewModel.setProductImage(product)
                                 .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
                                 .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> Toasty.error(ProductDetailActivity.this, e.toString(), Toast.LENGTH_LONG).show());
                     } else {
-                        addImageDataTask = viewModel.addProductImageData(product)
+                        addImageDataTask = viewModel.addProductImage(product)
                                 .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
                                 .addOnSuccessListener(documentReference -> {
                                     // set productId to recently made product
@@ -307,7 +303,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             if (!productId.isEmpty()) { // save existing product
                 product.setId(productId);
 
-                saveProductDetailsTask = viewModel.saveProductDetails(product)
+                saveProductDetailsTask = viewModel.setProductDetails(product)
                         .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
                         .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());

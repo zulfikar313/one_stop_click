@@ -17,6 +17,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import javax.inject.Inject;
 
+/**
+ * MainViewModel class handle data lifecycle for MainActivity
+ */
 public class MainViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
@@ -27,30 +30,63 @@ public class MainViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
+    /**
+     * MainViewModel constructor
+     *
+     * @param application application to inject repository class
+     */
     public MainViewModel(@NonNull Application application) {
         super(application);
+        initDagger(application);
+    }
 
-        // Initialize dagger injection
+    /**
+     * log user out
+     */
+    public void logout() {
+        authRepository.logout();
+    }
+
+    /**
+     * @return logged in user
+     */
+    public FirebaseUser getCurrentUser() {
+        return authRepository.getUser();
+    }
+
+    /**
+     * sync user data
+     *
+     * @return sync user data task
+     */
+    public Task<QuerySnapshot> syncUserData() {
+        return productRepository.retrieveAllProducts();
+
+        /*
+         * TODO: retrieve other data tied to user
+         */
+    }
+
+    /**
+     * get profile live data by email
+     *
+     * @param email user email address
+     * @return profile live data
+     */
+    public LiveData<Profile> getProfileByEmail(String email) {
+        return profileRepository.getProfileByEmail(email);
+    }
+
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject repository class
+     */
+    private void initDagger(Application application) {
         MainViewModelComponent component = DaggerMainViewModelComponent.builder()
                 .application(application)
                 .build();
 
         component.inject(this);
-    }
-
-    public void logout() {
-        authRepository.logout();
-    }
-
-    public FirebaseUser getCurrentUser() {
-        return authRepository.getUser();
-    }
-
-    public Task<QuerySnapshot> syncProductData() {
-        return productRepository.retrieveAllProducts();
-    }
-
-    public LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepository.retrieveProfileByEmail(email);
     }
 }

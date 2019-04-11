@@ -22,14 +22,9 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerMainActivityComponent;
 import com.example.mitrais.onestopclick.dagger.component.MainActivityComponent;
-import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.viewmodel.MainViewModel;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -184,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // synchronize product data
     private void syncProductData() {
         progressBar.setVisibility(View.VISIBLE);
-        productSyncTask = viewModel.syncProductData()
+        productSyncTask = viewModel.syncUserData()
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.INVISIBLE);
                 })

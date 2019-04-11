@@ -102,7 +102,6 @@ public class AuthRepository {
     public Task<Void> saveUser(String displayname) {
         return authService.setUser(displayname);
     }
-
     /**
      * save user photo uri
      *

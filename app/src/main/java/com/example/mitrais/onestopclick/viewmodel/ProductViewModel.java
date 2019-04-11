@@ -15,31 +15,57 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * ProductViewModel handle data lifecycle for ProductFragment
+ */
 public class ProductViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
+    /**
+     * ProductViewModel constructor
+     *
+     * @param application application to inject repository class
+     */
     public ProductViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    // return products live data
+    /**
+     * get all products live data
+     *
+     * @return product list live data
+     */
     public LiveData<List<Product>> getAllProducts() {
         return productRepository.getAllLocalProducts();
     }
 
-    // add like count
-    public Task<Void> addLike(String productId) {
-        return productRepository.addLike(productId);
+    /**
+     * increase like count
+     *
+     * @param id product id
+     * @return add like task
+     */
+    public Task<Void> addLike(String id) {
+        return productRepository.addLike(id);
     }
 
-    // add dislike count
-    public Task<Void> addDislike(String productId) {
-        return productRepository.addDislike(productId);
+    /**
+     * increase dislike count
+     *
+     * @param id product id
+     * @return add dislike task
+     */
+    public Task<Void> addDislike(String id) {
+        return productRepository.addDislike(id);
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject repository class
+     */
     private void initDagger(Application application) {
         ProductViewModelComponent component = DaggerProductViewModelComponent.builder()
                 .application(application)

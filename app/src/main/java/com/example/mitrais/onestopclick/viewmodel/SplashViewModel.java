@@ -14,6 +14,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import javax.inject.Inject;
 
+/**
+ * SplashViewModel handle data lifecycle for SplashActivity
+ */
 public class SplashViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
@@ -21,25 +24,43 @@ public class SplashViewModel extends AndroidViewModel {
     @Inject
     ProfileRepository profileRepository;
 
+    /**
+     * SplashViewModel constructor
+     *
+     * @param application application to inject repository class
+     */
     public SplashViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    // gets logged in user
+    /**
+     * get logged in user
+     *
+     * @return logged in user
+     */
     public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
-    // sync data with firebase
+    /**
+     * synchronized user data
+     *
+     * @param user logged in user
+     * @return sync data task
+     */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.getProfileByEmail(user.getEmail());
+            return profileRepository.retrieveProfileByEmail(user.getEmail());
         else
             return null;
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject repository class
+     */
     private void initDagger(Application application) {
         SplashViewModelComponent component = DaggerSplashViewModelComponent.builder()
                 .application(application)
