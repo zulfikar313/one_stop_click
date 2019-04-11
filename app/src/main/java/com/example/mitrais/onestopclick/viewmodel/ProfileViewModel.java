@@ -35,7 +35,7 @@ public class ProfileViewModel extends AndroidViewModel {
     // region public methods
     // get profile by email
     public LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepository.retrieveProfileByEmail(email);
+        return profileRepository.getProfileByEmail(email);
     }
 
     // get logged in user
@@ -70,7 +70,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
     // update profile image data
     public Task<Void> saveProfileImageData(Profile profile) {
-        return profileRepository.saveProfileImageData(profile);
+        return profileRepository.saveProfileImage(profile);
     }
     // endregion
 

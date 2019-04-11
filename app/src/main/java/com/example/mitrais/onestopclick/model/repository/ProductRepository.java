@@ -21,6 +21,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+/**
+ * ProductRepository class provide access to ProductDao and ProductService
+ */
 public class ProductRepository {
     private static ListenerRegistration productListenerRegistration;
 
@@ -30,6 +33,11 @@ public class ProductRepository {
     @Inject
     ProductService productService;
 
+    /**
+     * ProductRepository constructor
+     *
+     * @param application application to inject ProductDao
+     */
     public ProductRepository(Application application) {
         initDagger(application);
 
@@ -38,27 +46,56 @@ public class ProductRepository {
     }
 
     // region room
+
+    /**
+     * insert product to local database
+     *
+     * @param product product object
+     */
     private void insertProduct(Product product) {
         new InsertProductAsyncTask(productDao).execute(product);
     }
 
+    /**
+     * update product in local database
+     *
+     * @param product product object
+     */
     public void updateProduct(Product product) {
         new UpdateProductAsyncTask(productDao).execute(product);
     }
 
+    /**
+     * delete product in local database
+     *
+     * @param product product object
+     */
     public void deleteProduct(Product product) {
         new DeleteProductAsyncTask(productDao).execute(product);
     }
 
+    /**
+     * returns all product live data
+     *
+     * @return product list live data
+     */
     public LiveData<List<Product>> getAllLocalProducts() {
         return productDao.getAllProducts();
     }
 
+    /**
+     * returns product live data by id
+     *
+     * @param id product id
+     * @return product live data
+     */
     public LiveData<Product> getProductById(String id) {
         return productDao.getProductById(id);
     }
 
-    // insert product in background
+    /**
+     * insert product to local database in background
+     */
     static class InsertProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
@@ -73,7 +110,9 @@ public class ProductRepository {
         }
     }
 
-    // update product in background
+    /**
+     * update product in local data in background
+     */
     static class UpdateProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
@@ -88,7 +127,9 @@ public class ProductRepository {
         }
     }
 
-    // delete  product in background
+    /**
+     * delete product in local data in background
+     */
     static class DeleteProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
@@ -105,8 +146,14 @@ public class ProductRepository {
     //endregion
 
     // region firestore
+
+    /**
+     * retrieve all products
+     *
+     * @return retrieve all products task
+     */
     public Task<QuerySnapshot> retrieveAllProducts() {
-        return productService.getAllProducts().addOnSuccessListener(queryDocumentSnapshots -> {
+        return productService.retrieveAllProducts().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
@@ -115,30 +162,70 @@ public class ProductRepository {
         });
     }
 
-    public Task<Void> addLike(String productId) {
-        return productService.addLike(productId);
+    /**
+     * increase like count
+     *
+     * @param id product id
+     * @return add like task
+     */
+    public Task<Void> addLike(String id) {
+        return productService.addLike(id);
     }
 
-    public Task<Void> addDislike(String productId) {
-        return productService.addDislike(productId);
+    /**
+     * increase dislike count
+     *
+     * @param id product id
+     * @return add dislike task
+     */
+    public Task<Void> addDislike(String id) {
+        return productService.addDislike(id);
     }
 
-    public Task<Void> saveProductImageData(Product product) {
-        return productService.saveProductImageData(product);
+    /**
+     * set product with image data only
+     *
+     * @param product product object
+     * @return set product image task
+     */
+    public Task<Void> setProductImage(Product product) {
+        return productService.setProductImage(product);
     }
 
-    public Task<Void> saveProductDetails(Product product) {
-        return productService.saveProductDetails(product);
+    /**
+     * set product with details onlys
+     *
+     * @param product product object
+     * @return set product details task
+     */
+    public Task<Void> setProductDetails(Product product) {
+        return productService.setProductDetails(product);
     }
 
-    public Task<DocumentReference> addProductImageData(Product product) {
-        return productService.addProductImageData(product);
+    /**
+     * add new product with image data only
+     *
+     * @param product product object
+     * @return add product image task
+     */
+    public Task<DocumentReference> addProductImage(Product product) {
+        return productService.addProductImage(product);
     }
 
+    /**
+     * add new product with details only
+     *
+     * @param product product object
+     * @return add product details task
+     */
     public Task<DocumentReference> addProductDetails(Product product) {
         return productService.addProductDetails(product);
     }
 
+    /**
+     * add listener to product data
+     * changes in product data will be reflected in local database
+     */
     private void setProductListener() {
         productListenerRegistration = ProductService.getProductRef().addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null) {
@@ -166,7 +253,11 @@ public class ProductRepository {
     }
     // endregion
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject ProductDao
+     */
     private void initDagger(Application application) {
         ProductRepositoryComponent component = DaggerProductRepositoryComponent.builder()
                 .application(application)

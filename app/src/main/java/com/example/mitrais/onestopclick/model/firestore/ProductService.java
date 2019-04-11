@@ -10,6 +10,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ProductService provide access to product data in firestore
+ */
 public class ProductService {
     private static final String REF_PRODUCT = "product";
     private static final String KEY_LIKE = "like";
@@ -26,6 +29,11 @@ public class ProductService {
     private static FirebaseFirestore firestore;
     private static CollectionReference productRef;
 
+    /**
+     * returns ProductService singleton instance
+     *
+     * @return ProductService instance
+     */
     public static ProductService getInstance() {
         if (instance == null) {
             instance = new ProductService();
@@ -36,86 +44,128 @@ public class ProductService {
         return instance;
     }
 
-    // get all products
-    public Task<QuerySnapshot> getAllProducts() {
+    /**
+     * returns retrieve all products task
+     *
+     * @return retrieve all products task
+     */
+    public Task<QuerySnapshot> retrieveAllProducts() {
         return productRef.get();
     }
 
-    // increase product like count
-    public Task<Void> addLike(String productId) {
+
+    /**
+     * increase like count and returns add like task
+     *
+     * @param id product id
+     * @return add like task
+     */
+    public Task<Void> addLike(String id) {
         return firestore.runTransaction(transaction -> {
-            DocumentReference productDocRef = productRef.document(productId);
-            Product product = transaction.get(productDocRef).toObject(Product.class);
+            DocumentReference docRef = productRef.document(id);
+            Product product = transaction.get(docRef).toObject(Product.class);
             if (product != null) {
                 long newLikeCount = product.getLike() + 1;
-                transaction.update(productDocRef, KEY_LIKE, newLikeCount);
+                transaction.update(docRef, KEY_LIKE, newLikeCount);
             }
             return null;
         });
     }
 
-    // increase product dislike count
-    public Task<Void> addDislike(String productId) {
+    /**
+     * increase dislike count and returns add dislike task
+     *
+     * @param id product id
+     * @return add dislike task
+     */
+    public Task<Void> addDislike(String id) {
         return firestore.runTransaction(transaction -> {
-            DocumentReference productDocRef = productRef.document(productId);
-            Product product = transaction.get(productDocRef).toObject(Product.class);
+            DocumentReference docRef = productRef.document(id);
+            Product product = transaction.get(docRef).toObject(Product.class);
             if (product != null) {
                 long newLikeCount = product.getDislike() + 1;
-                transaction.update(productDocRef, KEY_DISLIKE, newLikeCount);
+                transaction.update(docRef, KEY_DISLIKE, newLikeCount);
             }
             return null;
         });
     }
 
-    // save existing product image data
-    public Task<Void> saveProductImageData(Product product) {
-        DocumentReference reference = productRef.document(product.getId());
+    /**
+     * set product image and returns set product image task
+     *
+     * @param product existing product
+     * @return set product image task
+     */
+    public Task<Void> setProductImage(Product product) {
+        DocumentReference docRef = productRef.document(product.getId());
 
-        Map<String, Object> productMap = new HashMap<>();
-        productMap.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
-        productMap.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
+        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
 
-        return reference.update(productMap);
+        return docRef.update(map);
     }
 
-    // save existing product non image data
-    public Task<Void> saveProductDetails(Product product) {
-        DocumentReference reference = productRef.document(product.getId());
+    /**
+     * set product details and returns set product details task
+     *
+     * @param product existing product
+     * @return set product details task
+     */
+    public Task<Void> setProductDetails(Product product) {
+        DocumentReference docRef = productRef.document(product.getId());
 
-        Map<String, Object> productMap = new HashMap<>();
-        productMap.put(KEY_TITLE, product.getTitle());
-        productMap.put(KEY_AUTHOR, product.getAuthor());
-        productMap.put(KEY_ARTIST, product.getArtist());
-        productMap.put(KEY_DIRECTOR, product.getDirector());
-        productMap.put(KEY_DESCRIPTION, product.getDescription());
-        productMap.put(KEY_TYPE, product.getType());
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_TITLE, product.getTitle());
+        map.put(KEY_AUTHOR, product.getAuthor());
+        map.put(KEY_ARTIST, product.getArtist());
+        map.put(KEY_DIRECTOR, product.getDirector());
+        map.put(KEY_DESCRIPTION, product.getDescription());
+        map.put(KEY_TYPE, product.getType());
 
-        return reference.update(productMap);
+        return docRef.update(map);
     }
 
-    // add new product image data
-    public Task<DocumentReference> addProductImageData(Product product) {
-        Map<String, Object> productMap = new HashMap<>();
-        productMap.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
-        productMap.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
+    /**
+     * add new product with image data only
+     * and returns add new product task
+     *
+     * @param product new product
+     * @return add product image task
+     */
+    public Task<DocumentReference> addProductImage(Product product) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
+        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
 
-        return productRef.add(productMap);
+        return productRef.add(map);
     }
 
-    // add product non image data
+    /**
+     * add new product with details only
+     * and returns add new product task
+     *
+     * @param product new product
+     * @return add product details task
+     */
     public Task<DocumentReference> addProductDetails(Product product) {
-        Map<String, Object> productMap = new HashMap<>();
-        productMap.put(KEY_TITLE, product.getTitle());
-        productMap.put(KEY_AUTHOR, product.getAuthor());
-        productMap.put(KEY_ARTIST, product.getArtist());
-        productMap.put(KEY_DIRECTOR, product.getDirector());
-        productMap.put(KEY_DESCRIPTION, product.getDescription());
-        productMap.put(KEY_TYPE, product.getType());
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_TITLE, product.getTitle());
+        map.put(KEY_AUTHOR, product.getAuthor());
+        map.put(KEY_ARTIST, product.getArtist());
+        map.put(KEY_DIRECTOR, product.getDirector());
+        map.put(KEY_DESCRIPTION, product.getDescription());
+        map.put(KEY_TYPE, product.getType());
 
-        return productRef.add(productMap);
+        return productRef.add(map);
     }
 
-    // return product reference
+    /**
+     * returns product collection reference
+     * collection reference can be listened for changes
+     *
+     * @return product collection reference
+     */
     public static CollectionReference getProductRef() {
         return productRef;
     }

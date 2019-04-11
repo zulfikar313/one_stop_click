@@ -46,15 +46,15 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     public Task<Void> saveProductImageData(Product product) {
-        return productRepository.saveProductImageData(product);
+        return productRepository.setProductImage(product);
     }
 
     public Task<Void> saveProductDetails(Product product) {
-        return productRepository.saveProductDetails(product);
+        return productRepository.setProductDetails(product);
     }
 
     public Task<DocumentReference> addProductImageData(Product product) {
-        return productRepository.addProductImageData(product);
+        return productRepository.addProductImage(product);
     }
 
     public Task<DocumentReference> addProductDetails(Product product) {

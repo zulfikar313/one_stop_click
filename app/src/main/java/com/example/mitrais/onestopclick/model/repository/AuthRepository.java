@@ -11,60 +11,105 @@ import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
+/**
+ * AuthRepository class provide access to AuthService
+ */
 public class AuthRepository {
     @Inject
     AuthService authService;
 
+    /**
+     * AuthRepository constructor
+     */
     public AuthRepository() {
         initDagger();
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         AuthRepositoryComponent component = DaggerAuthRepositoryComponent.builder()
                 .build();
         component.inject(this);
     }
 
-    // region public methods
-    // login with email and password
+    /**
+     * log user in
+     *
+     * @param email    user email address
+     * @param password user password
+     * @return login task
+     */
     public Task<AuthResult> login(String email, String password) {
         return authService.login(email, password);
     }
 
-    // register with email and password
+
+    /**
+     * register user
+     *
+     * @param email    user email address
+     * @param password user password
+     * @return register task
+     */
     public Task<AuthResult> register(String email, String password) {
         return authService.register(email, password);
     }
 
-    // get currently logged in user
+    /**
+     * returns logged in user
+     *
+     * @return user
+     */
     public FirebaseUser getUser() {
         return authService.getUser();
     }
 
-    // send verification email to user email address
+    /**
+     * send verification email
+     *
+     * @param user logged in user
+     * @return send verification email task
+     */
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
         return authService.sendVerificationEmail(user);
     }
 
-    // send password reset email to user email address
+    /**
+     * send password reset email
+     *
+     * @param email user email address
+     * @return send password reset email task
+     */
     public Task<Void> sendPasswordResetEmail(String email) {
         return authService.sendPasswordResetEmail(email);
     }
 
-    // logout from current user
+    /**
+     * log user out and remove user data
+     */
     public void logout() {
         authService.logout();
     }
 
-    // update user display name
-    public Task<Void> saveUser(String displayName) {
-        return authService.saveUser(displayName);
+    /**
+     * save user display name
+     *
+     * @param displayname user displayed name
+     * @return save user task
+     */
+    public Task<Void> saveUser(String displayname) {
+        return authService.setUser(displayname);
     }
 
-    // update user photo uri
+    /**
+     * save user photo uri
+     *
+     * @param photoUri photo uri
+     * @return save user task
+     */
     public Task<Void> saveUser(Uri photoUri) {
-        return authService.saveUser(photoUri);
+        return authService.setUser(photoUri);
     }
-    // endregion
 }

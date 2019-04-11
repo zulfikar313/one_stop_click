@@ -9,25 +9,47 @@ import com.google.android.gms.tasks.Task;
 
 import javax.inject.Inject;
 
+/**
+ * StorageRepository class provide access to StorageService
+ */
 public class StorageRepository {
     @Inject
     StorageService storageService;
 
+    /**
+     * StorageRepository constructor
+     */
     public StorageRepository() {
         initDagger();
     }
 
-    // save profile image
-    public Task<Uri> saveProfileImage(Uri uri, String fileName) {
-        return storageService.saveProfileImage(uri, fileName);
+    /**
+     * save profile image and returns save profile image task
+     * with image uri within
+     *
+     * @param uri      profile image uri
+     * @param filename profile image filename
+     * @return save profile image task and image uri
+     */
+    public Task<Uri> saveProfileImage(Uri uri, String filename) {
+        return storageService.setProfileImage(uri, filename);
     }
 
-    // save product image
-    public Task<Uri> saveProductImage(Uri uri, String fileName) {
-        return storageService.saveProductImage(uri, fileName);
+    /**
+     * save product image and returns save product image task
+     * with image uri within
+     *
+     * @param uri      product image uri
+     * @param filename product image filename
+     * @return save product image task and image uri
+     */
+    public Task<Uri> saveProductImage(Uri uri, String filename) {
+        return storageService.setProductImage(uri, filename);
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         StorageRepositoryComponent component = DaggerStorageRepositoryComponent.builder()
                 .build();
