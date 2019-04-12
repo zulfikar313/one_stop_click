@@ -34,6 +34,9 @@ import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
+/**
+ * MainActivity handle main page logic
+ */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ImageView imgProfile;
     private TextView txtEmail;
@@ -60,36 +63,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initDagger();
-
-        View navHeaderView = navView.getHeaderView(0);
-        imgProfile = navHeaderView.findViewById(R.id.img_profile);
-        txtEmail = navHeaderView.findViewById(R.id.txt_email);
-
-        setSupportActionBar(toolbar);
-        setTitle(getString(R.string.main_menu));
-
-        // initialize drawer toggle
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_bar_open, R.string.navigation_bar_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        navView.setNavigationItemSelectedListener(this);
-
-        // initialize first shown fragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
-            navView.setCheckedItem(R.id.movie);
-        }
-
-        // initialize user profile
-        FirebaseUser user = viewModel.getCurrentUser();
-        viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
-            if (profile != null) {
-                txtEmail.setText(profile.getEmail());
-                Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
-            }
-        });
+        initDrawer();
+        if (savedInstanceState == null)
+            initFragment();
+        observeProfile();
     }
 
     @Override
@@ -102,13 +79,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                doLogout();
+                logout();
                 return true;
             case R.id.sync:
                 if (isProductSyncInProgress())
                     Toasty.info(this, getString(R.string.product_sync_in_progress), Toast.LENGTH_SHORT).show();
                 else
-                    syncProductData();
+                    syncUserData();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -147,7 +124,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    // initialize dagger injection
+    // region private methods
+
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         MainActivityComponent component = DaggerMainActivityComponent.builder()
                 .mainActivity(this)
@@ -155,44 +136,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         component.inject(this);
     }
 
-    // go to login page
-    public void goToLoginPage() {
-        progressBar.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.INVISIBLE);
-                finish();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                CustomIntent.customType(MainActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    /**
+     * initialize drawer menu
+     */
+    private void initDrawer() {
+        View navHeaderView = navView.getHeaderView(0);
+        imgProfile = navHeaderView.findViewById(R.id.img_profile);
+        txtEmail = navHeaderView.findViewById(R.id.txt_email);
+
+        setSupportActionBar(toolbar);
+        setTitle(getString(R.string.main_menu));
+
+        /* initialize drawer toggle */
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_bar_open, R.string.navigation_bar_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navView.setNavigationItemSelectedListener(this);
+    }
+
+    /**
+     * initialize first fragment
+     */
+    private void initFragment() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
+        navView.setCheckedItem(R.id.movie);
+    }
+
+    /**
+     * observe user profile
+     */
+    private void observeProfile() {
+        FirebaseUser user = viewModel.getCurrentUser();
+        viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
+            if (profile != null) {
+                txtEmail.setText(profile.getEmail());
+                Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
             }
+        });
+    }
+
+    /**
+     * start LoginActivity
+     */
+    public void goToLoginPage() {
+        showProgressBar();
+        new Handler().postDelayed(() -> {
+            hideProgressBar();
+
+            finish();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            CustomIntent.customType(MainActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
         }, Constant.PROGRESS_DELAY);
     }
 
-    // logout from current user
-    private void doLogout() {
+    /**
+     * log user out
+     */
+    private void logout() {
         viewModel.logout();
         goToLoginPage();
     }
 
-    // synchronize product data
-    private void syncProductData() {
-        progressBar.setVisibility(View.VISIBLE);
+    /**
+     * synchronized user data
+     */
+    private void syncUserData() {
+        showProgressBar();
         productSyncTask = viewModel.syncUserData()
-                .addOnCompleteListener(task -> {
-                    progressBar.setVisibility(View.INVISIBLE);
-                })
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Toasty.success(this, getString(R.string.product_sync_success), Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                .addOnCompleteListener(task -> hideProgressBar())
+                .addOnSuccessListener(queryDocumentSnapshots -> Toasty.success(this, getString(R.string.product_sync_success), Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // return true if product sync in progress
+    /**
+     * returns true if sync user data in progress
+     *
+     * @return sync user data progress status
+     */
     private boolean isProductSyncInProgress() {
         return productSyncTask != null && !productSyncTask.isComplete();
     }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+    // endregion
 }

@@ -74,7 +74,7 @@ public class ProfileService {
 
         Map<String, Object> profileMap = new HashMap<>();
         profileMap.put(KEY_PROFILE_IMAGE_URI, profile.getProfileImageUri());
-        profileMap.put(KEY_PROFILE_IMAGE_FILE_NAME, profile.getProfileImageFileName());
+        profileMap.put(KEY_PROFILE_IMAGE_FILE_NAME, profile.getProfileImageFilename());
 
         return docRef.update(profileMap);
     }

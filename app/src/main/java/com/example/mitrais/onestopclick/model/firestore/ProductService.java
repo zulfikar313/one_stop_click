@@ -101,7 +101,7 @@ public class ProductService {
 
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
-        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
+        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFilename());
 
         return docRef.update(map);
     }
@@ -136,7 +136,7 @@ public class ProductService {
     public Task<DocumentReference> addProductImage(Product product) {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
-        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFileName());
+        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFilename());
 
         return productRef.add(map);
     }

@@ -94,21 +94,22 @@ public class AuthRepository {
     }
 
     /**
-     * save user display name
+     * set user display name
      *
      * @param displayname user displayed name
-     * @return save user task
+     * @return set user task
      */
-    public Task<Void> saveUser(String displayname) {
+    public Task<Void> setUser(String displayname) {
         return authService.setUser(displayname);
     }
+
     /**
-     * save user photo uri
+     * set user photo uri
      *
      * @param photoUri photo uri
-     * @return save user task
+     * @return set user task
      */
-    public Task<Void> saveUser(Uri photoUri) {
+    public Task<Void> setUser(Uri photoUri) {
         return authService.setUser(photoUri);
     }
 }

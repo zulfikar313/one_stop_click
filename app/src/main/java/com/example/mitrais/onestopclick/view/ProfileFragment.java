@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,13 +33,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 
+/**
+ * ProfileFragment handle profile page logic
+ */
 public class ProfileFragment extends Fragment {
     public static final int REQUEST_CHOOSE_IMAGE = 1;
     private FirebaseUser user;
     private Uri uri;
     private Task<Uri> profileImageUploadTask;
     private Task<Void> updateUserTask;
-    private Task<Void> saveProfileTask;
+    private Task<Void> setProfileTask;
     private Profile profile;
 
     @Inject
@@ -60,13 +64,21 @@ public class ProfileFragment extends Fragment {
     ProgressBar progressBar;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         getActivity().setTitle(getString(R.string.profile));
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
         initDagger();
-        bindData();
+
+        user = viewModel.getUser();
+        if (user != null) {
+            // bind user
+            txtEmail.setText(user.getEmail());
+            txtDisplayName.getEditText().setText(user.getDisplayName());
+
+            observeProfile();
+        }
 
         return view;
     }
@@ -76,8 +88,12 @@ public class ProfileFragment extends Fragment {
         if (isAddressValid() & isDisplayNameValid()) {
             if (isProfileImageUploadInProgress() || isUpdateUserInProgress() || isSaveProfileInProgress())
                 Toasty.info(getActivity(), getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
-            else
-                saveProfile();
+            else {
+                String displayname = txtDisplayName.getEditText().getText().toString().trim();
+                String address = txtAddress.getEditText().getText().toString().trim();
+                saveProfileDetails(displayname, address);
+            }
+
         }
     }
 
@@ -96,60 +112,15 @@ public class ProfileFragment extends Fragment {
                 && data != null && data.getData() != null) {
             uri = data.getData();
             Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
-            saveProfileImage(uri);
+            uploadProfileImage(uri);
         }
-    }
-
-    // save profile image
-    private void saveProfileImage(Uri imageUri) {
-        progressBar.setVisibility(View.VISIBLE);
-
-        String fileName;
-        if (profile == null || profile.getProfileImageFileName().isEmpty()) {
-            fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
-        } else {
-            fileName = profile.getProfileImageFileName();
-        }
-        profileImageUploadTask = viewModel.saveProfileImage(imageUri, fileName)
-                .addOnSuccessListener(uri -> {
-                    // save user
-                    updateUserTask = viewModel.saveUser(uri)
-                            .addOnSuccessListener(aVoid -> {
-                                // save profile
-                                Profile profile = new Profile(user.getEmail(), uri.toString(), fileName, "");
-                                saveProfileTask = viewModel.saveProfileImageData(profile)
-                                        .addOnSuccessListener(aVoid1 -> {
-                                            progressBar.setVisibility(View.INVISIBLE);
-                                            Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            // add profile if profile not exist yet
-                                            if (((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
-                                                saveProfileTask = viewModel.addProfile(profile)
-                                                        .addOnCompleteListener(task -> {
-                                                            progressBar.setVisibility(View.INVISIBLE);
-                                                        })
-                                                        .addOnSuccessListener(aVoid12 -> Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show())
-                                                        .addOnFailureListener(e1 -> {
-                                                            Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                                        });
-                                            } else
-                                                Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                        });
-                            })
-                            .addOnFailureListener(e -> {
-                                progressBar.setVisibility(View.INVISIBLE);
-                                Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                });
     }
 
     // region private methods
-    // initialize dagger injection
+
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         ProfileFragmentComponent component = DaggerProfileFragmentComponent.builder()
                 .profileFragment(this)
@@ -157,69 +128,111 @@ public class ProfileFragment extends Fragment {
         component.inject(this);
     }
 
-    // bind data to view
-    private void bindData() {
-        user = viewModel.getUser();
-        if (user != null) {
-            // bind user
-            txtEmail.setText(user.getEmail());
-            txtDisplayName.getEditText().setText(user.getDisplayName());
+    /**
+     * save profile image
+     *
+     * @param imageUri profile image uri
+     */
+    private void uploadProfileImage(Uri imageUri) {
+        showProgressBar();
 
-            viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
-                this.profile = profile;
-                if (profile != null) {
-                    // bind profile
-                    txtAddress.getEditText().setText(profile.getAddress());
-                    String uri = profile.getProfileImageUri();
-                    if (!uri.isEmpty())
-                        Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
-                } else {
-                    txtAddress.getEditText().setText("");
-                    imgProfile.setImageResource(R.drawable.ic_launcher_background);
-                }
-            });
+        String filename;
+        if (profile == null || profile.getProfileImageFilename().isEmpty()) {
+            filename = System.currentTimeMillis() + "." + getFileExtension(imageUri);
+        } else {
+            filename = profile.getProfileImageFilename();
         }
+
+        /* upload image file */
+        profileImageUploadTask = viewModel.uploadProfileImage(imageUri, filename)
+                .addOnSuccessListener(uri -> {
+                    /* save user data */
+                    updateUserTask = viewModel.setUser(uri)
+                            .addOnSuccessListener(aVoid -> {
+                                /* save profile data */
+                                Profile profile = new Profile(user.getEmail(), uri.toString(), filename, "");
+                                setProfileTask = viewModel.setProfileImage(profile)
+                                        .addOnSuccessListener(aVoid1 -> {
+                                            hideProgressBar();
+                                            Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            /* add new profile if profile doesn't exist */
+                                            if (((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
+                                                setProfileTask = viewModel.addProfile(profile)
+                                                        .addOnCompleteListener(task -> hideProgressBar())
+                                                        .addOnSuccessListener(aVoid12 -> Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show())
+                                                        .addOnFailureListener(e1 -> Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
+                                            } else
+                                                Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                hideProgressBar();
+                                Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
-    // save profile
-    private void saveProfile() {
-        progressBar.setVisibility(View.VISIBLE);
+    /**
+     * observe profile data
+     */
+    private void observeProfile() {
+        viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
+            this.profile = profile;
+            if (profile != null) {
+                /* bind profile */
+                txtAddress.getEditText().setText(profile.getAddress());
+                String uri = profile.getProfileImageUri();
+                if (!uri.isEmpty())
+                    Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
+            } else {
+                txtAddress.getEditText().setText("");
+                imgProfile.setImageResource(R.drawable.ic_launcher_background);
+            }
+        });
+    }
 
-        String displayName = txtDisplayName.getEditText().getText().toString().trim();
-        String address = txtAddress.getEditText().getText().toString().trim();
+    /**
+     * save profile details
+     */
+    private void saveProfileDetails(String displayname, String address) {
+        showProgressBar();
 
-        // save user
-        updateUserTask = viewModel.saveUser(displayName)
+        /* save user */
+        updateUserTask = viewModel.setUser(displayname)
                 .addOnSuccessListener(aVoid -> {
-                    // save profile
+                    /* save profile */
                     Profile profile = new Profile(user.getEmail(), "", "", address);
-                    saveProfileTask = viewModel.saveProfile(profile)
+                    setProfileTask = viewModel.setProfileDetails(profile)
                             .addOnSuccessListener(aVoid1 -> {
-                                progressBar.setVisibility(View.INVISIBLE);
+                                hideProgressBar();
                                 Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                // add profile if profile not exist yet
+                                /* add profile in case profile not exist */
                                 if (((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
-                                    saveProfileTask = viewModel.addProfile(profile)
-                                            .addOnCompleteListener(task -> {
-                                                progressBar.setVisibility(View.INVISIBLE);
-                                            })
+                                    setProfileTask = viewModel.addProfile(profile)
+                                            .addOnCompleteListener(task -> hideProgressBar())
                                             .addOnSuccessListener(aVoid12 -> Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show())
-                                            .addOnFailureListener(e1 -> {
-                                                Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                            });
+                                            .addOnFailureListener(e1 -> Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
                                 } else
                                     Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.INVISIBLE);
+                    hideProgressBar();
                     Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
-    // open image file chooser
+    /**
+     * open image file chooser
+     */
     private void openImageFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -227,14 +240,23 @@ public class ProfileFragment extends Fragment {
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
     }
 
-    // get file extension from uri
+    /**
+     * get file extension from uri
+     *
+     * @param uri file uri
+     * @return file extension
+     */
     private String getFileExtension(Uri uri) {
         ContentResolver resolver = getActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(resolver.getType(uri));
     }
 
-    // return true if address valid
+    /**
+     * returns true if address valid
+     *
+     * @return address validation
+     */
     private boolean isAddressValid() {
         String address = txtAddress.getEditText().getText().toString().trim();
         if (address.isEmpty()) {
@@ -245,7 +267,11 @@ public class ProfileFragment extends Fragment {
         return true;
     }
 
-    // returnt true if display name valid
+    /**
+     * returns true if display name valid
+     *
+     * @return display name validation
+     */
     private boolean isDisplayNameValid() {
         String displayName = txtDisplayName.getEditText().getText().toString().trim();
         if (displayName.isEmpty()) {
@@ -256,19 +282,45 @@ public class ProfileFragment extends Fragment {
         return true;
     }
 
-    // return true if profile image upload in progress
+    /**
+     * returns true if profile image upload in progrees
+     *
+     * @return profile image upload progress status
+     */
     private boolean isProfileImageUploadInProgress() {
         return profileImageUploadTask != null && !profileImageUploadTask.isComplete();
     }
 
-    // return true if update user in progress
+    /**
+     * returns true if update user in progress
+     *
+     * @return update user progress status
+     */
     private boolean isUpdateUserInProgress() {
         return updateUserTask != null && !updateUserTask.isComplete();
     }
 
-    // return true if save profile in progress
+    /**
+     * returns true if save profile in progress
+     *
+     * @return save profile progress status
+     */
     private boolean isSaveProfileInProgress() {
-        return saveProfileTask != null && !saveProfileTask.isComplete();
+        return setProfileTask != null && !setProfileTask.isComplete();
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
     // endregion
 }

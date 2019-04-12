@@ -33,6 +33,9 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 
+/**
+ * ProductDetailActivity handle product detail page logic
+ */
 public class ProductDetailActivity extends AppCompatActivity {
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private boolean isProductObserved = false;
@@ -87,7 +90,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initDagger();
 
-        rbBook.setChecked(true); // check book by default
+        rbBook.setChecked(true); /* check book by default */
         productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
         observeProduct(productId);
     }
@@ -164,7 +167,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         ProductDetailActivityComponent component = DaggerProductDetailActivityComponent.builder()
                 .productDetailActivity(this)
@@ -172,22 +177,29 @@ public class ProductDetailActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    // observe product if product id exist
-    private void observeProduct(String productId) {
-        if (!productId.isEmpty() && !isProductObserved) {
+    /**
+     * observe product live data
+     *
+     * @param id product id
+     */
+    private void observeProduct(String id) {
+        if (!id.isEmpty() && !isProductObserved) {
             isProductObserved = true;
-            viewModel.getProductById(productId).observe(this, product -> {
+            viewModel.getProductById(id).observe(this, product -> {
                 if (product != null) {
                     this.product = product;
                     bindView(product);
-                } else {
+                } else
                     Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
-                }
             });
         }
     }
 
-    // bind data to view
+    /**
+     * bind product data to view
+     *
+     * @param product product object
+     */
     private void bindView(Product product) {
         if (!product.getThumbnailUri().isEmpty())
             Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.ic_launcher_background).into(imgThumbnail);
@@ -216,35 +228,41 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtDescription.getEditText().setText(product.getDescription());
     }
 
-    // save product image
+    /**
+     * upload product image to storage
+     * update firebase user data with image data
+     * update profile data with image data
+     *
+     * @param imageUri product image uri
+     */
     private void saveProductImage(Uri imageUri) {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
 
-        String fileName;
-        if (product == null || product.getThumbnailFileName().isEmpty()) {
-            fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
+        String filename;
+        if (product == null || product.getThumbnailFilename().isEmpty()) {
+            filename = System.currentTimeMillis() + "." + getFileExtension(imageUri);
         } else {
-            fileName = product.getThumbnailFileName();
+            filename = product.getThumbnailFilename();
         }
 
-        saveImageTask = viewModel.uploadProductImage(imageUri, fileName)
+        saveImageTask = viewModel.uploadProductImage(imageUri, filename)
                 .addOnSuccessListener(uri -> {
-
                     Product product = new Product();
                     product.setThumbnailUri(uri.toString());
-                    product.setThumbnailFileName(fileName);
+                    product.setThumbnailFilename(filename);
 
-                    if (!productId.isEmpty()) { // product already exist
+                    if (!productId.isEmpty()) { /* indicating product already exist */
                         product.setId(productId);
                         saveImageDataTask = viewModel.setProductImage(product)
-                                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                                .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> Toasty.error(ProductDetailActivity.this, e.toString(), Toast.LENGTH_LONG).show());
                     } else {
+                        /* create new product */
                         addImageDataTask = viewModel.addProductImage(product)
-                                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                                .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(documentReference -> {
-                                    // set productId to recently made product
+                                    /* set productId local attribute with recently made product */
                                     documentReference.addSnapshotListener((documentSnapshot, e) -> {
                                         if (documentSnapshot != null) {
                                             productId = documentSnapshot.getId();
@@ -259,19 +277,22 @@ public class ProductDetailActivity extends AppCompatActivity {
 
                 })
                 .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.INVISIBLE);
+                    hideProgressBar();
                     Toasty.error(this, e.toString(), Toast.LENGTH_SHORT).show();
                 });
     }
 
-    // save product details
+    /**
+     * save product with product details only
+     * ignore product image data
+     */
     private void saveProductDetails() {
         if (isSaveImageInProgress() || isSaveImageDataInProgress() || isAddImageDataInProgress())
             Toasty.info(this, getString(R.string.save_image_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isSaveProductDetailsInProgress() || isAddProductDetailsInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else {
-            progressBar.setVisibility(View.VISIBLE);
+            showProgressBar();
 
             String title = txtTitle.getEditText().getText().toString().trim();
             String author = txtAuthor.getEditText().getText().toString().trim();
@@ -300,18 +321,19 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
             product.setDescription(description);
 
-            if (!productId.isEmpty()) { // save existing product
+            if (!productId.isEmpty()) { /* indicating product already exist */
                 product.setId(productId);
 
                 saveProductDetailsTask = viewModel.setProductDetails(product)
-                        .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                        .addOnCompleteListener(task -> hideProgressBar())
                         .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
-            } else { // add new product
+            } else {
+                /* add new product */
                 addProductDetailsTask = viewModel.addProductDetails(product)
-                        .addOnCompleteListener(task ->
-                                progressBar.setVisibility(View.INVISIBLE))
+                        .addOnCompleteListener(task -> hideProgressBar())
                         .addOnSuccessListener(documentReference -> {
+                            /* set productId local attribute with recently made product */
                             documentReference.addSnapshotListener((documentSnapshot, e) -> {
                                 productId = documentSnapshot.getId();
                                 observeProduct(productId);
@@ -323,7 +345,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    // open image file chooser
+    /**
+     * open menu to choose image to replace product image
+     */
     private void openImageFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -331,14 +355,19 @@ public class ProductDetailActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
     }
 
-    // get file extension from uri
+    /**
+     * @param uri image uri
+     * @return file extension based on uri
+     */
     private String getFileExtension(Uri uri) {
         ContentResolver resolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(resolver.getType(uri));
     }
 
-    // return true if title valid
+    /**
+     * @return true if title valid
+     */
     private boolean isTitleValid() {
         String title = txtTitle.getEditText().getText().toString().trim();
         if (title.isEmpty()) {
@@ -349,7 +378,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if author valid
+    /**
+     * @return true if author valid
+     */
     private boolean isAuthorValid() {
         String author = txtAuthor.getEditText().getText().toString().trim();
         if (author.isEmpty()) {
@@ -360,7 +391,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if artist valid
+    /**
+     * @return true if artist valid
+     */
     private boolean isArtistValid() {
         String artist = txtArtist.getEditText().getText().toString().trim();
         if (artist.isEmpty()) {
@@ -371,7 +404,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if director valid
+    /**
+     * @return true if director valid
+     */
     private boolean isDirectorValid() {
         String director = txtDirector.getEditText().getText().toString().trim();
         if (director.isEmpty()) {
@@ -382,7 +417,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if description valid
+    /**
+     * @return true if description valid
+     */
     private boolean isDescriptionValid() {
         String description = txtDescription.getEditText().getText().toString().trim();
         if (description.isEmpty()) {
@@ -393,49 +430,79 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if save image in progress
+    /**
+     * @return true if save image task in progress
+     */
     private boolean isSaveImageInProgress() {
         return saveImageTask != null && !saveImageTask.isComplete();
     }
 
-    // return true if save image data in progress
+    /**
+     * @return true if save image data task in progress
+     */
     private boolean isSaveImageDataInProgress() {
         return saveImageDataTask != null && !saveImageDataTask.isComplete();
     }
 
-    // return true if save product details data in progress
+    /**
+     * @return true if save product details task in progress
+     */
     private boolean isSaveProductDetailsInProgress() {
         return saveProductDetailsTask != null && !saveProductDetailsTask.isComplete();
     }
 
-    // return true if add image data in progress
+    /**
+     * @return true if add image data task in progress
+     */
     private boolean isAddImageDataInProgress() {
         return addImageDataTask != null && !addImageDataTask.isComplete();
     }
 
-    // return true if add product details data in progress
+    /**
+     * @return true if add product details task in progress
+     */
     private boolean isAddProductDetailsInProgress() {
         return addProductDetailsTask != null && !addProductDetailsTask.isComplete();
     }
 
-    // set view for book product
+    /**
+     * show author text input and remove artist and director text input
+     */
     private void setBookView() {
         txtAuthor.setVisibility(View.VISIBLE);
         txtArtist.setVisibility(View.GONE);
         txtDirector.setVisibility(View.GONE);
     }
 
-    // set view for music product
+    /**
+     * show artist text input and remove author and director text input
+     */
     private void setMusicView() {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.VISIBLE);
         txtDirector.setVisibility(View.GONE);
     }
 
-    // set view for movie product
+    /**
+     * show director text input and remove author and artist text input
+     */
     private void setMovieView() {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.GONE);
         txtDirector.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

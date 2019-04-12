@@ -33,48 +33,93 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     // region public methods
-    // get profile by email
+
+    /**
+     * get profile live data by email
+     *
+     * @param email user email address
+     * @return user profile live data
+     */
     public LiveData<Profile> getProfileByEmail(String email) {
         return profileRepository.getProfileByEmail(email);
     }
 
-    // get logged in user
+    /**
+     * get logged in user
+     *
+     * @return logged in user
+     */
     public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
-    // save profile image
-    public Task<Uri> saveProfileImage(Uri uri, String fileName) {
-        return storageRepository.uploadProfileImage(uri, fileName);
+    /**
+     * upload profile image
+     *
+     * @param uri      profile image uri
+     * @param filename profile image filename
+     * @return upload profile image task
+     */
+    public Task<Uri> uploadProfileImage(Uri uri, String filename) {
+        return storageRepository.uploadProfileImage(uri, filename);
     }
 
-    // save user display name
-    public Task<Void> saveUser(String displayName) {
-        return authRepository.saveUser(displayName);
+    /**
+     * set user display name
+     *
+     * @param displayname user displayed name
+     * @return set user task
+     */
+    public Task<Void> setUser(String displayname) {
+        return authRepository.setUser(displayname);
     }
 
-    // save user photo uri
-    public Task<Void> saveUser(Uri photoUri) {
-        return authRepository.saveUser(photoUri);
+    /**
+     * set user photo uri
+     *
+     * @param photoUri user photo uri
+     * @return set user task
+     */
+    public Task<Void> setUser(Uri photoUri) {
+        return authRepository.setUser(photoUri);
     }
 
-    // add profile
+    /**
+     * add profile
+     *
+     * @param profile profile object
+     * @return add profile task
+     */
     public Task<Void> addProfile(Profile profile) {
         return profileRepository.addProfile(profile);
     }
 
-    // update profile
-    public Task<Void> saveProfile(Profile profile) {
-        return profileRepository.saveProfile(profile);
+    /**
+     * set profile deatils
+     *
+     * @param profile profile object
+     * @return set profile details task
+     */
+    public Task<Void> setProfileDetails(Profile profile) {
+        return profileRepository.setProfileDetails(profile);
     }
 
-    // update profile image data
-    public Task<Void> saveProfileImageData(Profile profile) {
-        return profileRepository.saveProfileImage(profile);
+    /**
+     * set profile image
+     *
+     * @param profile profile object
+     * @return set profile task
+     */
+    public Task<Void> setProfileImage(Profile profile) {
+        return profileRepository.setProfileImage(profile);
     }
     // endregion
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject repository class
+     */
     private void initDagger(Application application) {
         ProfileViewModelComponent component = DaggerProfileViewModelComponent.builder()
                 .application(application)

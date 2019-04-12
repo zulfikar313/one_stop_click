@@ -21,6 +21,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import maes.tech.intentanim.CustomIntent;
 
+/**
+ * SplashActivity handle splash page logic
+ */
 public class SplashActivity extends AppCompatActivity {
     private FirebaseUser user;
 
@@ -42,7 +45,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         user = viewModel.getUser();
-        if (user != null && user.isEmailVerified()) // check if user is logged in and verified
+
+        /* handle auto login */
+        if (user != null && user.isEmailVerified())
             goToMainPage();
         else {
             boolean isLoggedOnOnce = App.prefs.getBoolean(Constant.PREF_IS_LOGGED_ON_ONCE);
@@ -59,7 +64,9 @@ public class SplashActivity extends AppCompatActivity {
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         SplashActivityComponent component = DaggerSplashActivityComponent.builder()
                 .splashActivity(this)
@@ -67,40 +74,63 @@ public class SplashActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    // go to login page
+    /**
+     * start LoginActivity
+     */
     private void goToLoginPage() {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         new Handler().postDelayed(() -> {
+            hideProgressBar();
+
             finish();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-            progressBar.setVisibility(View.INVISIBLE);
         }, Constant.PROGRESS_DELAY);
     }
 
-    // go to main page
+    /**
+     * start MainActivity
+     */
     private void goToMainPage() {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         viewModel.syncData(user)
                 .addOnCompleteListener(task -> {
+                    hideProgressBar();
+
                     finish();
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     startActivity(intent);
                     CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-                    progressBar.setVisibility(View.INVISIBLE);
                 });
     }
 
-    // go to registration page
+    /**
+     * start RegistrationActivity
+     */
     private void goToRegistrationPage() {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         new Handler().postDelayed(() -> {
+            hideProgressBar();
+
             finish();
             Intent intent = new Intent(SplashActivity.this, RegistrationActivity.class);
             startActivity(intent);
             CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-            progressBar.setVisibility(View.INVISIBLE);
         }, Constant.PROGRESS_DELAY);
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

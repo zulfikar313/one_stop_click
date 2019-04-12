@@ -29,6 +29,9 @@ import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
+/**
+ * LoginActivity handle login page logic
+ */
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private FirebaseUser user;
@@ -56,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initDagger();
 
-        // set last logged in email
+        /* set last logged in email if any */
         txtEmail.getEditText().setText(App.prefs.getString(Constant.PREF_LAST_LOGGED_IN_EMAIL));
     }
 
@@ -71,8 +74,12 @@ public class LoginActivity extends AppCompatActivity {
         if (isEmailValid() & isPasswordValid()) {
             if (isLoginInProgress() || isSyncDataInProgress()) {
                 Toasty.info(this, getString(R.string.login_process_is_running), Toast.LENGTH_SHORT).show();
-            } else
-                doLogin();
+            } else {
+                /* do login process */
+                String email = txtEmail.getEditText().getText().toString().trim();
+                String password = txtPassword.getEditText().getText().toString().trim();
+                login(email, password);
+            }
         }
     }
 
@@ -93,7 +100,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // region private methods
-    // initialize dagger injection
+
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         LoginActivityComponent component = DaggerLoginActivityComponent.builder()
                 .loginActivity(this)
@@ -101,16 +111,16 @@ public class LoginActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    // login using email and password
-    private void doLogin() {
-        progressBar.setVisibility(View.VISIBLE);
-        String email = txtEmail.getEditText().getText().toString().trim();
-        String password = txtPassword.getEditText().getText().toString().trim();
-
+    /**
+     * do login process
+     *
+     * @param email    user email address
+     * @param password user password
+     */
+    private void login(String email, String password) {
+        showProgressBar();
         loginTask = viewModel.login(email, password)
-                .addOnCompleteListener(task -> {
-                    progressBar.setVisibility(View.INVISIBLE);
-                })
+                .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(authResult -> {
                     user = viewModel.getCurrentUser();
                     if (!user.isEmailVerified()) {
@@ -121,33 +131,40 @@ public class LoginActivity extends AppCompatActivity {
                         goToMainPage();
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toasty.error(this, e.getMessage(), Toasty.LENGTH_LONG).show();
-                });
+                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toasty.LENGTH_LONG).show());
     }
 
-    // send verification email
+    /**
+     * send verification email to user email address
+     *
+     * @param user logged in user
+     */
     private void sendVerificationEmail(FirebaseUser user) {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         sendEmailTask = viewModel.sendVerificationEmail(user)
-                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.message_verification_email_sent), Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // go to registration page
+    /**
+     * start RegistrationActivity
+     */
     private void goToRegistrationPage() {
         Intent intent = new Intent(this, RegistrationActivity.class);
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    // go to main page
+    /**
+     * start MainActivity
+     */
     private void goToMainPage() {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         syncDataTask = viewModel.syncData(user)
                 .addOnCompleteListener(task -> {
-                    progressBar.setVisibility(View.INVISIBLE);
+                    hideProgressBar();
+
                     finish();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -155,14 +172,20 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // go to forgot password page
+    /**
+     * start ForgotPasswordActivity
+     */
     private void goToForgotPasswordPage() {
         Intent intent = new Intent(this, ForgotPasswordActivity.class);
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    // return true if email valid
+    /**
+     * returns true if email valid
+     *
+     * @return email validation
+     */
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
         if (email.isEmpty()) {
@@ -176,7 +199,11 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if password valid
+    /**
+     * returns true if password valid
+     *
+     * @return password validation
+     */
     private boolean isPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
         if (password.isEmpty()) {
@@ -187,7 +214,9 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    // show email not verified dialog
+    /**
+     * show dialog indicating email not verified
+     */
     private void showEmailNotVerifiedDialog() {
         EmailNotVerifiedDialog dialog = new EmailNotVerifiedDialog();
         dialog.setCancelable(false);
@@ -201,19 +230,45 @@ public class LoginActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), TAG);
     }
 
-    // return true if login in progress
+    /**
+     * returns true if login in progress
+     *
+     * @return login progress status
+     */
     private boolean isLoginInProgress() {
         return loginTask != null && !loginTask.isComplete();
     }
 
-    // return true if sync data in progress
+    /**
+     * returns true if sync data in progress
+     *
+     * @return sync data progress status
+     */
     private boolean isSyncDataInProgress() {
         return syncDataTask != null && !syncDataTask.isComplete();
     }
 
-    // return true if send verification email in progress
+    /**
+     * returns true if send verification email in progress
+     *
+     * @return send verification email progress status
+     */
     private boolean isSendVerificationEmailInProgress() {
         return sendEmailTask != null && !sendEmailTask.isComplete();
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
     //endregion
 }

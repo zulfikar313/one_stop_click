@@ -27,6 +27,9 @@ import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
+/**
+ * ForgotPasswordActivity handle forgot password logic
+ */
 public class ForgotPasswordActivity extends AppCompatActivity {
     private static final String TAG = "ForgotPasswordActivity";
     private Task<Void> sendEmailTask;
@@ -81,7 +84,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     // region private methods
-    // initialize dagger injection
+
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         ForgotPasswordActivityComponent component = DaggerForgotPasswordActivityComponent.builder()
                 .forgotPasswordActivity(this)
@@ -89,21 +95,25 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    // send password reset email
+    /**
+     * send password reset email to user email address
+     *
+     * @param email email address
+     */
     private void sendPasswordResetEmail(String email) {
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         sendEmailTask = viewModel.sendPasswordResetEmail(email)
-                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> {
                     showCheckEmailToResetPasswordDialog();
                 })
-                .addOnFailureListener(e -> {
-                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.i(TAG, e.toString());
-                });
+                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // show check email to reset password dialog
+    /**
+     * show dialog informing user that email has been sent
+     * where user can continue to reset password
+     */
     private void showCheckEmailToResetPasswordDialog() {
         CheckEmailToResetPasswordDialog dialog = new CheckEmailToResetPasswordDialog();
         dialog.setCancelable(false);
@@ -111,7 +121,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), TAG);
     }
 
-    // return true if email valid
+    /**
+     * returns true if email valid
+     *
+     * @return email validation
+     */
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
         if (email.isEmpty()) {
@@ -125,9 +139,27 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if send email in progress
+    /**
+     * returns true if send email in progress
+     *
+     * @return send email progress status
+     */
     private boolean isSendEmailInProgress() {
         return sendEmailTask != null && !sendEmailTask.isComplete();
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
     //endregion
 }

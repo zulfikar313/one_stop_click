@@ -2,6 +2,7 @@ package com.example.mitrais.onestopclick.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 
+/**
+ * ProductFragment handle product page logic
+ */
 public class ProductFragment extends Fragment implements ProductAdapter.Listener {
     private Task<Void> addLikeTask;
     private Task<Void> addDislikeTask;
@@ -44,7 +48,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     ProgressBar progressBar;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         getActivity().setTitle(getString(R.string.product_list));
         View view = inflater.inflate(R.layout.fragment_product, container, false);
@@ -60,7 +64,9 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         goToProductDetailPage("");
     }
 
-    // initialize dagger injection
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
         ProductFragmentComponent component = DaggerProductFragmentComponent.builder()
                 .productFragment(this)
@@ -68,7 +74,9 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         component.inject(this);
     }
 
-    // initialize recycler view
+    /**
+     * initialize recycler view
+     */
     private void initRecyclerView() {
         productAdapter = new ProductAdapter();
         productAdapter.setListener(this);
@@ -86,12 +94,12 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     }
 
     @Override
-    public void onLikeClicked(String productId) {
+    public void onLikeClicked(String id) {
         if (isAddLikeInProgress())
             Toasty.info(getActivity(), getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
         else {
             addLikeTask = viewModel
-                    .addLike(productId)
+                    .addLike(id)
                     .addOnFailureListener(e -> {
                         Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                     });
@@ -116,19 +124,31 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
 
     }
 
-    // Go to product detail page
-    private void goToProductDetailPage(String productId) {
+    /**
+     * start ProductDetailActivity
+     *
+     * @param id product id
+     */
+    private void goToProductDetailPage(String id) {
         Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
-        intent.putExtra(Constant.EXTRA_PRODUCT_ID, productId);
+        intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
     }
 
-    // return true if add like in progress
+    /**
+     * returns true if add like in progress
+     *
+     * @return add like progress status
+     */
     private boolean isAddLikeInProgress() {
         return addLikeTask != null && !addLikeTask.isComplete();
     }
 
-    // return true if add dislike in progress
+    /**
+     * returns true if add dislike in progress
+     *
+     * @return add dislike progress status
+     */
     private boolean isAddDislikeInProgress() {
         return addDislikeTask != null && !addDislikeTask.isComplete();
     }

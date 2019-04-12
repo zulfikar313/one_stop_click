@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -69,8 +68,12 @@ public class RegistrationActivity extends AppCompatActivity {
         if (isEmailValid() & isPasswordValid() & isConfirmPasswordValid()) {
             if (isRegistrationInProgress() || isSendEmailInProgress())
                 Toasty.info(this, getString(R.string.registration_is_in_progress), Toast.LENGTH_SHORT).show();
-            else
-                doRegistration();
+            else {
+                String email = txtEmail.getEditText().getText().toString().trim();
+                String password = txtPassword.getEditText().getText().toString().trim();
+                register(email, password);
+            }
+
         }
     }
 
@@ -80,33 +83,39 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     // region private methods
-    // initialize dagger injection
+
+    /**
+     * initialize dagger injection
+     */
     private void initDagger() {
-        // Initialize dagger injection
         RegistrationActivityComponent component = DaggerRegistrationActivityComponent.builder()
                 .registrationActivity(this)
                 .build();
         component.inject(this);
     }
 
-    // register new user using email and password
-    private void doRegistration() {
-        progressBar.setVisibility(View.VISIBLE);
-        String email = txtEmail.getEditText().getText().toString().trim();
-        String password = txtPassword.getEditText().getText().toString().trim();
+    /**
+     * register new user
+     *
+     * @param email    user email address
+     * @param password user password
+     */
+    private void register(String email, String password) {
+        showProgressBar();
         registerTask = viewModel.register(email, password)
-                .addOnCompleteListener(task -> progressBar.setVisibility(View.INVISIBLE))
+                .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(authResult -> {
                     user = viewModel.getCurrentUser();
                     sendVerificationEmail(user);
                 })
-                .addOnFailureListener(e -> {
-                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e(TAG, e.toString());
-                });
+                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // return true if email valid
+    /**
+     * returns true if email valid
+     *
+     * @return email validation
+     */
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
         if (email.isEmpty()) {
@@ -120,7 +129,11 @@ public class RegistrationActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if password valid
+    /**
+     * returns true if password valid
+     *
+     * @return password validation
+     */
     private boolean isPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
         if (password.isEmpty()) {
@@ -131,7 +144,11 @@ public class RegistrationActivity extends AppCompatActivity {
         return true;
     }
 
-    // return true if confirm password valid
+    /**
+     * returns true if confirm password valid
+     *
+     * @return confirm password validation
+     */
     private boolean isConfirmPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
         String confirmPassword = txtConfirmPassword.getEditText().getText().toString().trim();
@@ -146,7 +163,10 @@ public class RegistrationActivity extends AppCompatActivity {
         return true;
     }
 
-    // show check email for verification dialog
+    /**
+     * show dialog indicating that email has been sent
+     * to user email address
+     */
     private void showCheckEmailForVerificationDialog() {
         CheckEmailForVerificationDialog dialog = new CheckEmailForVerificationDialog();
         dialog.setCancelable(false);
@@ -154,28 +174,56 @@ public class RegistrationActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), TAG);
     }
 
-    // send verification email to user email address
+    /**
+     * send verification email to user email address
+     *
+     * @param user logged in user
+     */
     private void sendVerificationEmail(FirebaseUser user) {
         sendEmailTask = viewModel.sendVerificationEmail(user)
                 .addOnSuccessListener(aVoid -> showCheckEmailForVerificationDialog())
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    // go to login page
+    /**
+     * start LoginActivity
+     */
     private void goToLoginPage() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    // return true if registration in progress
+    /**
+     * returns true if registration in progress
+     *
+     * @return registration progress status
+     */
     private boolean isRegistrationInProgress() {
         return registerTask != null && !registerTask.isComplete();
     }
 
-    // return true if send email in progress
+    /**
+     * returns true if send email in progress
+     *
+     * @return send email progress status
+     */
     private boolean isSendEmailInProgress() {
         return sendEmailTask != null && !sendEmailTask.isComplete();
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
     //endregion
 }

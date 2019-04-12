@@ -3,10 +3,14 @@ package com.example.mitrais.onestopclick.view.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialogFragment;
 
 import com.example.mitrais.onestopclick.R;
 
+/**
+ * dialog informing user to check email to reset password
+ */
 public class CheckEmailToResetPasswordDialog extends AppCompatDialogFragment {
     private DialogListener listener;
 
@@ -19,6 +23,7 @@ public class CheckEmailToResetPasswordDialog extends AppCompatDialogFragment {
     }
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.attention))

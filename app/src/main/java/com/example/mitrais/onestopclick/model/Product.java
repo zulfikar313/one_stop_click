@@ -19,9 +19,9 @@ public class Product {
     private String author;
     private String director;
     private String contentUri;
-    private String contentFileName;
+    private String contentFilename;
     private String thumbnailUri;
-    private String thumbnailFileName;
+    private String thumbnailFilename;
     private int like;
     private int dislike;
 
@@ -29,7 +29,22 @@ public class Product {
     public Product() {
     }
 
-    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFileName, String thumbnailUri, String thumbnailFileName, int like, int dislike) {
+    /**
+     * @param id                product id
+     * @param title             product title
+     * @param description       product description
+     * @param type              product type either book, music or movie
+     * @param artist            used if product type is music
+     * @param author            used if product type is book
+     * @param director          used if product type is movie
+     * @param contentUri        content uri for product file
+     * @param contentFilename   content filename in storage
+     * @param thumbnailUri      thumbnail uri depicting product
+     * @param thumbnailFilename thumbnail filename in storage
+     * @param like              product like count
+     * @param dislike           product dislike count
+     */
+    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, int like, int dislike) {
         this.id = id;
         this.title = title = title == null ? " " : title;
         this.description = description == null ? "" : description;
@@ -38,100 +53,166 @@ public class Product {
         this.author = author == null ? "" : author;
         this.director = director == null ? "" : director;
         this.contentUri = contentUri == null ? "" : contentUri;
-        this.contentFileName = contentFileName == null ? "" : contentFileName;
+        this.contentFilename = contentFilename == null ? "" : contentFilename;
         this.thumbnailUri = thumbnailUri == null ? "" : thumbnailUri;
-        this.thumbnailFileName = thumbnailFileName == null ? "" : thumbnailFileName;
+        this.thumbnailFilename = thumbnailFilename == null ? "" : thumbnailFilename;
         this.like = like;
         this.dislike = dislike;
     }
 
+    /**
+     * @return product id
+     */
     @Exclude
     @NonNull
     public String getId() {
         return id;
     }
 
+    /**
+     * @param id product id
+     */
     @Exclude
     public void setId(@NonNull String id) {
         this.id = id;
     }
 
+    /**
+     * @return product title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * @return product description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * @return product type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * @return artist
+     */
     public String getArtist() {
         return artist;
     }
 
+    /**
+     * @return author
+     */
     public String getAuthor() {
         return author;
     }
 
+    /**
+     * @return director
+     */
     public String getDirector() {
         return director;
     }
 
+    /**
+     * @return content uri
+     */
     public String getContentUri() {
         return contentUri;
     }
 
-    public String getContentFileName() {
-        return contentFileName;
+    /**
+     * @return content filename
+     */
+    public String getContentFilename() {
+        return contentFilename;
     }
 
+    /**
+     * @return thumbnail uri
+     */
     public String getThumbnailUri() {
         return thumbnailUri;
     }
 
-    public String getThumbnailFileName() {
-        return thumbnailFileName;
+    /**
+     * @return thumbnail filename
+     */
+    public String getThumbnailFilename() {
+        return thumbnailFilename;
     }
 
+    /**
+     * @return like count
+     */
     public int getLike() {
         return like;
     }
 
+    /**
+     * @return dislike count
+     */
     public int getDislike() {
         return dislike;
     }
 
+    /**
+     * @param thumbnailUri thumbnail uri
+     */
     public void setThumbnailUri(String thumbnailUri) {
         this.thumbnailUri = thumbnailUri;
     }
 
-    public void setThumbnailFileName(String thumbnailFileName) {
-        this.thumbnailFileName = thumbnailFileName;
+    /**
+     * @param thumbnailFilename thumbnail filename
+     */
+    public void setThumbnailFilename(String thumbnailFilename) {
+        this.thumbnailFilename = thumbnailFilename;
     }
 
+    /**
+     * @param title product title
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * @param description product description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * @param type product type
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * @param artist music artist
+     */
     public void setArtist(String artist) {
         this.artist = artist;
     }
 
+    /**
+     * @param author book author
+     */
     public void setAuthor(String author) {
         this.author = author;
     }
 
+    /**
+     * @param director movie director
+     */
     public void setDirector(String director) {
         this.director = director;
     }

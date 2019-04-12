@@ -19,6 +19,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Adapter to handle product list recycler view
+ */
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
     private Listener listener;
 
@@ -32,6 +35,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         void onShareClicked(String productId);
     }
 
+    /**
+     * @param listener set adapter listeners
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -52,9 +58,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                         product.getAuthor().equals(t1.getAuthor()) &&
                         product.getDirector().equals(t1.getDirector()) &&
                         product.getContentUri().equals(t1.getContentUri()) &&
-                        product.getContentFileName().equals(t1.getContentFileName()) &&
+                        product.getContentFilename().equals(t1.getContentFilename()) &&
                         product.getThumbnailUri().equals(t1.getThumbnailUri()) &&
-                        product.getThumbnailFileName().equals(t1.getThumbnailFileName()) &&
+                        product.getThumbnailFilename().equals(t1.getThumbnailFilename()) &&
                         product.getLike() == t1.getLike() &&
                         product.getDislike() == t1.getDislike();
             }
@@ -73,6 +79,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         productViewHolder.bind(getItem(i));
     }
 
+    /**
+     * ProductViewHolder to bind product data to view
+     */
     class ProductViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.txt_title)
         TextView txtTitle;
@@ -95,6 +104,11 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_dislike_counter)
         TextView txtDislikeCounter;
 
+        /**
+         * ProductViewHolder constructor
+         *
+         * @param itemView recycler item view
+         */
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -107,7 +121,11 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             });
         }
 
-        // bind product to view
+        /**
+         * bind product to item view
+         *
+         * @param product product object
+         */
         public void bind(Product product) {
             txtTitle.setText(product.getTitle());
             txtType.setText(product.getType());
@@ -152,6 +170,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 listener.onDislikeClicked(product.getId());
             }
         }
+
 
         @OnClick(R.id.img_share)
         void onShareImageClicked() {

@@ -13,17 +13,23 @@ public class Profile {
     @NonNull
     private String email = "";
     private String profileImageUri;
-    private String profileImageFileName;
+    private String profileImageFilename;
     private String address;
 
     @Ignore
     public Profile() {
     }
 
-    public Profile(@NonNull String email, String profileImageUri, String profileImageFileName, String address) {
+    /**
+     * @param email profile email address
+     * @param profileImageUri profile image uri
+     * @param profileImageFilename profile image filename
+     * @param address profile address
+     */
+    public Profile(@NonNull String email, String profileImageUri, String profileImageFilename, String address) {
         this.email = email;
         this.profileImageUri = profileImageUri;
-        this.profileImageFileName = profileImageFileName;
+        this.profileImageFilename = profileImageFilename;
         this.address = address;
     }
 
@@ -38,14 +44,23 @@ public class Profile {
         return email;
     }
 
+    /**
+     * @return profile image uri
+     */
     public String getProfileImageUri() {
         return profileImageUri;
     }
 
-    public String getProfileImageFileName() {
-        return profileImageFileName;
+    /**
+     * @return profile image filename
+     */
+    public String getProfileImageFilename() {
+        return profileImageFilename;
     }
 
+    /**
+     * @return user address
+     */
     public String getAddress() {
         return address;
     }

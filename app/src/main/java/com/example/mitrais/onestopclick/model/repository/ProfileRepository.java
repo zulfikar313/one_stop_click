@@ -181,23 +181,23 @@ public class ProfileRepository {
     }
 
     /**
-     * save profile
+     * set profile
      *
      * @param profile user profile
      * @return save profile task
      */
-    public Task<Void> saveProfile(Profile profile) {
+    public Task<Void> setProfileDetails(Profile profile) {
         addProfileListener(profile.getEmail());
         return profileService.setProfileDetails(profile);
     }
 
     /**
-     * save profile image
+     * set profile image
      *
      * @param profile user profile
      * @return save profile task
      */
-    public Task<Void> saveProfileImage(Profile profile) {
+    public Task<Void> setProfileImage(Profile profile) {
         addProfileListener(profile.getEmail());
         return profileService.setProfileImage(profile);
     }
