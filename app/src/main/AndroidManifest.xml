@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mitrais.onestopclick">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -40,6 +42,9 @@
         <activity
             android:name=".view.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-    </application>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="9ff704fc5cf7f800c4c135a7994497585a0a576e" />
+    </application>
 </manifest>

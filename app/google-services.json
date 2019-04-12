@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "665475513149-kiqbgkvgcvgjaf86ouj4stm3st6m0cf0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mitrais.onestopclick",
+            "certificate_hash": "52743e8c441838d0a3f15829262c08c4950a65a2"
+          }
+        },
+        {
           "client_id": "665475513149-6tbkh6j6u5jeg0g2e6kc3g4fvdfdsic7.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -33,20 +41,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "665475513149-6tbkh6j6u5jeg0g2e6kc3g4fvdfdsic7.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
