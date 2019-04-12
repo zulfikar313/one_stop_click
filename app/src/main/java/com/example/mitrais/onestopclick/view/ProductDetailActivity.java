@@ -32,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
+import maes.tech.intentanim.CustomIntent;
 
 /**
  * ProductDetailActivity handle product detail page logic
@@ -103,6 +104,13 @@ public class ProductDetailActivity extends AppCompatActivity {
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else
             super.onBackPressed();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     @OnClick(R.id.img_thumbnail)

@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
+import maes.tech.intentanim.CustomIntent;
 
 /**
  * ProductFragment handle product page logic
@@ -158,6 +159,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
+        CustomIntent.customType(getActivity(), Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     /**

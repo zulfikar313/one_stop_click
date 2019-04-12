@@ -59,15 +59,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
-        super.finish();
-        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
     }
 
     @OnClick(R.id.btn_reset_password)
