@@ -23,8 +23,11 @@ public interface ProductDao {
     @Delete
     void deleteProduct(Product product);
 
-    @Query("SELECT * FROM product")
+    @Query("SELECT * FROM product ORDER BY title")
     LiveData<List<Product>> getAllProducts();
+
+    @Query("SELECT * FROM product WHERE type = :type ORDER BY title")
+    LiveData<List<Product>> getProductsByType(String type);
 
     @Query("SELECT * FROM product WHERE id = :id")
     LiveData<Product> getProductById(String id);

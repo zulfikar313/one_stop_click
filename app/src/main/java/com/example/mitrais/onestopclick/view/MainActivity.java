@@ -103,16 +103,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            case R.id.all: {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
+                break;
+            }
             case R.id.movie: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_MOVIE)).commit();
                 break;
             }
             case R.id.music: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_MUSIC)).commit();
                 break;
             }
             case R.id.book: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_BOOK)).commit();
                 break;
             }
             case R.id.profile: {
@@ -160,8 +164,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * initialize first fragment
      */
     private void initFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductFragment()).commit();
-        navView.setCheckedItem(R.id.movie);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
+        navView.setCheckedItem(R.id.all);
     }
 
     /**

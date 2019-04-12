@@ -74,4 +74,5 @@
     <string name="save_product_is_in_progress">Save product is in progress</string>
     <string name="product_has_been_saved">Product has been saved</string>
     <string name="remember_me">Remember me</string>
+    <string name="all">All</string>
 </resources>

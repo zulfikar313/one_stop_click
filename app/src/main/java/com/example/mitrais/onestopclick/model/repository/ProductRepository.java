@@ -75,12 +75,19 @@ public class ProductRepository {
     }
 
     /**
+     * @return all products
+     */
+    public LiveData<List<Product>> getAllProducts() {
+        return productDao.getAllProducts();
+    }
+
+    /**
      * returns all product live data
      *
      * @return product list live data
      */
-    public LiveData<List<Product>> getAllLocalProducts() {
-        return productDao.getAllProducts();
+    public LiveData<List<Product>> getProductsByType(String type) {
+        return productDao.getProductsByType(type);
     }
 
     /**

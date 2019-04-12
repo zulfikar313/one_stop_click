@@ -33,12 +33,19 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
+     * @return all products
+     */
+    public LiveData<List<Product>> getAllProducts() {
+        return productRepository.getAllProducts();
+    }
+
+    /**
      * get all products live data
      *
      * @return product list live data
      */
-    public LiveData<List<Product>> getAllProducts() {
-        return productRepository.getAllLocalProducts();
+    public LiveData<List<Product>> getProductsByType(String type) {
+        return productRepository.getProductsByType(type);
     }
 
     /**

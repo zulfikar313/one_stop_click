@@ -326,7 +326,10 @@ public class ProductDetailActivity extends AppCompatActivity {
 
                 saveProductDetailsTask = viewModel.setProductDetails(product)
                         .addOnCompleteListener(task -> hideProgressBar())
-                        .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show())
+                        .addOnSuccessListener(aVoid -> {
+                            Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                            onBackPressed();
+                        })
                         .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
             } else {
                 /* add new product */
@@ -339,6 +342,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                                 observeProduct(productId);
                             });
                             Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                            onBackPressed();
                         })
                         .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
             }

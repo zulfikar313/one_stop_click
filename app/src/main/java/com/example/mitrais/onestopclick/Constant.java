@@ -19,6 +19,7 @@ public class Constant {
     /**
      * product types
      */
+    public static final String PRODUCT_TYPE_ALL = "all";
     public static final String PRODUCT_TYPE_BOOK = "book";
     public static final String PRODUCT_TYPE_MUSIC = "music";
     public static final String PRODUCT_TYPE_MOVIE = "movie";

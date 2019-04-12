@@ -1,8 +1,10 @@
 package com.example.mitrais.onestopclick.view;
 
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductFragmentComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductFragmentComponent;
+import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.adapter.ProductAdapter;
 import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
 import com.google.android.gms.tasks.Task;
@@ -30,8 +33,10 @@ import es.dmoral.toasty.Toasty;
  * ProductFragment handle product page logic
  */
 public class ProductFragment extends Fragment implements ProductAdapter.Listener {
+    private static final String ARG_TYPE = "ARG_TYPE";
     private Task<Void> addLikeTask;
     private Task<Void> addDislikeTask;
+    private String type = "";
 
     @Inject
     ProductAdapter productAdapter;
@@ -42,6 +47,18 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     @BindView(R.id.rec_product)
     RecyclerView recProduct;
 
+    /**
+     * @param type product type filter
+     * @return new ProductFragment instance
+     */
+    public static ProductFragment newInstance(String type) {
+        ProductFragment fragment = new ProductFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TYPE, type);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +66,10 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         View view = inflater.inflate(R.layout.fragment_product, container, false);
         ButterKnife.bind(this, view);
         initDagger();
+
+        if (getArguments() != null)
+            type = getArguments().getString(ARG_TYPE);
+
         initRecyclerView();
 
         return view;
@@ -58,6 +79,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     void onAddProductImageClicked() {
         goToProductDetailPage("");
     }
+
 
     /**
      * initialize dagger injection
@@ -78,9 +100,17 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         recProduct.setHasFixedSize(true);
         recProduct.setAdapter(productAdapter);
         recProduct.setLayoutManager(new LinearLayoutManager(getActivity()));
-        viewModel.getAllProducts().observe(this, products -> {
-            productAdapter.submitList(products);
-        });
+        if (type.equals(Constant.PRODUCT_TYPE_ALL)) {
+            /* observe all products */
+            viewModel.getAllProducts().observe(this, products -> {
+                productAdapter.submitList(products);
+            });
+        } else {
+            /* observe products by type */
+            viewModel.getProductsByType(type).observe(this, products -> {
+                productAdapter.submitList(products);
+            });
+        }
     }
 
     @Override
