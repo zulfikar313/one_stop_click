@@ -21,16 +21,16 @@ public class Profile {
     }
 
     /**
-     * @param email profile email address
-     * @param profileImageUri profile image uri
+     * @param email                profile email address
+     * @param profileImageUri      profile image uri
      * @param profileImageFilename profile image filename
-     * @param address profile address
+     * @param address              profile address
      */
     public Profile(@NonNull String email, String profileImageUri, String profileImageFilename, String address) {
         this.email = email;
-        this.profileImageUri = profileImageUri;
-        this.profileImageFilename = profileImageFilename;
-        this.address = address;
+        this.profileImageUri = profileImageUri == null ? "" : profileImageUri;
+        this.profileImageFilename = profileImageFilename == null ? "" : profileImageFilename;
+        this.address = address == null ? "" : address;
     }
 
     @Exclude

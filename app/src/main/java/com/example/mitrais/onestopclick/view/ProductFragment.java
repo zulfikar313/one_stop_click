@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
@@ -43,9 +41,6 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
 
     @BindView(R.id.rec_product)
     RecyclerView recProduct;
-
-    @BindView(R.id.progress_bar)
-    ProgressBar progressBar;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,

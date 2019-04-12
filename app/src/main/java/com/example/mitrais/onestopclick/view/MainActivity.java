@@ -223,14 +223,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * set progress bar visible
      */
-    private void showProgressBar() {
+    public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
     /**
      * set progress bar invisible
      */
-    private void hideProgressBar() {
+    public void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }
     // endregion

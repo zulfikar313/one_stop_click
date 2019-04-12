@@ -60,9 +60,6 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.txt_address)
     TextInputLayout txtAddress;
 
-    @BindView(R.id.progress_bar)
-    ProgressBar progressBar;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -313,14 +310,14 @@ public class ProfileFragment extends Fragment {
      * set progress bar visible
      */
     private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
+        ((MainActivity)getActivity()).showProgressBar();
     }
 
     /**
      * set progress bar invisible
      */
     private void hideProgressBar() {
-        progressBar.setVisibility(View.INVISIBLE);
+        ((MainActivity)getActivity()).hideProgressBar();
     }
     // endregion
 }

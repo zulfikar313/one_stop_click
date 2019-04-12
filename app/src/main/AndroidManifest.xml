@@ -15,7 +15,8 @@
         <activity
             android:name=".view.ProductDetailActivity"
             android:parentActivityName=".view.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".view.ForgotPasswordActivity"
             android:parentActivityName=".view.LoginActivity"
@@ -41,7 +42,8 @@
         </activity>
         <activity
             android:name=".view.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

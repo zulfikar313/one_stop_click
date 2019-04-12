@@ -46,7 +46,7 @@ public class Product {
      */
     public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, int like, int dislike) {
         this.id = id;
-        this.title = title = title == null ? " " : title;
+        this.title = title == null ? " " : title;
         this.description = description == null ? "" : description;
         this.type = type == null ? "" : type;
         this.artist = artist == null ? "" : artist;
