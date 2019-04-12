@@ -6,6 +6,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
@@ -48,6 +50,9 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.txt_password)
     TextInputLayout txtPassword;
 
+    @BindView(R.id.cb_remember_me)
+    CheckBox cbRememberMe;
+
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
@@ -59,8 +64,13 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initDagger();
 
+        /* set remember me based on preferences */
+        cbRememberMe.setChecked(App.prefs.getBoolean(Constant.PREF_IS_REMEMBER_ME_ENABLED));
+
         /* set last logged in email if any */
         txtEmail.getEditText().setText(App.prefs.getString(Constant.PREF_LAST_LOGGED_IN_EMAIL));
+
+
     }
 
     @Override
@@ -99,6 +109,11 @@ public class LoginActivity extends AppCompatActivity {
             goToForgotPasswordPage();
     }
 
+    @OnClick(R.id.cb_remember_me)
+    void onRememberMeCheckboxClicked() {
+        App.prefs.putBoolean(Constant.PREF_IS_REMEMBER_ME_ENABLED, cbRememberMe.isChecked());
+    }
+
     // region private methods
 
     /**
@@ -127,7 +142,15 @@ public class LoginActivity extends AppCompatActivity {
                         showEmailNotVerifiedDialog();
                     } else {
                         App.prefs.putBoolean(Constant.PREF_IS_LOGGED_ON_ONCE, true);
-                        App.prefs.putString(Constant.PREF_LAST_LOGGED_IN_EMAIL, email);
+
+                        /**
+                         * save last logged in email if remember me enabled
+                         */
+                        if (App.prefs.getBoolean(Constant.PREF_IS_REMEMBER_ME_ENABLED))
+                            App.prefs.putString(Constant.PREF_LAST_LOGGED_IN_EMAIL, email);
+                        else
+                            App.prefs.putString(Constant.PREF_LAST_LOGGED_IN_EMAIL, "");
+
                         goToMainPage();
                     }
                 })

@@ -8,6 +8,7 @@ public class Constant {
      */
     public static final String PREF_LAST_LOGGED_IN_EMAIL = "PREF_LAST_LOGGED_IN_EMAIL";
     public static final String PREF_IS_LOGGED_ON_ONCE = "PREF_IS_LOGGED_ON_ONCE";
+    public static final String PREF_IS_REMEMBER_ME_ENABLED = "PREF_IS_REMEMBER_ME_ENABLED";
 
     /**
      * intent animation
