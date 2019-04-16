@@ -23,19 +23,29 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:textColor="#000"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/img_thumbnail"
+            app:layout_constraintEnd_toEndOf="@id/shimmer_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/img_thumbnail"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+        <io.supercharge.shimmerlayout.ShimmerLayout
+            android:id="@+id/shimmer_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            app:shimmer_color="@color/lightGray"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_launcher_background"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_title" />
+            app:layout_constraintTop_toBottomOf="@id/txt_title">
+
+            <ImageView
+                android:id="@+id/img_thumbnail"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@null"
+                android:src="@drawable/skeleton" />
+
+        </io.supercharge.shimmerlayout.ShimmerLayout>
+
 
         <TextView
             android:id="@+id/txt_author"
@@ -48,9 +58,9 @@
             android:text="@string/author"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:textColor="#000"
-            app:layout_constraintEnd_toEndOf="@id/img_thumbnail"
+            app:layout_constraintEnd_toEndOf="@id/shimmer_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/img_thumbnail" />
+            app:layout_constraintTop_toBottomOf="@id/shimmer_layout" />
 
         <TextView
             android:id="@+id/txt_type"
@@ -74,8 +84,8 @@
             android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="@id/txt_author"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/img_thumbnail"
-            app:layout_constraintTop_toTopOf="@id/img_thumbnail" />
+            app:layout_constraintStart_toEndOf="@id/shimmer_layout"
+            app:layout_constraintTop_toTopOf="@id/shimmer_layout" />
 
         <LinearLayout
             android:id="@+id/layout_social"

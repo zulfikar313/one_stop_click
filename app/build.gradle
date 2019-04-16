@@ -102,4 +102,9 @@ dependencies {
      * picasso library
      */
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    /**
+     * shimmer layout
+     */
+    implementation 'io.supercharge:shimmerlayout:2.1.0'
 }

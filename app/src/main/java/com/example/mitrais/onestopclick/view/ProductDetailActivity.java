@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
@@ -23,6 +24,7 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -32,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
+import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
 /**
@@ -50,6 +53,9 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @Inject
     ProductDetailViewModel viewModel;
+
+    @BindView(R.id.shimmer_layout)
+    ShimmerLayout shimmerLayout;
 
     @BindView(R.id.img_thumbnail)
     ImageView imgThumbnail;
@@ -170,7 +176,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
             Uri uri = data.getData();
-            Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgThumbnail);
+
+//            /* load skeleton */
+            shimmerLayout.startShimmerAnimation();
+            imgThumbnail.setImageDrawable(getDrawable(R.drawable.skeleton));
             saveProductImage(uri);
         }
     }
@@ -208,8 +217,22 @@ public class ProductDetailActivity extends AppCompatActivity {
      * @param product product objects
      */
     private void bindProduct(Product product) {
-        if (!product.getThumbnailUri().isEmpty())
-                Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.ic_launcher_background).into(imgThumbnail);
+        if (!product.getThumbnailUri().isEmpty()) {
+            Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
+                @Override
+                public void onSuccess() {
+                    shimmerLayout.stopShimmerAnimation();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    shimmerLayout.stopShimmerAnimation();
+                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, e.toString());
+                }
+            });
+        }
+
 
         txtTitle.getEditText().setText(product.getTitle());
         txtAuthor.getEditText().setText(product.getAuthor());
@@ -301,35 +324,35 @@ public class ProductDetailActivity extends AppCompatActivity {
         else {
             showProgressBar();
 
-        String title = txtTitle.getEditText().getText().toString().trim();
-        String author = txtAuthor.getEditText().getText().toString().trim();
-        String artist = txtArtist.getEditText().getText().toString().trim();
-        String director = txtDirector.getEditText().getText().toString().trim();
-        String description = txtDescription.getEditText().getText().toString().trim();
+            String title = txtTitle.getEditText().getText().toString().trim();
+            String author = txtAuthor.getEditText().getText().toString().trim();
+            String artist = txtArtist.getEditText().getText().toString().trim();
+            String director = txtDirector.getEditText().getText().toString().trim();
+            String description = txtDescription.getEditText().getText().toString().trim();
 
-        Product product = new Product();
-        product.setTitle(title);
-        switch (rgType.getCheckedRadioButtonId()) {
-            case R.id.rb_book: {
-                product.setType(Constant.PRODUCT_TYPE_BOOK);
-                product.setAuthor(author);
-                break;
+            Product product = new Product();
+            product.setTitle(title);
+            switch (rgType.getCheckedRadioButtonId()) {
+                case R.id.rb_book: {
+                    product.setType(Constant.PRODUCT_TYPE_BOOK);
+                    product.setAuthor(author);
+                    break;
+                }
+                case R.id.rb_music: {
+                    product.setType(Constant.PRODUCT_TYPE_MUSIC);
+                    product.setArtist(artist);
+                    break;
+                }
+                case R.id.rb_movie: {
+                    product.setType(Constant.PRODUCT_TYPE_MOVIE);
+                    product.setDirector(director);
+                    break;
+                }
             }
-            case R.id.rb_music: {
-                product.setType(Constant.PRODUCT_TYPE_MUSIC);
-                product.setArtist(artist);
-                break;
-            }
-            case R.id.rb_movie: {
-                product.setType(Constant.PRODUCT_TYPE_MOVIE);
-                product.setDirector(director);
-                break;
-            }
-        }
-        product.setDescription(description);
+            product.setDescription(description);
 
-        if (!productId.isEmpty()) { /* indicating product already exist */
-            product.setId(productId);
+            if (!productId.isEmpty()) { /* indicating product already exist */
+                product.setId(productId);
 
                 saveProductDetailsTask = viewModel.setProductDetails(product)
                         .addOnCompleteListener(task -> hideProgressBar())
