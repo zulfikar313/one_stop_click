@@ -38,8 +38,8 @@ import maes.tech.intentanim.CustomIntent;
  * ProductDetailActivity handle product detail page logic
  */
 public class ProductDetailActivity extends AppCompatActivity {
+    private static final String TAG = "ProductDetailActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
-    private boolean isProductObserved = false;
     private String productId;
     private Product product;
     private Task<Uri> saveImageTask;
@@ -191,12 +191,11 @@ public class ProductDetailActivity extends AppCompatActivity {
      * @param id product id
      */
     private void observeProduct(String id) {
-        if (!id.isEmpty() && !isProductObserved) {
-            isProductObserved = true;
+        if (!id.isEmpty()) {
             viewModel.getProductById(id).observe(this, product -> {
                 if (product != null) {
                     this.product = product;
-                    bindView(product);
+                    bindProduct(product);
                 } else
                     Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
             });
@@ -206,11 +205,11 @@ public class ProductDetailActivity extends AppCompatActivity {
     /**
      * bind product data to view
      *
-     * @param product product object
+     * @param product product objects
      */
-    private void bindView(Product product) {
+    private void bindProduct(Product product) {
         if (!product.getThumbnailUri().isEmpty())
-            Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.ic_launcher_background).into(imgThumbnail);
+                Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.ic_launcher_background).into(imgThumbnail);
 
         txtTitle.getEditText().setText(product.getTitle());
         txtAuthor.getEditText().setText(product.getAuthor());
@@ -247,10 +246,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         showProgressBar();
 
         String filename;
-        if (product == null || product.getThumbnailFilename().isEmpty()) {
-            filename = System.currentTimeMillis() + "." + getFileExtension(imageUri);
-        } else {
+        if (product != null && !product.getThumbnailFilename().isEmpty()) {
             filename = product.getThumbnailFilename();
+        } else {
+            filename = System.currentTimeMillis() + "." + getFileExtension(imageUri);
         }
 
         saveImageTask = viewModel.uploadProductImage(imageUri, filename)
@@ -302,35 +301,35 @@ public class ProductDetailActivity extends AppCompatActivity {
         else {
             showProgressBar();
 
-            String title = txtTitle.getEditText().getText().toString().trim();
-            String author = txtAuthor.getEditText().getText().toString().trim();
-            String artist = txtArtist.getEditText().getText().toString().trim();
-            String director = txtDirector.getEditText().getText().toString().trim();
-            String description = txtDescription.getEditText().getText().toString().trim();
+        String title = txtTitle.getEditText().getText().toString().trim();
+        String author = txtAuthor.getEditText().getText().toString().trim();
+        String artist = txtArtist.getEditText().getText().toString().trim();
+        String director = txtDirector.getEditText().getText().toString().trim();
+        String description = txtDescription.getEditText().getText().toString().trim();
 
-            Product product = new Product();
-            product.setTitle(title);
-            switch (rgType.getCheckedRadioButtonId()) {
-                case R.id.rb_book: {
-                    product.setType(Constant.PRODUCT_TYPE_BOOK);
-                    product.setAuthor(author);
-                    break;
-                }
-                case R.id.rb_music: {
-                    product.setType(Constant.PRODUCT_TYPE_MUSIC);
-                    product.setArtist(artist);
-                    break;
-                }
-                case R.id.rb_movie: {
-                    product.setType(Constant.PRODUCT_TYPE_MOVIE);
-                    product.setDirector(director);
-                    break;
-                }
+        Product product = new Product();
+        product.setTitle(title);
+        switch (rgType.getCheckedRadioButtonId()) {
+            case R.id.rb_book: {
+                product.setType(Constant.PRODUCT_TYPE_BOOK);
+                product.setAuthor(author);
+                break;
             }
-            product.setDescription(description);
+            case R.id.rb_music: {
+                product.setType(Constant.PRODUCT_TYPE_MUSIC);
+                product.setArtist(artist);
+                break;
+            }
+            case R.id.rb_movie: {
+                product.setType(Constant.PRODUCT_TYPE_MOVIE);
+                product.setDirector(director);
+                break;
+            }
+        }
+        product.setDescription(description);
 
-            if (!productId.isEmpty()) { /* indicating product already exist */
-                product.setId(productId);
+        if (!productId.isEmpty()) { /* indicating product already exist */
+            product.setId(productId);
 
                 saveProductDetailsTask = viewModel.setProductDetails(product)
                         .addOnCompleteListener(task -> hideProgressBar())

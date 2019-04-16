@@ -150,7 +150,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
             if (!product.getThumbnailUri().isEmpty())
-                Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.ic_launcher_background).into(imgThumbnail);
+                Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail);
         }
 
         @OnClick(R.id.img_like)

@@ -18,7 +18,7 @@ public class ProductService {
     private static final String KEY_LIKE = "like";
     private static final String KEY_DISLIKE = "dislike";
     private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
-    private static final String KEY_THUMBNAIL_FILENAME = "thumbnailFileName";
+    private static final String KEY_THUMBNAIL_FILENAME = "thumbnailFilename";
     private static final String KEY_TITLE = "title";
     private static final String KEY_AUTHOR = "author";
     private static final String KEY_DESCRIPTION = "description";

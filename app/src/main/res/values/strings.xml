@@ -75,4 +75,5 @@
     <string name="product_has_been_saved">Product has been saved</string>
     <string name="remember_me">Remember me</string>
     <string name="all">All</string>
+    <string name="all_products">All products</string>
 </resources>

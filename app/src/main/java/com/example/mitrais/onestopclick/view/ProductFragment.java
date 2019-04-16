@@ -1,10 +1,8 @@
 package com.example.mitrais.onestopclick.view;
 
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,13 +61,29 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle(getString(R.string.product_list));
+
         View view = inflater.inflate(R.layout.fragment_product, container, false);
         ButterKnife.bind(this, view);
         initDagger();
 
-        if (getArguments() != null)
+        if (getArguments() != null) {
             type = getArguments().getString(ARG_TYPE);
+            switch (type) {
+                case Constant.PRODUCT_TYPE_ALL:
+                    getActivity().setTitle(getString(R.string.all_products));
+                    break;
+                case Constant.PRODUCT_TYPE_BOOK:
+                    getActivity().setTitle(getString(R.string.book));
+                    break;
+                case Constant.PRODUCT_TYPE_MUSIC:
+                    getActivity().setTitle(getString(R.string.music));
+                    break;
+                case Constant.PRODUCT_TYPE_MOVIE:
+                    getActivity().setTitle(getString(R.string.movie));
+                    break;
+            }
+        }
+
 
         initRecyclerView();
 
