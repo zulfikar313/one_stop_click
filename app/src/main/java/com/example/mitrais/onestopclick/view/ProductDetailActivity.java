@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductDetailActivityComponent;
@@ -44,12 +45,11 @@ public class ProductDetailActivity extends AppCompatActivity {
     private static final String TAG = "ProductDetailActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private String productId;
+    private String productThumbnailUri;
     private Product product;
     private Task<Uri> saveImageTask;
-    private Task<Void> saveImageDataTask;
-    private Task<Void> saveProductDetailsTask;
-    private Task<DocumentReference> addImageDataTask;
-    private Task<DocumentReference> addProductDetailsTask;
+    private Task<Void> saveProductTask;
+    private Task<DocumentReference> addProductTask;
 
     @Inject
     ProductDetailViewModel viewModel;
@@ -104,9 +104,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isSaveImageInProgress() || isSaveImageDataInProgress())
-            Toasty.info(this, getString(R.string.save_image_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isSaveProductDetailsInProgress())
+        if (isSaveImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else
             super.onBackPressed();
@@ -121,10 +119,10 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.img_thumbnail)
     void onThumbnailImageClicked() {
-        if (isSaveImageInProgress() || isSaveImageDataInProgress())
-            Toasty.info(this, getString(R.string.save_image_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isSaveProductDetailsInProgress())
+        if (isSaveImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (!App.isOnline())
+            Toasty.info(this, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
         else
             openImageFileChooser();
     }
@@ -133,18 +131,18 @@ public class ProductDetailActivity extends AppCompatActivity {
     void onSaveButtonClicked() {
         switch (rgType.getCheckedRadioButtonId()) {
             case R.id.rb_book: {
-                if (isAuthorValid() & isTitleValid() & isDescriptionValid())
-                    saveProductDetails();
+                if (isAuthorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
+                    saveProduct(Uri.parse(productThumbnailUri));
                 break;
             }
             case R.id.rb_music: {
-                if (isArtistValid() & isTitleValid() & isDescriptionValid())
-                    saveProductDetails();
+                if (isArtistValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
+                    saveProduct(Uri.parse(productThumbnailUri));
                 break;
             }
             case R.id.rb_movie: {
-                if (isDirectorValid() & isTitleValid() & isDescriptionValid())
-                    saveProductDetails();
+                if (isDirectorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
+                    saveProduct(Uri.parse(productThumbnailUri));
                 break;
             }
         }
@@ -177,10 +175,22 @@ public class ProductDetailActivity extends AppCompatActivity {
                 && data != null && data.getData() != null) {
             Uri uri = data.getData();
 
-//            /* load skeleton */
+            /* load image */
             shimmerLayout.startShimmerAnimation();
-            imgThumbnail.setImageDrawable(getDrawable(R.drawable.skeleton));
-            saveProductImage(uri);
+            Picasso.get().load(uri).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
+                @Override
+                public void onSuccess() {
+                    shimmerLayout.stopShimmerAnimation();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    shimmerLayout.stopShimmerAnimation();
+                    Log.e(TAG, e.toString());
+                }
+            });
+
+            productThumbnailUri = uri.toString();
         }
     }
 
@@ -218,6 +228,7 @@ public class ProductDetailActivity extends AppCompatActivity {
      */
     private void bindProduct(Product product) {
         if (!product.getThumbnailUri().isEmpty()) {
+            productThumbnailUri = product.getThumbnailUri();
             Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
                 @Override
                 public void onSuccess() {
@@ -227,7 +238,6 @@ public class ProductDetailActivity extends AppCompatActivity {
                 @Override
                 public void onError(Exception e) {
                     shimmerLayout.stopShimmerAnimation();
-                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.toString());
                 }
             });
@@ -265,7 +275,7 @@ public class ProductDetailActivity extends AppCompatActivity {
      *
      * @param imageUri product image uri
      */
-    private void saveProductImage(Uri imageUri) {
+    private void saveProduct(Uri imageUri) {
         showProgressBar();
 
         String filename;
@@ -277,30 +287,54 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         saveImageTask = viewModel.uploadProductImage(imageUri, filename)
                 .addOnSuccessListener(uri -> {
+                    productThumbnailUri = uri.toString();
+
                     Product product = new Product();
                     product.setThumbnailUri(uri.toString());
                     product.setThumbnailFilename(filename);
 
+                    String title = txtTitle.getEditText().getText().toString().trim();
+                    String author = txtAuthor.getEditText().getText().toString().trim();
+                    String artist = txtArtist.getEditText().getText().toString().trim();
+                    String director = txtDirector.getEditText().getText().toString().trim();
+                    String description = txtDescription.getEditText().getText().toString().trim();
+
+                    product.setTitle(title);
+                    switch (rgType.getCheckedRadioButtonId()) {
+                        case R.id.rb_book: {
+                            product.setType(Constant.PRODUCT_TYPE_BOOK);
+                            product.setAuthor(author);
+                            break;
+                        }
+                        case R.id.rb_music: {
+                            product.setType(Constant.PRODUCT_TYPE_MUSIC);
+                            product.setArtist(artist);
+                            break;
+                        }
+                        case R.id.rb_movie: {
+                            product.setType(Constant.PRODUCT_TYPE_MOVIE);
+                            product.setDirector(director);
+                            break;
+                        }
+                    }
+                    product.setDescription(description);
+
                     if (!productId.isEmpty()) { /* indicating product already exist */
                         product.setId(productId);
-                        saveImageDataTask = viewModel.setProductImage(product)
+                        saveProductTask = viewModel.saveProduct(product)
                                 .addOnCompleteListener(task -> hideProgressBar())
-                                .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
+                                .addOnSuccessListener(aVoid -> {
+                                    Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                                    onBackPressed();
+                                })
                                 .addOnFailureListener(e -> Toasty.error(ProductDetailActivity.this, e.toString(), Toast.LENGTH_LONG).show());
                     } else {
                         /* create new product */
-                        addImageDataTask = viewModel.addProductImage(product)
+                        addProductTask = viewModel.addProduct(product)
                                 .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(documentReference -> {
-                                    /* set productId local attribute with recently made product */
-                                    documentReference.addSnapshotListener((documentSnapshot, e) -> {
-                                        if (documentSnapshot != null) {
-                                            productId = documentSnapshot.getId();
-                                            observeProduct(productId);
-                                        }
-                                    });
-
                                     Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
+                                    onBackPressed();
                                 })
                                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
                     }
@@ -310,73 +344,6 @@ public class ProductDetailActivity extends AppCompatActivity {
                     hideProgressBar();
                     Toasty.error(this, e.toString(), Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    /**
-     * save product with product details only
-     * ignore product image data
-     */
-    private void saveProductDetails() {
-        if (isSaveImageInProgress() || isSaveImageDataInProgress() || isAddImageDataInProgress())
-            Toasty.info(this, getString(R.string.save_image_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isSaveProductDetailsInProgress() || isAddProductDetailsInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else {
-            showProgressBar();
-
-            String title = txtTitle.getEditText().getText().toString().trim();
-            String author = txtAuthor.getEditText().getText().toString().trim();
-            String artist = txtArtist.getEditText().getText().toString().trim();
-            String director = txtDirector.getEditText().getText().toString().trim();
-            String description = txtDescription.getEditText().getText().toString().trim();
-
-            Product product = new Product();
-            product.setTitle(title);
-            switch (rgType.getCheckedRadioButtonId()) {
-                case R.id.rb_book: {
-                    product.setType(Constant.PRODUCT_TYPE_BOOK);
-                    product.setAuthor(author);
-                    break;
-                }
-                case R.id.rb_music: {
-                    product.setType(Constant.PRODUCT_TYPE_MUSIC);
-                    product.setArtist(artist);
-                    break;
-                }
-                case R.id.rb_movie: {
-                    product.setType(Constant.PRODUCT_TYPE_MOVIE);
-                    product.setDirector(director);
-                    break;
-                }
-            }
-            product.setDescription(description);
-
-            if (!productId.isEmpty()) { /* indicating product already exist */
-                product.setId(productId);
-
-                saveProductDetailsTask = viewModel.setProductDetails(product)
-                        .addOnCompleteListener(task -> hideProgressBar())
-                        .addOnSuccessListener(aVoid -> {
-                            Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
-                            onBackPressed();
-                        })
-                        .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
-            } else {
-                /* add new product */
-                addProductDetailsTask = viewModel.addProductDetails(product)
-                        .addOnCompleteListener(task -> hideProgressBar())
-                        .addOnSuccessListener(documentReference -> {
-                            /* set productId local attribute with recently made product */
-                            documentReference.addSnapshotListener((documentSnapshot, e) -> {
-                                productId = documentSnapshot.getId();
-                                observeProduct(productId);
-                            });
-                            Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
-                            onBackPressed();
-                        })
-                        .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
-            }
-        }
     }
 
     /**
@@ -465,6 +432,17 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * @return true if product thumbnail valid
+     */
+    private boolean isProductThumbnailValid() {
+        if (productThumbnailUri == null || productThumbnailUri.isEmpty()) {
+            Toasty.error(this, getString(R.string.error_invalid_product_image), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @return true if save image task in progress
      */
     private boolean isSaveImageInProgress() {
@@ -472,31 +450,17 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * @return true if save image data task in progress
+     * @return true if save details task in progress
      */
-    private boolean isSaveImageDataInProgress() {
-        return saveImageDataTask != null && !saveImageDataTask.isComplete();
+    private boolean isSaveProductInProgress() {
+        return saveProductTask != null && !saveProductTask.isComplete();
     }
 
     /**
-     * @return true if save product details task in progress
+     * @return true if add product task in progress
      */
-    private boolean isSaveProductDetailsInProgress() {
-        return saveProductDetailsTask != null && !saveProductDetailsTask.isComplete();
-    }
-
-    /**
-     * @return true if add image data task in progress
-     */
-    private boolean isAddImageDataInProgress() {
-        return addImageDataTask != null && !addImageDataTask.isComplete();
-    }
-
-    /**
-     * @return true if add product details task in progress
-     */
-    private boolean isAddProductDetailsInProgress() {
-        return addProductDetailsTask != null && !addProductDetailsTask.isComplete();
+    private boolean isAddProductInProgress() {
+        return addProductTask != null && !addProductTask.isComplete();
     }
 
     /**

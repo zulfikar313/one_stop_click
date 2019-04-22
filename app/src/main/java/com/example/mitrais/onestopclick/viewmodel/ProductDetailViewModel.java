@@ -57,46 +57,24 @@ public class ProductDetailViewModel extends AndroidViewModel {
         return storageRepository.uploadProductImage(uri, filename);
     }
 
-
     /**
-     * set product image
+     * set product
      *
      * @param product product object
-     * @return set product image task
+     * @return save product task
      */
-    public Task<Void> setProductImage(Product product) {
-        return productRepository.setProductImage(product);
-    }
-
-
-    /**
-     * set product details
-     *
-     * @param product product object
-     * @return set product details task
-     */
-    public Task<Void> setProductDetails(Product product) {
-        return productRepository.setProductDetails(product);
+    public Task<Void> saveProduct(Product product) {
+        return productRepository.saveProduct(product);
     }
 
     /**
-     * add product image
+     * add product
      *
      * @param product product object
-     * @return add product image task
+     * @return add product task
      */
-    public Task<DocumentReference> addProductImage(Product product) {
-        return productRepository.addProductImage(product);
-    }
-
-    /**
-     * add product details
-     *
-     * @param product product object
-     * @return add product details task
-     */
-    public Task<DocumentReference> addProductDetails(Product product) {
-        return productRepository.addProductDetails(product);
+    public Task<DocumentReference> addProduct(Product product) {
+        return productRepository.addProduct(product);
     }
 
     /**

@@ -190,43 +190,23 @@ public class ProductRepository {
     }
 
     /**
-     * set product with image data only
+     * set product with onlys
      *
      * @param product product object
-     * @return set product image task
+     * @return save product task
      */
-    public Task<Void> setProductImage(Product product) {
-        return productService.setProductImage(product);
+    public Task<Void> saveProduct(Product product) {
+        return productService.saveProduct(product);
     }
 
     /**
-     * set product with details onlys
-     *
-     * @param product product object
-     * @return set product details task
-     */
-    public Task<Void> setProductDetails(Product product) {
-        return productService.setProductDetails(product);
-    }
-
-    /**
-     * add new product with image data only
-     *
-     * @param product product object
-     * @return add product image task
-     */
-    public Task<DocumentReference> addProductImage(Product product) {
-        return productService.addProductImage(product);
-    }
-
-    /**
-     * add new product with details only
+     * add product
      *
      * @param product product object
      * @return add product details task
      */
-    public Task<DocumentReference> addProductDetails(Product product) {
-        return productService.addProductDetails(product);
+    public Task<DocumentReference> addProduct(Product product) {
+        return productService.addProduct(product);
     }
 
     /**

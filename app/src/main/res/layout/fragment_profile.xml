@@ -6,16 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".view.ProfileFragment">
 
-    <ImageView
-        android:id="@+id/img_profile"
+    <io.supercharge.shimmerlayout.ShimmerLayout
+        android:id="@+id/shimmer_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_launcher_background"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:shimmer_color="@color/lightGray">
+
+        <ImageView
+            android:id="@+id/img_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/skeleton" />
+    </io.supercharge.shimmerlayout.ShimmerLayout>
 
     <TextView
         android:id="@+id/txt_email"
@@ -29,7 +37,7 @@
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_profile" />
+        app:layout_constraintTop_toBottomOf="@id/shimmer_layout" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/txt_display_name"
@@ -93,6 +101,6 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_save_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_address"/>
+        app:layout_constraintTop_toBottomOf="@+id/txt_address" />
 
 </android.support.constraint.ConstraintLayout>

@@ -76,4 +76,6 @@
     <string name="remember_me">Remember me</string>
     <string name="all">All</string>
     <string name="all_products">All products</string>
+    <string name="internet_required">internet is required to proceed</string>
+    <string name="error_invalid_product_image">Please add product image</string>
 </resources>

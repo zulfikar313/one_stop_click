@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProfileFragmentComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProfileFragmentComponent;
@@ -24,6 +26,7 @@ import com.example.mitrais.onestopclick.viewmodel.ProfileViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -32,11 +35,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
+import io.supercharge.shimmerlayout.ShimmerLayout;
 
 /**
  * ProfileFragment handle profile page logic
  */
 public class ProfileFragment extends Fragment {
+    private static final String TAG = "ProfileFragment";
     public static final int REQUEST_CHOOSE_IMAGE = 1;
     private FirebaseUser user;
     private Uri uri;
@@ -47,6 +52,9 @@ public class ProfileFragment extends Fragment {
 
     @Inject
     ProfileViewModel viewModel;
+
+    @BindView(R.id.shimmer_layout)
+    ShimmerLayout shimmerLayout;
 
     @BindView(R.id.img_profile)
     ImageView imgProfile;
@@ -101,6 +109,8 @@ public class ProfileFragment extends Fragment {
     void onProfileImageClicked() {
         if (isProfileImageUploadInProgress() || isUpdateUserInProgress() || isSaveProfileInProgress())
             Toasty.info(getActivity(), getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (!App.isOnline())
+            Toasty.info(getActivity(), getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
         else
             openImageFileChooser();
     }
@@ -111,7 +121,8 @@ public class ProfileFragment extends Fragment {
         if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == getActivity().RESULT_OK
                 && data != null && data.getData() != null) {
             uri = data.getData();
-            Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
+            shimmerLayout.startShimmerAnimation();
+            imgProfile.setImageDrawable(getActivity().getDrawable(R.drawable.skeleton));
             uploadProfileImage(uri);
         }
     }
@@ -134,8 +145,6 @@ public class ProfileFragment extends Fragment {
      * @param imageUri profile image uri
      */
     private void uploadProfileImage(Uri imageUri) {
-        showProgressBar();
-
         String filename;
         if (profile == null || profile.getProfileImageFilename().isEmpty()) {
             filename = System.currentTimeMillis() + "." + getFileExtension(imageUri);
@@ -153,7 +162,6 @@ public class ProfileFragment extends Fragment {
                                 Profile profile = new Profile(user.getEmail(), uri.toString(), filename, "");
                                 setProfileTask = viewModel.setProfileImage(profile)
                                         .addOnSuccessListener(aVoid1 -> {
-                                            hideProgressBar();
                                             Toasty.success(getActivity(), getString(R.string.profile_update_success), Toast.LENGTH_SHORT).show();
                                         })
                                         .addOnFailureListener(e -> {
@@ -168,12 +176,10 @@ public class ProfileFragment extends Fragment {
                                         });
                             })
                             .addOnFailureListener(e -> {
-                                hideProgressBar();
                                 Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    hideProgressBar();
                     Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
@@ -188,8 +194,22 @@ public class ProfileFragment extends Fragment {
                 /* bind profile */
                 txtAddress.getEditText().setText(profile.getAddress());
                 String uri = profile.getProfileImageUri();
-                if (!uri.isEmpty())
-                    Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
+                if (!uri.isEmpty()) {
+                    shimmerLayout.startShimmerAnimation();
+                    Picasso.get().load(uri).placeholder(R.drawable.skeleton).into(imgProfile, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            shimmerLayout.stopShimmerAnimation();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            shimmerLayout.stopShimmerAnimation();
+                            Log.e(TAG, e.toString());
+                        }
+                    });
+                }
+
             } else {
                 txtAddress.getEditText().setText("");
                 imgProfile.setImageResource(R.drawable.ic_launcher_background);

@@ -91,73 +91,24 @@ public class ProductService {
     }
 
     /**
-     * set product image and returns set product image task
+     * save product and returns save product task
      *
      * @param product existing product
-     * @return set product image task
+     * @return save product task
      */
-    public Task<Void> setProductImage(Product product) {
+    public Task<Void> saveProduct(Product product) {
         DocumentReference docRef = productRef.document(product.getId());
-
-        Map<String, Object> map = new HashMap<>();
-        map.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
-        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFilename());
-
-        return docRef.update(map);
+        return docRef.set(product);
     }
 
     /**
-     * set product details and returns set product details task
+     * add product and returns add product task
      *
-     * @param product existing product
-     * @return set product details task
+     * @param product product
+     * @return add product task
      */
-    public Task<Void> setProductDetails(Product product) {
-        DocumentReference docRef = productRef.document(product.getId());
-
-        Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TITLE, product.getTitle());
-        map.put(KEY_AUTHOR, product.getAuthor());
-        map.put(KEY_ARTIST, product.getArtist());
-        map.put(KEY_DIRECTOR, product.getDirector());
-        map.put(KEY_DESCRIPTION, product.getDescription());
-        map.put(KEY_TYPE, product.getType());
-
-        return docRef.update(map);
-    }
-
-    /**
-     * add new product with image data only
-     * and returns add new product task
-     *
-     * @param product new product
-     * @return add product image task
-     */
-    public Task<DocumentReference> addProductImage(Product product) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(KEY_THUMBNAIL_URI, product.getThumbnailUri());
-        map.put(KEY_THUMBNAIL_FILENAME, product.getThumbnailFilename());
-
-        return productRef.add(map);
-    }
-
-    /**
-     * add new product with details only
-     * and returns add new product task
-     *
-     * @param product new product
-     * @return add product details task
-     */
-    public Task<DocumentReference> addProductDetails(Product product) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TITLE, product.getTitle());
-        map.put(KEY_AUTHOR, product.getAuthor());
-        map.put(KEY_ARTIST, product.getArtist());
-        map.put(KEY_DIRECTOR, product.getDirector());
-        map.put(KEY_DESCRIPTION, product.getDescription());
-        map.put(KEY_TYPE, product.getType());
-
-        return productRef.add(map);
+    public Task<DocumentReference> addProduct(Product product) {
+        return productRef.add(product);
     }
 
     /**
