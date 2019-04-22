@@ -1,5 +1,6 @@
 package com.example.mitrais.onestopclick.view.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
@@ -28,6 +29,7 @@ import io.supercharge.shimmerlayout.ShimmerLayout;
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
     private static final String TAG = "ProductAdapter";
     private Listener listener;
+    private Context context;
 
     public interface Listener {
         void onItemClicked(String productId);
@@ -74,6 +76,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        context = viewGroup.getContext();
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_product, viewGroup, false);
         return new ProductViewHolder(view);
     }
@@ -170,6 +173,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                         Log.e(TAG, Integer.toString(getAdapterPosition()) + " " + e.toString());
                     }
                 });
+            } else {
+                imgThumbnail.setImageDrawable(context.getDrawable(R.drawable.skeleton));
             }
 
         }
