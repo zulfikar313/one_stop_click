@@ -65,55 +65,14 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     /**
-     * set user display name
-     *
-     * @param displayname user displayed name
-     * @return set user task
-     */
-    public Task<Void> setUser(String displayname) {
-        return authRepository.setUser(displayname);
-    }
-
-    /**
-     * set user photo uri
-     *
-     * @param photoUri user photo uri
-     * @return set user task
-     */
-    public Task<Void> setUser(Uri photoUri) {
-        return authRepository.setUser(photoUri);
-    }
-
-    /**
-     * add profile
+     * save profile
      *
      * @param profile profile object
-     * @return add profile task
+     * @return save profile task
      */
-    public Task<Void> addProfile(Profile profile) {
-        return profileRepository.addProfile(profile);
+    public Task<Void> saveProfile(Profile profile) {
+        return profileRepository.saveProfile(profile);
     }
-
-    /**
-     * set profile deatils
-     *
-     * @param profile profile object
-     * @return set profile details task
-     */
-    public Task<Void> setProfileDetails(Profile profile) {
-        return profileRepository.setProfileDetails(profile);
-    }
-
-    /**
-     * set profile image
-     *
-     * @param profile profile object
-     * @return set profile task
-     */
-    public Task<Void> setProfileImage(Profile profile) {
-        return profileRepository.setProfileImage(profile);
-    }
-    // endregion
 
     /**
      * initialize dagger injection

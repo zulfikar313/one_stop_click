@@ -170,36 +170,14 @@ public class ProfileRepository {
     // region firestore
 
     /**
-     * add profile
-     *
-     * @param profile user profile
-     * @return add profile task
-     */
-    public Task<Void> addProfile(Profile profile) {
-        addProfileListener(profile.getEmail());
-        return profileService.addProfile(profile);
-    }
-
-    /**
-     * set profile
+     * save profile
      *
      * @param profile user profile
      * @return save profile task
      */
-    public Task<Void> setProfileDetails(Profile profile) {
+    public Task<Void> saveProfile(Profile profile) {
         addProfileListener(profile.getEmail());
-        return profileService.setProfileDetails(profile);
-    }
-
-    /**
-     * set profile image
-     *
-     * @param profile user profile
-     * @return save profile task
-     */
-    public Task<Void> setProfileImage(Profile profile) {
-        addProfileListener(profile.getEmail());
-        return profileService.setProfileImage(profile);
+        return profileService.saveProfile(profile);
     }
 
     /**

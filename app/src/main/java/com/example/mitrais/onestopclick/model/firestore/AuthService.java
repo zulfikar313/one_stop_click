@@ -88,31 +88,4 @@ public class AuthService {
     public FirebaseUser getUser() {
         return auth.getCurrentUser();
     }
-
-    /**
-     * set user display name and returns set user task
-     *
-     * @param displayname user profile displayed name
-     * @return set user task
-     */
-    public Task<Void> setUser(String displayname) {
-        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
-                .setDisplayName(displayname)
-                .build();
-        return getUser().updateProfile(request);
-    }
-
-
-    /**
-     * set user photo uri and returns set user task
-     *
-     * @param photoUri user profile photo uri
-     * @return set user task
-     */
-    public Task<Void> setUser(Uri photoUri) {
-        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(photoUri)
-                .build();
-        return getUser().updateProfile(request);
-    }
 }

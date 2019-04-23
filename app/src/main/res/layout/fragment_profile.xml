@@ -1,106 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.ProfileFragment">
+    android:layout_height="wrap_content">
 
-    <io.supercharge.shimmerlayout.ShimmerLayout
-        android:id="@+id/shimmer_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.ProfileFragment">
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shimmer_color="@color/lightGray">
-
-        <ImageView
-            android:id="@+id/img_profile"
+        <io.supercharge.shimmerlayout.ShimmerLayout
+            android:id="@+id/shimmer_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@null"
-            android:src="@drawable/skeleton" />
-    </io.supercharge.shimmerlayout.ShimmerLayout>
+            android:layout_marginTop="32dp"
 
-    <TextView
-        android:id="@+id/txt_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:gravity="center"
-        android:text="@string/email"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shimmer_layout" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shimmer_color="@color/lightGray">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/txt_display_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_email">
+            <ImageView
+                android:id="@+id/img_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/skeleton" />
+        </io.supercharge.shimmerlayout.ShimmerLayout>
 
-        <android.support.design.widget.TextInputEditText
+        <TextView
+            android:id="@+id/txt_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/display_name"
-            android:inputType="text" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center"
+            android:text="@string/email"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_layout" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/txt_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_display_name">
 
-        <android.support.design.widget.TextInputEditText
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txt_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="@string/address"
-            android:inputType="text" />
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_email">
 
-    </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="@string/address"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_save_profile"
+            style="@style/BlueButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/save_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_address" />
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_save_profile"
-        style="@style/BlueButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/save_profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/btn_save_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/btn_save_profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_address" />
+    </android.support.constraint.ConstraintLayout>
 
-</android.support.constraint.ConstraintLayout>
+</ScrollView>
+

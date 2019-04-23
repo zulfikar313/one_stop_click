@@ -176,7 +176,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
             if (profile != null) {
                 txtEmail.setText(profile.getEmail());
-                Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.ic_launcher_background).into(imgProfile);
+                if (profile.getProfileImageUri() != null && !profile.getProfileImageUri().isEmpty())
+                    Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.skeleton).into(imgProfile);
             }
         });
     }

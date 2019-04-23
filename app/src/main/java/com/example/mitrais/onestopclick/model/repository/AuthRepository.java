@@ -92,24 +92,4 @@ public class AuthRepository {
     public void logout() {
         authService.logout();
     }
-
-    /**
-     * set user display name
-     *
-     * @param displayname user displayed name
-     * @return set user task
-     */
-    public Task<Void> setUser(String displayname) {
-        return authService.setUser(displayname);
-    }
-
-    /**
-     * set user photo uri
-     *
-     * @param photoUri photo uri
-     * @return set user task
-     */
-    public Task<Void> setUser(Uri photoUri) {
-        return authService.setUser(photoUri);
-    }
 }

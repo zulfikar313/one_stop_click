@@ -15,7 +15,6 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductFragmentComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductFragmentComponent;
-import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.adapter.ProductAdapter;
 import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
 import com.google.android.gms.tasks.Task;
@@ -117,14 +116,10 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         recProduct.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (type.equals(Constant.PRODUCT_TYPE_ALL)) {
             /* observe all products */
-            viewModel.getAllProducts().observe(this, products -> {
-                productAdapter.submitList(products);
-            });
+            viewModel.getAllProducts().observe(this, products -> productAdapter.submitList(products));
         } else {
             /* observe products by type */
-            viewModel.getProductsByType(type).observe(this, products -> {
-                productAdapter.submitList(products);
-            });
+            viewModel.getProductsByType(type).observe(this, products -> productAdapter.submitList(products));
         }
     }
 
@@ -140,9 +135,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         else {
             addLikeTask = viewModel
                     .addLike(id)
-                    .addOnFailureListener(e -> {
-                        Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+                    .addOnFailureListener(e -> Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
         }
     }
 
@@ -153,9 +146,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         else {
             addDislikeTask = viewModel
                     .addDislike(productId)
-                    .addOnFailureListener(e -> {
-                        Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+                    .addOnFailureListener(e -> Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
         }
     }
 

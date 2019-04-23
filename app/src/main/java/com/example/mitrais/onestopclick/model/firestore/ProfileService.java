@@ -40,43 +40,11 @@ public class ProfileService {
      * add new profile and returns add profile task
      *
      * @param profile
-     * @return add profile task
+     * @return save profile task
      */
-    public Task<Void> addProfile(Profile profile) {
+    public Task<Void> saveProfile(Profile profile) {
         DocumentReference reference = profileRef.document(profile.getEmail());
         return reference.set(profile);
-    }
-
-
-    /**
-     * set profile details and returns set profile details task
-     *
-     * @param profile user profile
-     * @return set profile details task
-     */
-    public Task<Void> setProfileDetails(Profile profile) {
-        DocumentReference docRef = profileRef.document(profile.getEmail());
-
-        Map<String, Object> profileMap = new HashMap<>();
-        profileMap.put(KEY_ADDRESS, profile.getAddress());
-
-        return docRef.update(profileMap);
-    }
-
-    /**
-     * set profile image and returns set profile image task
-     *
-     * @param profile user profile
-     * @return set profile image task
-     */
-    public Task<Void> setProfileImage(Profile profile) {
-        DocumentReference docRef = profileRef.document(profile.getEmail());
-
-        Map<String, Object> profileMap = new HashMap<>();
-        profileMap.put(KEY_PROFILE_IMAGE_URI, profile.getProfileImageUri());
-        profileMap.put(KEY_PROFILE_IMAGE_FILE_NAME, profile.getProfileImageFilename());
-
-        return docRef.update(profileMap);
     }
 
     /**
