@@ -49,6 +49,23 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
+     * @param search title, author, artist or director
+     * @return product search results live data
+     */
+    public LiveData<List<Product>> searchProducts(String search) {
+        return productRepository.searchProducts(search);
+    }
+
+    /**
+     * @param type   product type
+     * @param search title, author, artist or director
+     * @return product search results live data
+     */
+    public LiveData<List<Product>> searchProductsByType(String type, String search) {
+        return productRepository.searchProductsByType(type, search);
+    }
+
+    /**
      * increase like count
      *
      * @param id product id

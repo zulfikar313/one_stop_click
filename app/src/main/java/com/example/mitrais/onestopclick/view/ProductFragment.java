@@ -1,23 +1,34 @@
 package com.example.mitrais.onestopclick.view;
 
+import android.app.Service;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductFragmentComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductFragmentComponent;
+import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.adapter.ProductAdapter;
 import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
 import com.google.android.gms.tasks.Task;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,6 +43,8 @@ import maes.tech.intentanim.CustomIntent;
  */
 public class ProductFragment extends Fragment implements ProductAdapter.Listener {
     private static final String ARG_TYPE = "ARG_TYPE";
+    private Observer<List<Product>> productsObserver;
+    private LiveData<List<Product>> productLiveData;
     private Task<Void> addLikeTask;
     private Task<Void> addDislikeTask;
     private String type = "";
@@ -44,6 +57,15 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
 
     @BindView(R.id.rec_product)
     RecyclerView recProduct;
+
+    @BindView(R.id.txt_search)
+    TextInputLayout txtSearch;
+
+    @BindView(R.id.txt_product_not_found)
+    TextView txtProductNotFound;
+
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
 
     /**
      * @param type product type filter
@@ -65,6 +87,7 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         ButterKnife.bind(this, view);
         initDagger();
 
+        /* get product type */
         if (getArguments() != null) {
             type = getArguments().getString(ARG_TYPE);
             switch (type) {
@@ -83,17 +106,22 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
             }
         }
 
-
         initRecyclerView();
+        initObserver();
 
         return view;
+    }
+
+    @OnClick(R.id.btn_search)
+    void onSearchButtonClicked() {
+        String searchInput = txtSearch.getEditText().getText().toString().trim();
+        searchProducts(type, searchInput);
     }
 
     @OnClick(R.id.img_add_product)
     void onAddProductImageClicked() {
         goToProductDetailPage("");
     }
-
 
     /**
      * initialize dagger injection
@@ -114,13 +142,25 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
         recProduct.setHasFixedSize(true);
         recProduct.setAdapter(productAdapter);
         recProduct.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if (type.equals(Constant.PRODUCT_TYPE_ALL)) {
-            /* observe all products */
-            viewModel.getAllProducts().observe(this, products -> productAdapter.submitList(products));
-        } else {
-            /* observe products by type */
-            viewModel.getProductsByType(type).observe(this, products -> productAdapter.submitList(products));
-        }
+    }
+
+    /**
+     * initialize products observer
+     */
+    private void initObserver() {
+        productsObserver = products -> {
+            if (products != null) {
+                productAdapter.submitList(products);
+                if (products.size() == 0)
+                    new Handler().postDelayed(() -> txtProductNotFound.setVisibility(View.VISIBLE), Constant.HALF_DELAY);
+                else
+                    txtProductNotFound.setVisibility(View.INVISIBLE);
+
+
+                hideProgressBar();
+            }
+        };
+        observeProducts(type);
     }
 
     @Override
@@ -156,6 +196,40 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
     }
 
     /**
+     * observe product by type
+     *
+     * @param type product type
+     */
+    private void observeProducts(String type) {
+        showProgressBar();
+        if (type.equals(Constant.PRODUCT_TYPE_ALL))
+            productLiveData = viewModel.getAllProducts();
+        else
+            productLiveData = viewModel.getProductsByType(type);
+
+        productLiveData.observe(getViewLifecycleOwner(), productsObserver);
+    }
+
+    /**
+     * observe product by type and search input
+     *
+     * @param type   product type
+     * @param search search input
+     */
+    private void searchProducts(String type, String search) {
+        showProgressBar();
+        if (type.equals(Constant.PRODUCT_TYPE_ALL))
+            productLiveData = viewModel.searchProducts(search);
+        else
+            productLiveData = viewModel.searchProductsByType(type, search);
+
+        productLiveData.observe(getViewLifecycleOwner(), productsObserver);
+
+        hideSoftKeyboard();
+    }
+
+
+    /**
      * start ProductDetailActivity
      *
      * @param id product id
@@ -183,5 +257,28 @@ public class ProductFragment extends Fragment implements ProductAdapter.Listener
      */
     private boolean isAddDislikeInProgress() {
         return addDislikeTask != null && !addDislikeTask.isComplete();
+    }
+
+    /**
+     * set progress bar visible
+     */
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * set progress bar invisible
+     */
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+    // endregion
+
+    /**
+     * hide soft keyboard
+     */
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
     }
 }

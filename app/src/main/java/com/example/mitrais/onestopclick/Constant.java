@@ -2,6 +2,7 @@ package com.example.mitrais.onestopclick;
 
 public class Constant {
     public static final int PROGRESS_DELAY = 1000;
+    public static final int HALF_DELAY = 500;
 
     /**
      * preferences

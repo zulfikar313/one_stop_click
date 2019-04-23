@@ -79,4 +79,6 @@
     <string name="internet_required">internet is required to proceed</string>
     <string name="error_invalid_product_image">Please add product image</string>
     <string name="error_invalid_profile_image">Please choose profile image</string>
+    <string name="search">Search</string>
+    <string name="error_empty_search_input">Search input can\'t be empty</string>
 </resources>

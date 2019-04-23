@@ -1,5 +1,6 @@
 package com.example.mitrais.onestopclick.view;
 
+import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -129,6 +131,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_save)
     void onSaveButtonClicked() {
+        hideSoftKeyboard();
         switch (rgType.getCheckedRadioButtonId()) {
             case R.id.rb_book: {
                 if (isAuthorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
@@ -502,5 +505,13 @@ public class ProductDetailActivity extends AppCompatActivity {
      */
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * hide soft keyboard
+     */
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(txtTitle.getWindowToken(), 0);
     }
 }

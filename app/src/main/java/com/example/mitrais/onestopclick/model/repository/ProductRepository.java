@@ -82,6 +82,23 @@ public class ProductRepository {
     }
 
     /**
+     * @param search title, author, artist or director
+     * @return product search results live data
+     */
+    public LiveData<List<Product>> searchProducts(String search) {
+        return productDao.searchProducts("%" + search + "%");
+    }
+
+    /**
+     * @param type   product type
+     * @param search title, author, artist or director
+     * @return product search results live data
+     */
+    public LiveData<List<Product>> searchProductsByType(String type, String search) {
+        return productDao.searchProductsByType(type, "%" + search + "%");
+    }
+
+    /**
      * returns all product live data
      *
      * @return product list live data
