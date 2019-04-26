@@ -170,8 +170,6 @@ public class ProfileRepository {
     // region firestore
 
     /**
-     * save profile
-     *
      * @param profile user profile
      * @return save profile task
      */

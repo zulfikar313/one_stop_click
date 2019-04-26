@@ -65,8 +65,6 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     /**
-     * save profile
-     *
      * @param profile profile object
      * @return save profile task
      */

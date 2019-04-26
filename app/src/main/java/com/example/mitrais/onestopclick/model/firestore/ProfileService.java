@@ -7,17 +7,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * ProfileService class provide access to profile data in firestore
  */
 public class ProfileService {
     private static final String REF_PROFILE = "profile";
-    private static final String KEY_ADDRESS = "address";
-    private static final String KEY_PROFILE_IMAGE_URI = "profileImageUri";
-    private static final String KEY_PROFILE_IMAGE_FILE_NAME = "profileImageFileName";
     private static ProfileService instance;
     private static CollectionReference profileRef;
 

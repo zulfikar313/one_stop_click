@@ -83,4 +83,9 @@
     <string name="error_empty_search_input">Search input can\'t be empty</string>
     <string name="add_trailer">Add trailer</string>
     <string name="set_trailer">Set trailer</string>
+    <string name="error_failed_to_choose_image">Failed to choose image</string>
+    <string name="error_failed_to_load_profile_image">Failed to load profile image</string>
+    <string name="error_failed_to_upload_profile_image">Failed to upload profile image</string>
+    <string name="error_failed_to_save_profile">Failed to save profile</string>
+    <string name="profile_has_been_saved">Profile has been saved</string>
 </resources>

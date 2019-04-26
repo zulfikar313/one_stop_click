@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.profile: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProfileFragment.newInstance()).commit();
                 break;
             }
         }
@@ -172,12 +172,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * observe user profile
      */
     private void observeProfile() {
-        FirebaseUser user = viewModel.getCurrentUser();
-        viewModel.getProfileByEmail(user.getEmail()).observe(this, profile -> {
+        viewModel.getProfileByEmail(viewModel.getCurrentUser().getEmail()).observe(this, profile -> {
             if (profile != null) {
                 txtEmail.setText(profile.getEmail());
-                if (profile.getProfileImageUri() != null && !profile.getProfileImageUri().isEmpty())
-                    Picasso.get().load(profile.getProfileImageUri()).placeholder(R.drawable.skeleton).into(imgProfile);
+                if (profile.getImageUri() != null && !profile.getImageUri().isEmpty())
+                    Picasso.get().load(profile.getImageUri()).placeholder(R.drawable.skeleton).into(imgProfile);
             }
         });
     }

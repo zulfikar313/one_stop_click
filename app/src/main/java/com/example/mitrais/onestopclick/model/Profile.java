@@ -12,8 +12,7 @@ public class Profile {
     @PrimaryKey
     @NonNull
     private String email = "";
-    private String profileImageUri;
-    private String profileImageFilename;
+    private String imageUri;
     private String address;
 
     @Ignore
@@ -21,21 +20,14 @@ public class Profile {
     }
 
     /**
-     * @param email                profile email address
-     * @param profileImageUri      profile image uri
-     * @param profileImageFilename profile image filename
-     * @param address              profile address
+     * @param email    profile email address
+     * @param imageUri profile image uri
+     * @param address  profile address
      */
-    public Profile(@NonNull String email, String profileImageUri, String profileImageFilename, String address) {
+    public Profile(@NonNull String email, String imageUri, String address) {
         this.email = email;
-        this.profileImageUri = profileImageUri == null ? "" : profileImageUri;
-        this.profileImageFilename = profileImageFilename == null ? "" : profileImageFilename;
+        this.imageUri = imageUri == null ? "" : imageUri;
         this.address = address == null ? "" : address;
-    }
-
-    @Exclude
-    public void setEmail(@NonNull String email) {
-        this.email = email;
     }
 
     @Exclude
@@ -44,26 +36,25 @@ public class Profile {
         return email;
     }
 
-    /**
-     * @return profile image uri
-     */
-    public String getProfileImageUri() {
-        return profileImageUri;
+    public String getImageUri() {
+        return imageUri;
     }
 
-    /**
-     * @return profile image filename
-     */
-    public String getProfileImageFilename() {
-        return profileImageFilename;
-    }
-
-    /**
-     * @return user address
-     */
     public String getAddress() {
         return address;
     }
 
+    @Exclude
+    public void setEmail(@NonNull String email) {
+        this.email = email;
+    }
 
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
+    }
 }

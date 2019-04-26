@@ -8,10 +8,7 @@ import android.content.Context;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
 
-/**
- * MainDatabase class provide access to dao's
- */
-@Database(entities = {Profile.class, Product.class}, version = 7)
+@Database(entities = {Profile.class, Product.class}, version = 8)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;
 
