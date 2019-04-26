@@ -616,9 +616,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-    /**
-     * hide soft keyboard
-     */
     private void hideSoftKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(txtTitle.getWindowToken(), 0);

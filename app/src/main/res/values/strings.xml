@@ -88,4 +88,7 @@
     <string name="error_failed_to_upload_profile_image">Failed to upload profile image</string>
     <string name="error_failed_to_save_profile">Failed to save profile</string>
     <string name="profile_has_been_saved">Profile has been saved</string>
+    <string name="search_book">Search book</string>
+    <string name="search_music">Search music</string>
+    <string name="search_movie">Search movie</string>
 </resources>

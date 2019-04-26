@@ -2,8 +2,8 @@ package com.example.mitrais.onestopclick.dagger.module;
 
 import android.arch.lifecycle.ViewModelProviders;
 
-import com.example.mitrais.onestopclick.view.ProductFragment;
-import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
+import com.example.mitrais.onestopclick.view.ProductListFragment;
+import com.example.mitrais.onestopclick.viewmodel.ProductListViewModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -11,7 +11,7 @@ import dagger.Provides;
 @Module
 public class ProductViewModelModule {
     @Provides
-    ProductViewModel provideProductViewModel(ProductFragment fragment) {
-        return ViewModelProviders.of(fragment).get(ProductViewModel.class);
+    ProductListViewModel provideProductViewModel(ProductListFragment fragment) {
+        return ViewModelProviders.of(fragment).get(ProductListViewModel.class);
     }
 }

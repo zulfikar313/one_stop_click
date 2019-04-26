@@ -15,19 +15,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-/**
- * ProductViewModel handle data lifecycle for ProductFragment
- */
-public class ProductViewModel extends AndroidViewModel {
+public class ProductListViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
-    /**
-     * ProductViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
-    public ProductViewModel(@NonNull Application application) {
+    public ProductListViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
@@ -40,8 +32,6 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
-     * get all products live data
-     *
      * @return product list live data
      */
     public LiveData<List<Product>> getProductsByType(String type) {

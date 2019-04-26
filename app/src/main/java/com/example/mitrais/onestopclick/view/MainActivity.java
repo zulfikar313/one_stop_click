@@ -1,5 +1,6 @@
 package com.example.mitrais.onestopclick.view;
 
+import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,7 +26,6 @@ import com.example.mitrais.onestopclick.dagger.component.DaggerMainActivityCompo
 import com.example.mitrais.onestopclick.dagger.component.MainActivityComponent;
 import com.example.mitrais.onestopclick.viewmodel.MainViewModel;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -104,19 +105,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.all: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
                 break;
             }
             case R.id.movie: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_MOVIE)).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MOVIE)).commit();
                 break;
             }
             case R.id.music: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_MUSIC)).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MUSIC)).commit();
                 break;
             }
             case R.id.book: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_BOOK)).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_BOOK)).commit();
                 break;
             }
             case R.id.profile: {
@@ -151,9 +152,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.main_menu));
 
+
         /* initialize drawer toggle */
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_bar_open, R.string.navigation_bar_close);
+                R.string.navigation_bar_open, R.string.navigation_bar_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                hideSoftKeyboard();
+            }
+        };
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * initialize first fragment
      */
     private void initFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
         navView.setCheckedItem(R.id.all);
     }
 
@@ -216,26 +225,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * returns true if sync user data in progress
-     *
-     * @return sync user data progress status
+     * @return true if sync in progress
      */
     private boolean isProductSyncInProgress() {
         return productSyncTask != null && !productSyncTask.isComplete();
     }
 
-    /**
-     * set progress bar visible
-     */
     public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * set progress bar invisible
-     */
     public void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(toolbar.getWindowToken(), 0);
     }
     // endregion
 }
