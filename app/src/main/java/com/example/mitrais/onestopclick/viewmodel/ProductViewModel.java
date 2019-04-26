@@ -16,29 +16,19 @@ import com.google.firebase.firestore.DocumentReference;
 
 import javax.inject.Inject;
 
-/**
- * ProductDetailViewModel handle data lifecycle for ProductDetailActivity
- */
-public class ProductDetailViewModel extends AndroidViewModel {
+public class ProductViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
     @Inject
     StorageRepository storageRepository;
 
-    /**
-     * ProductDetailViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
-    public ProductDetailViewModel(@NonNull Application application) {
+    public ProductViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
     /**
-     * get product live data by id
-     *
      * @param id product id
      * @return product live data
      */
@@ -47,8 +37,6 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * upload product image
-     *
      * @param uri      product image uri
      * @param filename product image filename
      * @return upload product image task
@@ -58,8 +46,6 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * upload trailer
-     *
      * @param uri      trailer uri
      * @param filename trailer filename
      * @return upload trailer task
@@ -84,7 +70,7 @@ public class ProductDetailViewModel extends AndroidViewModel {
      * @param trailer1Uri trailer1 uri
      * @return save product task
      */
-    public Task<Void> saveProductTrailer1(String productId, Uri trailer1Uri) {
+    public Task<Void> saveProductTrailer(String productId, Uri trailer1Uri) {
         return productRepository.saveProductTrailer1(productId, trailer1Uri);
     }
 

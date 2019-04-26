@@ -15,6 +15,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -22,13 +23,12 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductDetailActivityComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductDetailActivityComponent;
 import com.example.mitrais.onestopclick.model.Product;
-import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
+import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.squareup.picasso.Callback;
@@ -45,44 +45,29 @@ import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
 /**
- * ProductDetailActivity handle product detail page logic
+ * ProductActivity handle product detail page logic
  */
-public class ProductDetailActivity extends AppCompatActivity {
-    private static final String TAG = "ProductDetailActivity";
+public class ProductActivity extends AppCompatActivity {
+    private static final String TAG = "ProductActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
-    private static final int REQUEST_PICK_TRAILER1 = 2;
+    private static final int REQUEST_CHOOSE_TRAILER = 2;
     private String productId;
-    private String productThumbnailUri;
+    private Uri thumbnailUri;
     private Product product;
-    private Task<Uri> saveImageTask;
+    private Task<Uri> uploadImageTask;
     private Task<Uri> uploadTrailerTask;
     private Task<Void> saveProductTask;
     private Task<DocumentReference> addProductTask;
-    private Uri trailer1Uri;
+    private Uri trailerUri;
 
     @Inject
-    ProductDetailViewModel viewModel;
+    ProductViewModel viewModel;
 
     @BindView(R.id.shimmer_layout)
     ShimmerLayout shimmerLayout;
 
     @BindView(R.id.img_thumbnail)
     ImageView imgThumbnail;
-
-    @BindView(R.id.txt_title)
-    TextInputLayout txtTitle;
-
-    @BindView(R.id.txt_author)
-    TextInputLayout txtAuthor;
-
-    @BindView(R.id.txt_artist)
-    TextInputLayout txtArtist;
-
-    @BindView(R.id.txt_director)
-    TextInputLayout txtDirector;
-
-    @BindView(R.id.txt_description)
-    TextInputLayout txtDescription;
 
     @BindView(R.id.rg_type)
     RadioGroup rgType;
@@ -96,14 +81,35 @@ public class ProductDetailActivity extends AppCompatActivity {
     @BindView(R.id.rb_movie)
     RadioButton rbMovie;
 
-    @BindView(R.id.trailer1_container)
-    FrameLayout trailer1Container;
+    @BindView(R.id.txt_title)
+    TextInputLayout txtTitle;
 
-    @BindView(R.id.trailer1)
-    VideoView trailer1;
+    @BindView(R.id.txt_author)
+    TextInputLayout txtAuthor;
 
-    @BindView(R.id.btn_set_trailer1)
-    AppCompatButton btnAddTrailer1;
+    @BindView(R.id.txt_artist)
+    TextInputLayout txtArtist;
+
+    @BindView(R.id.movie_container)
+    LinearLayout movieContainer;
+
+    @BindView(R.id.movie_edit_container)
+    LinearLayout movieEditContainer;
+
+    @BindView(R.id.txt_director)
+    TextInputLayout txtDirector;
+
+    @BindView(R.id.trailer_container)
+    FrameLayout trailerContainer;
+
+    @BindView(R.id.vid_trailer)
+    VideoView vidTrailer;
+
+    @BindView(R.id.btn_upload_trailer)
+    AppCompatButton btnSetTrailer;
+
+    @BindView(R.id.txt_description)
+    TextInputLayout txtDescription;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -111,19 +117,20 @@ public class ProductDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_product_detail);
+        setContentView(R.layout.activity_product);
         ButterKnife.bind(this);
         initDagger();
-
-        rbBook.setChecked(true); /* check book by default */
         productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
-        observeProduct(productId);
+        if (productId != null && !productId.isEmpty())
+            observeProduct(productId);
     }
 
     @Override
     public void onBackPressed() {
-        if (isSaveImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadTrailerInProgress())
+            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
         else
             super.onBackPressed();
 
@@ -137,44 +144,50 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.img_thumbnail)
     void onThumbnailImageClicked() {
-        if (isSaveImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (!App.isOnline())
-            Toasty.info(this, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
+        else if (isUploadTrailerInProgress())
+            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
         else
             openImageFileChooser();
     }
 
     @OnClick(R.id.btn_save)
     void onSaveButtonClicked() {
-        hideSoftKeyboard();
-        switch (rgType.getCheckedRadioButtonId()) {
-            case R.id.rb_book: {
-                if (isAuthorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
-                    saveProduct(Uri.parse(productThumbnailUri));
-                break;
-            }
-            case R.id.rb_music: {
-                if (isArtistValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
-                    saveProduct(Uri.parse(productThumbnailUri));
-                break;
-            }
-            case R.id.rb_movie: {
-                if (isDirectorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
-                    saveProduct(Uri.parse(productThumbnailUri));
-                break;
+        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadTrailerInProgress())
+            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
+        else {
+            hideSoftKeyboard();
+            switch (rgType.getCheckedRadioButtonId()) {
+                case R.id.rb_book: {
+                    if (isAuthorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
+                        saveBook();
+                    break;
+                }
+                case R.id.rb_music: {
+                    if (isArtistValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
+                        saveMusic();
+                    break;
+                }
+                case R.id.rb_movie: {
+                    if (isDirectorValid() & isTitleValid() & isDescriptionValid() & isProductThumbnailValid())
+                        saveMovie();
+                    break;
+                }
             }
         }
     }
 
-    @OnClick(R.id.btn_set_trailer1)
-    void onAddTrailer1ButtonClicked() {
-        if (isSaveImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+    @OnClick(R.id.btn_upload_trailer)
+    void onUploadTrailerButtonClicked() {
+        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (!App.isOnline())
-            Toasty.info(this, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
+        else if (isUploadTrailerInProgress())
+            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
         else
-            openTrailer1FileChooser();
+            openTrailerFileChooser();
     }
 
     @OnCheckedChanged({R.id.rb_book, R.id.rb_music, R.id.rb_movie})
@@ -203,6 +216,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
             Uri uri = data.getData();
+            thumbnailUri = uri;
 
             /* load image */
             shimmerLayout.startShimmerAnimation();
@@ -218,21 +232,14 @@ public class ProductDetailActivity extends AppCompatActivity {
                     Log.e(TAG, e.toString());
                 }
             });
-
-            productThumbnailUri = uri.toString();
         }
 
-        if (requestCode == REQUEST_PICK_TRAILER1 && resultCode == RESULT_OK
+        if (requestCode == REQUEST_CHOOSE_TRAILER && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
-            trailer1Uri = data.getData();
-            trailer1.setVideoURI(data.getData());
-            trailer1.setMediaController(new MediaController(this));
-
-            /* save trailer if product exist */
-            if (productId != null && !productId.isEmpty()) {
-                String filename = productId + "tr1." + getFileExtension(data.getData());
-                saveTrailer(data.getData(), filename, productId);
-            }
+            trailerUri = data.getData();
+            vidTrailer.setVideoURI(data.getData());
+            vidTrailer.setMediaController(new MediaController(this));
+            uploadTrailer();
         }
     }
 
@@ -247,20 +254,16 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * observe product live data
-     *
      * @param id product id
      */
     private void observeProduct(String id) {
-        if (!id.isEmpty()) {
-            viewModel.getProductById(id).observe(this, product -> {
-                if (product != null) {
-                    this.product = product;
-                    bindProduct(product);
-                } else
-                    Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
-            });
-        }
+        viewModel.getProductById(id).observe(this, product -> {
+            if (product != null) {
+                this.product = product;
+                bindProduct(product);
+            } else
+                Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
+        });
     }
 
     /**
@@ -270,7 +273,7 @@ public class ProductDetailActivity extends AppCompatActivity {
      */
     private void bindProduct(Product product) {
         if (!product.getThumbnailUri().isEmpty()) {
-            productThumbnailUri = product.getThumbnailUri();
+            thumbnailUri = Uri.parse(product.getThumbnailUri());
             Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
                 @Override
                 public void onSuccess() {
@@ -310,12 +313,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                 rbMusic.setEnabled(false);
                 rbBook.setEnabled(false);
 
-                if (product.getTrailer1Uri() != null && !product.getTrailer1Uri().isEmpty()) {
-                    trailer1.setVideoURI(Uri.parse(product.getTrailer1Uri()));
-                    trailer1.setMediaController(new MediaController(this));
-                    trailer1.start();
+                if (product.getTrailerUri() != null && !product.getTrailerUri().isEmpty()) {
+                    trailerUri = Uri.parse(product.getTrailerUri());
+                    vidTrailer.setVideoURI(Uri.parse(product.getTrailerUri()));
+                    vidTrailer.setMediaController(new MediaController(this));
+                    vidTrailer.start();
                 } else {
-                    trailer1Container.setBackground(getDrawable(R.drawable.skeleton));
+                    trailerContainer.setBackground(getDrawable(R.drawable.skeleton));
                 }
 
                 break;
@@ -328,113 +332,151 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * upload product image to storage
-     * update firebase user data with image data
-     * update profile data with image data
-     *
-     * @param imageUri product image uri
+     * save book product
      */
-    private void saveProduct(Uri imageUri) {
+    private void saveBook() {
         showProgressBar();
-
         String filename;
         if (product != null && !product.getThumbnailFilename().isEmpty()) {
             filename = product.getThumbnailFilename();
         } else {
-            filename = System.currentTimeMillis() + "." + getFileExtension(imageUri);
+            filename = System.currentTimeMillis() + "." + getFileExtension(thumbnailUri);
         }
-
-        saveImageTask = viewModel.uploadProductImage(imageUri, filename)
+        uploadImageTask = viewModel.uploadProductImage(thumbnailUri, filename)
                 .addOnSuccessListener(uri -> {
-                    productThumbnailUri = uri.toString();
-
-                    Product product = new Product();
-                    product.setThumbnailUri(uri.toString());
-                    product.setThumbnailFilename(filename);
-
                     String title = txtTitle.getEditText().getText().toString().trim();
                     String author = txtAuthor.getEditText().getText().toString().trim();
-                    String artist = txtArtist.getEditText().getText().toString().trim();
-                    String director = txtDirector.getEditText().getText().toString().trim();
                     String description = txtDescription.getEditText().getText().toString().trim();
-
+                    product.setThumbnailUri(uri.toString());
+                    product.setThumbnailFilename(filename);
                     product.setTitle(title);
-                    switch (rgType.getCheckedRadioButtonId()) {
-                        case R.id.rb_book: {
-                            product.setType(Constant.PRODUCT_TYPE_BOOK);
-                            product.setAuthor(author);
-                            break;
-                        }
-                        case R.id.rb_music: {
-                            product.setType(Constant.PRODUCT_TYPE_MUSIC);
-                            product.setArtist(artist);
-                            break;
-                        }
-                        case R.id.rb_movie: {
-                            product.setType(Constant.PRODUCT_TYPE_MOVIE);
-                            product.setDirector(director);
-                            break;
-                        }
-                    }
+                    product.setAuthor(author);
+                    product.setType(Constant.PRODUCT_TYPE_BOOK);
                     product.setDescription(description);
-
-                    if (!productId.isEmpty()) { /* indicating product already exist */
-                        product.setId(productId);
-                        saveProductTask = viewModel.saveProduct(product)
-                                .addOnCompleteListener(task -> hideProgressBar())
-                                .addOnSuccessListener(aVoid -> {
-                                    Toasty.success(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
-                                    onBackPressed();
-                                })
-                                .addOnFailureListener(e -> Toasty.error(ProductDetailActivity.this, e.toString(), Toast.LENGTH_LONG).show());
-                    } else {
-                        /* create new product */
-                        addProductTask = viewModel.addProduct(product)
-                                .addOnCompleteListener(task -> hideProgressBar())
-                                .addOnSuccessListener(documentReference -> {
-                                    Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
-                                    onBackPressed();
-                                })
-                                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
-                    }
-
+                    saveProductTask = viewModel.saveProduct(product)
+                            .addOnCompleteListener(task -> hideProgressBar())
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                                onBackPressed();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                            });
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Toasty.error(this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
                 });
     }
 
     /**
-     * @param uri       trailer uri
-     * @param filename  trailer filename
-     * @param productId product id
+     * save music product
      */
-    private void saveTrailer(Uri uri, String filename, String productId) {
+    private void saveMusic() {
         showProgressBar();
-        uploadTrailerTask = viewModel.uploadTrailer(uri, filename)
+        String filename;
+        if (product != null && !product.getThumbnailFilename().isEmpty()) {
+            filename = product.getThumbnailFilename();
+        } else {
+            filename = System.currentTimeMillis() + "." + getFileExtension(thumbnailUri);
+        }
+        uploadImageTask = viewModel.uploadProductImage(thumbnailUri, filename)
+                .addOnSuccessListener(uri -> {
+                    String title = txtTitle.getEditText().getText().toString().trim();
+                    String artist = txtArtist.getEditText().getText().toString().trim();
+                    String description = txtDescription.getEditText().getText().toString().trim();
+                    product.setThumbnailUri(uri.toString());
+                    product.setThumbnailFilename(filename);
+                    product.setTitle(title);
+                    product.setArtist(artist);
+                    product.setType(Constant.PRODUCT_TYPE_MUSIC);
+                    product.setDescription(description);
+                    saveProductTask = viewModel.saveProduct(product)
+                            .addOnCompleteListener(task -> hideProgressBar())
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                                onBackPressed();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                });
+    }
+
+    /**
+     * save movie product
+     */
+    private void saveMovie() {
+        showProgressBar();
+        String filename;
+        if (product != null && !product.getThumbnailFilename().isEmpty()) {
+            filename = product.getThumbnailFilename();
+        } else {
+            filename = System.currentTimeMillis() + "." + getFileExtension(thumbnailUri);
+        }
+        uploadImageTask = viewModel.uploadProductImage(thumbnailUri, filename)
+                .addOnSuccessListener(uri -> {
+                    String title = txtTitle.getEditText().getText().toString().trim();
+                    String director = txtDirector.getEditText().getText().toString().trim();
+                    String description = txtDescription.getEditText().getText().toString().trim();
+                    product.setThumbnailUri(uri.toString());
+                    product.setThumbnailFilename(filename);
+                    product.setTitle(title);
+                    product.setDirector(director);
+                    product.setType(Constant.PRODUCT_TYPE_MOVIE);
+                    product.setDescription(description);
+                    saveProductTask = viewModel.saveProduct(product)
+                            .addOnCompleteListener(task -> hideProgressBar())
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                                onBackPressed();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                });
+    }
+
+    /**
+     * upload movie trailer
+     */
+    private void uploadTrailer() {
+        showProgressBar();
+        String filename = productId + "tr1." + getFileExtension(trailerUri);
+        uploadTrailerTask = viewModel.uploadTrailer(trailerUri, filename)
                 .addOnSuccessListener(uri1 ->
-                        saveProductTask = viewModel.saveProductTrailer1(productId, uri1)
+                        saveProductTask = viewModel.saveProductTrailer(productId, uri1)
                                 .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(aVoid ->
                                 {
-                                    Toasty.success(ProductDetailActivity.this, "Trailer uploaded", Toast.LENGTH_SHORT).show();
-                                    trailer1.start();
+                                    Toasty.success(ProductActivity.this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show();
+                                    vidTrailer.start();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Failed to upload trailer");
-                                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
+                                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 }))
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Log.e(TAG, "Failed to upload trailer");
-                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
+                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
-    /**
-     * open menu to choose image to replace product image
-     */
     private void openImageFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -442,14 +484,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
     }
 
-    /**
-     * open menu to choose tralier for trailer 1
-     */
-    private void openTrailer1FileChooser() {
+    private void openTrailerFileChooser() {
         Intent intent = new Intent();
         intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, REQUEST_PICK_TRAILER1);
+        startActivityForResult(intent, REQUEST_CHOOSE_TRAILER);
     }
 
     /**
@@ -531,7 +570,7 @@ public class ProductDetailActivity extends AppCompatActivity {
      * @return true if product thumbnail valid
      */
     private boolean isProductThumbnailValid() {
-        if (productThumbnailUri == null || productThumbnailUri.isEmpty()) {
+        if (thumbnailUri == null || thumbnailUri.toString().isEmpty()) {
             Toasty.error(this, getString(R.string.error_invalid_product_image), Toast.LENGTH_LONG).show();
             return false;
         }
@@ -539,14 +578,14 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * @return true if save image task in progress
+     * @return true if upload image task in progress
      */
-    private boolean isSaveImageInProgress() {
-        return saveImageTask != null && !saveImageTask.isComplete();
+    private boolean isUploadImageInProgress() {
+        return uploadImageTask != null && !uploadImageTask.isComplete();
     }
 
     /**
-     * @return true if save details task in progress
+     * @return true if save task in progress
      */
     private boolean isSaveProductInProgress() {
         return saveProductTask != null && !saveProductTask.isComplete();
@@ -567,51 +606,38 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * show author text input and remove artist and director text input
+     * show book exclusive view
      */
     private void setBookView() {
         txtAuthor.setVisibility(View.VISIBLE);
         txtArtist.setVisibility(View.GONE);
-        txtDirector.setVisibility(View.GONE);
-        trailer1Container.setVisibility(View.GONE);
-        btnAddTrailer1.setVisibility(View.GONE);
+        movieContainer.setVisibility(View.GONE);
     }
 
     /**
-     * show artist text input and remove author and director text input
+     * show music exclusive views
      */
     private void setMusicView() {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.VISIBLE);
-
-        txtDirector.setVisibility(View.GONE);
-        trailer1Container.setVisibility(View.GONE);
-        btnAddTrailer1.setVisibility(View.GONE);
+        movieContainer.setVisibility(View.GONE);
     }
 
     /**
-     * show director text input and remove author and artist text input
+     * show movie exclusive views
      */
     private void setMovieView() {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.GONE);
-        txtDirector.setVisibility(View.VISIBLE);
-        if (productId != null && !productId.isEmpty()) {
-            trailer1Container.setVisibility(View.VISIBLE);
-            btnAddTrailer1.setVisibility(View.VISIBLE);
-        }
+        movieContainer.setVisibility(View.VISIBLE);
+        if (productId != null && !productId.isEmpty())
+            movieEditContainer.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * set progress bar visible
-     */
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * set progress bar invisible
-     */
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }

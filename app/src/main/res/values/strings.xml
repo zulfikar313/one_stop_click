@@ -91,4 +91,11 @@
     <string name="search_book">Search book</string>
     <string name="search_music">Search music</string>
     <string name="search_movie">Search movie</string>
+    <string name="error_invalid_trailer">Please add trailer</string>
+    <string name="error_failed_to_upload_product_image">Failed to upload product image</string>
+    <string name="error_failed_to_save_product">Failed to save product</string>
+    <string name="upload_trailer">Upload trailer</string>
+    <string name="error_failed_to_upload_trailer">Failed to upload trailer</string>
+    <string name="trailer_uploaded">Trailer uploaded</string>
+    <string name="upload_trailer_is_in_progress">Upload trailer is in progress</string>
 </resources>

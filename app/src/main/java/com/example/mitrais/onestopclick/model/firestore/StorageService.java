@@ -8,9 +8,6 @@ import com.google.firebase.storage.StorageReference;
 
 import io.grpc.Context;
 
-/**
- * StorageService class provide access to FirebaseStorage
- */
 public class StorageService {
     private static final String REF_PROFILE_IMG = "profile_image";
     private static final String REF_PRODUCT_IMG = "product_image";

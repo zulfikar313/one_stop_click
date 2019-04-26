@@ -22,7 +22,7 @@ public class Product {
     private String contentFilename;
     private String thumbnailUri;
     private String thumbnailFilename;
-    private String trailer1Uri;
+    private String trailerUri;
     private int like;
     private int dislike;
 
@@ -42,11 +42,11 @@ public class Product {
      * @param contentFilename   content filename in storage
      * @param thumbnailUri      thumbnail uri depicting product
      * @param thumbnailFilename thumbnail filename in storage
-     * @param trailer1Uri       trailer1 uri
+     * @param trailerUri        trailer uri
      * @param like              product like count
      * @param dislike           product dislike count
      */
-    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, String trailer1Uri, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, String trailerUri, int like, int dislike) {
         this.id = id;
         this.title = title == null ? " " : title;
         this.description = description == null ? "" : description;
@@ -58,171 +58,102 @@ public class Product {
         this.contentFilename = contentFilename == null ? "" : contentFilename;
         this.thumbnailUri = thumbnailUri == null ? "" : thumbnailUri;
         this.thumbnailFilename = thumbnailFilename == null ? "" : thumbnailFilename;
-        this.trailer1Uri = trailer1Uri == null ? "" : trailer1Uri;
+        this.trailerUri = trailerUri == null ? "" : trailerUri;
         this.like = like;
         this.dislike = dislike;
     }
 
-    /**
-     * @return product id
-     */
     @Exclude
     @NonNull
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id product id
-     */
     @Exclude
     public void setId(@NonNull String id) {
         this.id = id;
     }
 
-    /**
-     * @return product title
-     */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * @return product description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @return product type
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * @return artist
-     */
     public String getArtist() {
         return artist;
     }
 
-    /**
-     * @return author
-     */
     public String getAuthor() {
         return author;
     }
 
-    /**
-     * @return director
-     */
     public String getDirector() {
         return director;
     }
 
-    /**
-     * @return content uri
-     */
     public String getContentUri() {
         return contentUri;
     }
 
-    /**
-     * @return content filename
-     */
     public String getContentFilename() {
         return contentFilename;
     }
 
-    /**
-     * @return thumbnail uri
-     */
     public String getThumbnailUri() {
         return thumbnailUri;
     }
 
-    /**
-     * @return thumbnail filename
-     */
     public String getThumbnailFilename() {
         return thumbnailFilename;
     }
 
-    /**
-     * @return like count
-     */
     public int getLike() {
         return like;
     }
 
-    /**
-     * @return dislike count
-     */
     public int getDislike() {
         return dislike;
     }
 
-    /**
-     * @param thumbnailUri thumbnail uri
-     */
     public void setThumbnailUri(String thumbnailUri) {
         this.thumbnailUri = thumbnailUri;
     }
 
-    /**
-     * @param thumbnailFilename thumbnail filename
-     */
     public void setThumbnailFilename(String thumbnailFilename) {
         this.thumbnailFilename = thumbnailFilename;
     }
 
-    /**
-     * @return trailer uri
-     */
-    public String getTrailer1Uri() {
-        return trailer1Uri;
+    public String getTrailerUri() {
+        return trailerUri;
     }
 
-    /**
-     * @param title product title
-     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * @param description product description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * @param type product type
-     */
     public void setType(String type) {
         this.type = type;
     }
 
-    /**
-     * @param artist music artist
-     */
     public void setArtist(String artist) {
         this.artist = artist;
     }
 
-    /**
-     * @param author book author
-     */
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    /**
-     * @param director movie director
-     */
     public void setDirector(String director) {
         this.director = director;
     }

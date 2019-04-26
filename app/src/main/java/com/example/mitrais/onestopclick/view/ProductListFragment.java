@@ -85,7 +85,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     void onSearchButtonClicked() {
         String searchInput = txtSearch.getEditText().getText().toString().trim();
         searchProducts(productType, searchInput);
-        hideSoftKeyboard();
     }
 
     @OnClick(R.id.img_add_product)
@@ -95,8 +94,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @OnEditorAction(R.id.txt_edit_search)
     boolean onSearchTextEditorAction() {
-        txtSearch.getEditText().clearFocus();
-        hideSoftKeyboard();
         String search = txtSearch.getEditText().getText().toString();
         searchProducts(productType, search);
         return true;
@@ -204,6 +201,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
      * @param search search input
      */
     private void searchProducts(String type, String search) {
+        txtSearch.getEditText().setText("");
+        txtSearch.getEditText().clearFocus();
+        hideSoftKeyboard();
+
         if (type.equals(Constant.PRODUCT_TYPE_ALL))
             viewModel.searchProducts(search).observe(getViewLifecycleOwner(), products -> {
                 productAdapter.submitList(products);
@@ -217,7 +218,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void goToProductScreen(String id) {
-        Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+        Intent intent = new Intent(getActivity(), ProductActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
         CustomIntent.customType(getActivity(), Constant.ANIMATION_FADEIN_TO_FADEOUT);

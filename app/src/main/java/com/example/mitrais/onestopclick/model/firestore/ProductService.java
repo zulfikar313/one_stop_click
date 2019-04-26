@@ -21,7 +21,7 @@ public class ProductService {
     private static final String KEY_DISLIKE = "dislike";
     private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
     private static final String KEY_THUMBNAIL_FILENAME = "thumbnailFilename";
-    private static final String KEY_TRAILER1_URI = "trailer1Uri";
+    private static final String KEY_TRAILER_URI = "trailerUri";
     private static final String KEY_TITLE = "title";
     private static final String KEY_AUTHOR = "author";
     private static final String KEY_DESCRIPTION = "description";
@@ -105,15 +105,15 @@ public class ProductService {
     }
 
     /**
-     * @param productId   product id
-     * @param trailer1Uri trailer1 uri
+     * @param productId  product id
+     * @param trailerUri trailer1 uri
      * @return
      */
-    public Task<Void> saveProductTrailer1Uri(String productId, Uri trailer1Uri) {
+    public Task<Void> saveProductTrailer1Uri(String productId, Uri trailerUri) {
         DocumentReference docRef = productRef.document(productId);
 
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TRAILER1_URI, trailer1Uri.toString());
+        map.put(KEY_TRAILER_URI, trailerUri.toString());
 
         return docRef.update(map);
     }
