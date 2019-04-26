@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerSplashActivityComponent;
@@ -18,9 +17,6 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import maes.tech.intentanim.CustomIntent;
 
-/**
- * SplashActivity handle splash page logic
- */
 public class SplashActivity extends AppCompatActivity {
     private FirebaseUser user;
 
@@ -38,17 +34,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        user = viewModel.getUser();
 
-        /* handle auto login */
+        user = viewModel.getUser();
         if (user != null && user.isEmailVerified())
-            goToMainPage();
+            goToMainScreen(); /* auto login */
         else {
-            boolean isLoggedOnOnce = App.prefs.getBoolean(Constant.PREF_IS_LOGGED_ON_ONCE);
-            if (isLoggedOnOnce)
-                goToLoginPage();
-            else
-                goToRegistrationPage();
+            goToLoginScreen();
         }
     }
 
@@ -68,10 +59,7 @@ public class SplashActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    /**
-     * start LoginActivity
-     */
-    private void goToLoginPage() {
+    private void goToLoginScreen() {
         new Handler().postDelayed(() -> {
             finish();
             Intent intent = new Intent(this, LoginActivity.class);
@@ -80,10 +68,7 @@ public class SplashActivity extends AppCompatActivity {
         }, Constant.PROGRESS_DELAY);
     }
 
-    /**
-     * start MainActivity
-     */
-    private void goToMainPage() {
+    private void goToMainScreen() {
         viewModel.syncData(user)
                 .addOnCompleteListener(task -> {
                     finish();
@@ -91,17 +76,5 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(intent);
                     CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
                 });
-    }
-
-    /**
-     * start RegistrationActivity
-     */
-    private void goToRegistrationPage() {
-        new Handler().postDelayed(() -> {
-            finish();
-            Intent intent = new Intent(SplashActivity.this, RegistrationActivity.class);
-            startActivity(intent);
-            CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-        }, Constant.PROGRESS_DELAY);
     }
 }

@@ -1,6 +1,5 @@
 package com.example.mitrais.onestopclick.view;
 
-import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -73,13 +72,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 String password = txtPassword.getEditText().getText().toString().trim();
                 register(email, password);
             }
-
         }
-    }
-
-    @OnClick(R.id.txt_login)
-    void onLoginTextClicked() {
-        goToLoginPage();
     }
 
     // region private methods
@@ -112,9 +105,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     /**
-     * returns true if email valid
-     *
-     * @return email validation
+     * @return true if email valid
      */
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
@@ -130,9 +121,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     /**
-     * returns true if password valid
-     *
-     * @return password validation
+     * @return true if password valid
      */
     private boolean isPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
@@ -145,9 +134,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     /**
-     * returns true if confirm password valid
-     *
-     * @return confirm password validation
+     * @return true if confirm password valid
      */
     private boolean isConfirmPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
@@ -170,7 +157,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private void showCheckEmailForVerificationDialog() {
         CheckEmailForVerificationDialog dialog = new CheckEmailForVerificationDialog();
         dialog.setCancelable(false);
-        dialog.setListener(this::goToLoginPage);
+        dialog.setListener(this::onBackPressed);
         dialog.show(getSupportFragmentManager(), TAG);
     }
 
@@ -186,42 +173,23 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     /**
-     * start LoginActivity
-     */
-    private void goToLoginPage() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-    }
-
-    /**
-     * returns true if registration in progress
-     *
-     * @return registration progress status
+     * @return true if registratino in progress
      */
     private boolean isRegistrationInProgress() {
         return registerTask != null && !registerTask.isComplete();
     }
 
     /**
-     * returns true if send email in progress
-     *
-     * @return send email progress status
+     * @return true if send email in progress
      */
     private boolean isSendEmailInProgress() {
         return sendEmailTask != null && !sendEmailTask.isComplete();
     }
 
-    /**
-     * set progress bar visible
-     */
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * set progress bar invisible
-     */
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }

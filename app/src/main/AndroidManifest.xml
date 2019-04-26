@@ -25,6 +25,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.RegistrationActivity"
+            android:parentActivityName=".view.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />

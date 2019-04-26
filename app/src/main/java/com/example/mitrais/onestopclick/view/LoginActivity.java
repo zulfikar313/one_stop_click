@@ -26,14 +26,10 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
-/**
- * LoginActivity handle login page logic
- */
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private FirebaseUser user;
@@ -69,14 +65,6 @@ public class LoginActivity extends AppCompatActivity {
 
         /* set last logged in email if any */
         txtEmail.getEditText().setText(App.prefs.getString(Constant.PREF_LAST_LOGGED_IN_EMAIL));
-
-
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     @OnClick(R.id.btn_login)
@@ -98,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         if (isLoginInProgress() || isSyncDataInProgress()) {
             Toasty.info(this, getString(R.string.login_process_is_running), Toast.LENGTH_SHORT).show();
         } else
-            goToRegistrationPage();
+            goToRegistrationScreen();
     }
 
     @OnClick(R.id.txt_forgot_password)
@@ -106,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
         if (isLoginInProgress() || isSyncDataInProgress()) {
             Toasty.info(this, getString(R.string.login_process_is_running), Toast.LENGTH_SHORT).show();
         } else
-            goToForgotPasswordPage();
+            goToForgotPasswordScreen();
     }
 
     @OnClick(R.id.cb_remember_me)
@@ -141,25 +129,19 @@ public class LoginActivity extends AppCompatActivity {
                     if (!user.isEmailVerified()) {
                         showEmailNotVerifiedDialog();
                     } else {
-                        App.prefs.putBoolean(Constant.PREF_IS_LOGGED_ON_ONCE, true);
-
-                        /**
-                         * save last logged in email if remember me enabled
-                         */
+                        /* save last logged in email if remember me enabled */
                         if (App.prefs.getBoolean(Constant.PREF_IS_REMEMBER_ME_ENABLED))
                             App.prefs.putString(Constant.PREF_LAST_LOGGED_IN_EMAIL, email);
                         else
                             App.prefs.putString(Constant.PREF_LAST_LOGGED_IN_EMAIL, "");
 
-                        goToMainPage();
+                        goToMainScreen();
                     }
                 })
-                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toasty.LENGTH_LONG).show());
+                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toasty.LENGTH_SHORT).show());
     }
 
     /**
-     * send verification email to user email address
-     *
      * @param user logged in user
      */
     private void sendVerificationEmail(FirebaseUser user) {
@@ -170,24 +152,19 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    /**
-     * start RegistrationActivity
-     */
-    private void goToRegistrationPage() {
-        Intent intent = new Intent(this, RegistrationActivity.class);
-        startActivity(intent);
+    private void goToRegistrationScreen() {
+        startActivity(new Intent(this, RegistrationActivity.class));
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     /**
-     * start MainActivity
+     * sync user data then go to main screen
      */
-    private void goToMainPage() {
+    private void goToMainScreen() {
         showProgressBar();
         syncDataTask = viewModel.syncData(user)
                 .addOnCompleteListener(task -> {
                     hideProgressBar();
-
                     finish();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -195,19 +172,13 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * start ForgotPasswordActivity
-     */
-    private void goToForgotPasswordPage() {
-        Intent intent = new Intent(this, ForgotPasswordActivity.class);
-        startActivity(intent);
+    private void goToForgotPasswordScreen() {
+        startActivity(new Intent(this, ForgotPasswordActivity.class));
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     /**
-     * returns true if email valid
-     *
-     * @return email validation
+     * @return true if email valid
      */
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
@@ -223,9 +194,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * returns true if password valid
-     *
-     * @return password validation
+     * @return true if password valid
      */
     private boolean isPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
@@ -244,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
         EmailNotVerifiedDialog dialog = new EmailNotVerifiedDialog();
         dialog.setCancelable(false);
         dialog.setListener(() -> {
-            if (isSendVerificationEmailInProgress())
+            if (isSendEmailInProgress())
                 Toasty.info(this, getString(R.string.send_verification_email_is_in_progress), Toast.LENGTH_SHORT).show();
             else
                 sendVerificationEmail(user);
@@ -254,42 +223,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * returns true if login in progress
-     *
-     * @return login progress status
+     * @return true if login in progress
      */
     private boolean isLoginInProgress() {
         return loginTask != null && !loginTask.isComplete();
     }
 
     /**
-     * returns true if sync data in progress
-     *
-     * @return sync data progress status
+     * @return true if sync data in progress
      */
     private boolean isSyncDataInProgress() {
         return syncDataTask != null && !syncDataTask.isComplete();
     }
 
     /**
-     * returns true if send verification email in progress
-     *
-     * @return send verification email progress status
+     * @return true if send email in progress
      */
-    private boolean isSendVerificationEmailInProgress() {
+    private boolean isSendEmailInProgress() {
         return sendEmailTask != null && !sendEmailTask.isComplete();
     }
 
-    /**
-     * set progress bar visible
-     */
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * set progress bar invisible
-     */
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }
