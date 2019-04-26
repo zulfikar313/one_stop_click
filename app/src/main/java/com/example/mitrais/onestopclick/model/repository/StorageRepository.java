@@ -47,6 +47,16 @@ public class StorageRepository {
         return storageService.setProductImage(uri, filename);
     }
 
+
+    /**
+     * @param uri      trailer uri
+     * @param filename trailer filename
+     * @return
+     */
+    public Task<Uri> uploadTrailer(Uri uri, String filename) {
+        return storageService.uploadTrailer(uri, filename);
+    }
+
     /**
      * initialize dagger injection
      */

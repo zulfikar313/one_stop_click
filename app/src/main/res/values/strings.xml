@@ -81,4 +81,6 @@
     <string name="error_invalid_profile_image">Please choose profile image</string>
     <string name="search">Search</string>
     <string name="error_empty_search_input">Search input can\'t be empty</string>
+    <string name="add_trailer">Add trailer</string>
+    <string name="set_trailer">Set trailer</string>
 </resources>

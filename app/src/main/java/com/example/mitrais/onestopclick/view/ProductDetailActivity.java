@@ -7,16 +7,20 @@ import android.net.Uri;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.Constant;
@@ -46,12 +50,15 @@ import maes.tech.intentanim.CustomIntent;
 public class ProductDetailActivity extends AppCompatActivity {
     private static final String TAG = "ProductDetailActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
+    private static final int REQUEST_PICK_TRAILER1 = 2;
     private String productId;
     private String productThumbnailUri;
     private Product product;
     private Task<Uri> saveImageTask;
+    private Task<Uri> uploadTrailerTask;
     private Task<Void> saveProductTask;
     private Task<DocumentReference> addProductTask;
+    private Uri trailer1Uri;
 
     @Inject
     ProductDetailViewModel viewModel;
@@ -88,6 +95,15 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.rb_movie)
     RadioButton rbMovie;
+
+    @BindView(R.id.trailer1_container)
+    FrameLayout trailer1Container;
+
+    @BindView(R.id.trailer1)
+    VideoView trailer1;
+
+    @BindView(R.id.btn_set_trailer1)
+    AppCompatButton btnAddTrailer1;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -151,6 +167,16 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.btn_set_trailer1)
+    void onAddTrailer1ButtonClicked() {
+        if (isSaveImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (!App.isOnline())
+            Toasty.info(this, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
+        else
+            openTrailer1FileChooser();
+    }
+
     @OnCheckedChanged({R.id.rb_book, R.id.rb_music, R.id.rb_movie})
     void onRadioButtonCheckChanged(CompoundButton button, boolean checked) {
         if (checked) {
@@ -194,6 +220,19 @@ public class ProductDetailActivity extends AppCompatActivity {
             });
 
             productThumbnailUri = uri.toString();
+        }
+
+        if (requestCode == REQUEST_PICK_TRAILER1 && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            trailer1Uri = data.getData();
+            trailer1.setVideoURI(data.getData());
+            trailer1.setMediaController(new MediaController(this));
+
+            /* save trailer if product exist */
+            if (productId != null && !productId.isEmpty()) {
+                String filename = productId + "tr1." + getFileExtension(data.getData());
+                saveTrailer(data.getData(), filename, productId);
+            }
         }
     }
 
@@ -251,17 +290,34 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtAuthor.getEditText().setText(product.getAuthor());
         txtArtist.getEditText().setText(product.getArtist());
         txtDirector.getEditText().setText(product.getDirector());
+
+
         switch (product.getType()) {
             case Constant.PRODUCT_TYPE_BOOK: {
                 rbBook.setChecked(true);
+                rbMusic.setEnabled(false);
+                rbMovie.setEnabled(false);
                 break;
             }
             case Constant.PRODUCT_TYPE_MUSIC: {
                 rbMusic.setChecked(true);
+                rbBook.setEnabled(false);
+                rbMovie.setEnabled(false);
                 break;
             }
             case Constant.PRODUCT_TYPE_MOVIE: {
-                rbMusic.setChecked(true);
+                rbMovie.setChecked(true);
+                rbMusic.setEnabled(false);
+                rbBook.setEnabled(false);
+
+                if (product.getTrailer1Uri() != null && !product.getTrailer1Uri().isEmpty()) {
+                    trailer1.setVideoURI(Uri.parse(product.getTrailer1Uri()));
+                    trailer1.setMediaController(new MediaController(this));
+                    trailer1.start();
+                } else {
+                    trailer1Container.setBackground(getDrawable(R.drawable.skeleton));
+                }
+
                 break;
             }
             default: {
@@ -350,6 +406,33 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * @param uri       trailer uri
+     * @param filename  trailer filename
+     * @param productId product id
+     */
+    private void saveTrailer(Uri uri, String filename, String productId) {
+        showProgressBar();
+        uploadTrailerTask = viewModel.uploadTrailer(uri, filename)
+                .addOnSuccessListener(uri1 ->
+                        saveProductTask = viewModel.saveProductTrailer1(productId, uri1)
+                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnSuccessListener(aVoid ->
+                                {
+                                    Toasty.success(ProductDetailActivity.this, "Trailer uploaded", Toast.LENGTH_SHORT).show();
+                                    trailer1.start();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to upload trailer");
+                                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                }))
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Log.e(TAG, "Failed to upload trailer");
+                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    /**
      * open menu to choose image to replace product image
      */
     private void openImageFileChooser() {
@@ -357,6 +440,16 @@ public class ProductDetailActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+    }
+
+    /**
+     * open menu to choose tralier for trailer 1
+     */
+    private void openTrailer1FileChooser() {
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, REQUEST_PICK_TRAILER1);
     }
 
     /**
@@ -460,6 +553,13 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * @return true if upload trailer in progress
+     */
+    private boolean isUploadTrailerInProgress() {
+        return uploadTrailerTask != null && !uploadTrailerTask.isComplete();
+    }
+
+    /**
      * @return true if add product task in progress
      */
     private boolean isAddProductInProgress() {
@@ -473,6 +573,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtAuthor.setVisibility(View.VISIBLE);
         txtArtist.setVisibility(View.GONE);
         txtDirector.setVisibility(View.GONE);
+        trailer1Container.setVisibility(View.GONE);
+        btnAddTrailer1.setVisibility(View.GONE);
     }
 
     /**
@@ -481,7 +583,10 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void setMusicView() {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.VISIBLE);
+
         txtDirector.setVisibility(View.GONE);
+        trailer1Container.setVisibility(View.GONE);
+        btnAddTrailer1.setVisibility(View.GONE);
     }
 
     /**
@@ -491,6 +596,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.GONE);
         txtDirector.setVisibility(View.VISIBLE);
+        if (productId != null && !productId.isEmpty()) {
+            trailer1Container.setVisibility(View.VISIBLE);
+            btnAddTrailer1.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

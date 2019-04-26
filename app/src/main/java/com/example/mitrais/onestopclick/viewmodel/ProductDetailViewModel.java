@@ -58,6 +58,17 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
+     * upload trailer
+     *
+     * @param uri      trailer uri
+     * @param filename trailer filename
+     * @return upload trailer task
+     */
+    public Task<Uri> uploadTrailer(Uri uri, String filename) {
+        return storageRepository.uploadTrailer(uri, filename);
+    }
+
+    /**
      * set product
      *
      * @param product product object
@@ -65,6 +76,16 @@ public class ProductDetailViewModel extends AndroidViewModel {
      */
     public Task<Void> saveProduct(Product product) {
         return productRepository.saveProduct(product);
+    }
+
+
+    /**
+     * @param productId   product id
+     * @param trailer1Uri trailer1 uri
+     * @return save product task
+     */
+    public Task<Void> saveProductTrailer1(String productId, Uri trailer1Uri) {
+        return productRepository.saveProductTrailer1(productId, trailer1Uri);
     }
 
     /**

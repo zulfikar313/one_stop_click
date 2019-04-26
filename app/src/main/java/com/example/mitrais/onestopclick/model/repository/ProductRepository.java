@@ -2,6 +2,7 @@ package com.example.mitrais.onestopclick.model.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductRepositoryComponent;
@@ -207,13 +208,22 @@ public class ProductRepository {
     }
 
     /**
-     * set product with onlys
+     * set product with only
      *
      * @param product product object
      * @return save product task
      */
     public Task<Void> saveProduct(Product product) {
         return productService.saveProduct(product);
+    }
+
+    /**
+     * @param productId   product id
+     * @param trailer1Uri trailer1 uri
+     * @return save product task
+     */
+    public Task<Void> saveProductTrailer1(String productId, Uri trailer1Uri) {
+        return productService.saveProductTrailer1Uri(productId, trailer1Uri);
     }
 
     /**

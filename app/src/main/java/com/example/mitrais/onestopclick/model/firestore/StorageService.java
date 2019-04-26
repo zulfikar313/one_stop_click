@@ -6,15 +6,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import io.grpc.Context;
+
 /**
  * StorageService class provide access to FirebaseStorage
  */
 public class StorageService {
     private static final String REF_PROFILE_IMG = "profile_image";
     private static final String REF_PRODUCT_IMG = "product_image";
+    private static final String REF_TRAILER = "trailer";
     private static StorageService instance;
     private static StorageReference profileImgRef;
     private static StorageReference productImgRef;
+    private static StorageReference trailerRef;
 
     /**
      * returns StorageService singleton instance
@@ -27,6 +31,7 @@ public class StorageService {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             profileImgRef = storage.getReference(REF_PROFILE_IMG);
             productImgRef = storage.getReference(REF_PRODUCT_IMG);
+            trailerRef = storage.getReference(REF_TRAILER);
         }
 
         return instance;
@@ -53,6 +58,16 @@ public class StorageService {
      */
     public Task<Uri> setProductImage(Uri uri, String filename) {
         StorageReference reference = productImgRef.child(filename);
+        return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
+    }
+
+    /**
+     * @param uri      trailer uri
+     * @param filename trailer filename
+     * @return upload trailer task
+     */
+    public Task<Uri> uploadTrailer(Uri uri, String filename) {
+        StorageReference reference = trailerRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 }

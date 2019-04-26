@@ -180,6 +180,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <FrameLayout
+            android:id="@+id/trailer1_container"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="#000"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_description">
+
+            <VideoView
+                android:id="@+id/trailer1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical" />
+        </FrameLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_set_trailer1"
+            style="@style/OrangeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/set_trailer"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trailer1_container" />
+
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_save"
             style="@style/GreenButton"
@@ -194,7 +228,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_description"
+            app:layout_constraintTop_toBottomOf="@+id/btn_set_trailer1"
             app:layout_goneMarginTop="16dp" />
+
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

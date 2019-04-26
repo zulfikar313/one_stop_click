@@ -1,5 +1,7 @@
 package com.example.mitrais.onestopclick.model.firestore;
 
+import android.net.Uri;
+
 import com.example.mitrais.onestopclick.model.Product;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -19,6 +21,7 @@ public class ProductService {
     private static final String KEY_DISLIKE = "dislike";
     private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
     private static final String KEY_THUMBNAIL_FILENAME = "thumbnailFilename";
+    private static final String KEY_TRAILER1_URI = "trailer1Uri";
     private static final String KEY_TITLE = "title";
     private static final String KEY_AUTHOR = "author";
     private static final String KEY_DESCRIPTION = "description";
@@ -100,6 +103,21 @@ public class ProductService {
         DocumentReference docRef = productRef.document(product.getId());
         return docRef.set(product);
     }
+
+    /**
+     * @param productId   product id
+     * @param trailer1Uri trailer1 uri
+     * @return
+     */
+    public Task<Void> saveProductTrailer1Uri(String productId, Uri trailer1Uri) {
+        DocumentReference docRef = productRef.document(productId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_TRAILER1_URI, trailer1Uri.toString());
+
+        return docRef.update(map);
+    }
+
 
     /**
      * add product and returns add product task

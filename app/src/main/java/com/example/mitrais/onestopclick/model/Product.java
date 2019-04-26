@@ -22,6 +22,7 @@ public class Product {
     private String contentFilename;
     private String thumbnailUri;
     private String thumbnailFilename;
+    private String trailer1Uri;
     private int like;
     private int dislike;
 
@@ -41,10 +42,11 @@ public class Product {
      * @param contentFilename   content filename in storage
      * @param thumbnailUri      thumbnail uri depicting product
      * @param thumbnailFilename thumbnail filename in storage
+     * @param trailer1Uri       trailer1 uri
      * @param like              product like count
      * @param dislike           product dislike count
      */
-    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, String trailer1Uri, int like, int dislike) {
         this.id = id;
         this.title = title == null ? " " : title;
         this.description = description == null ? "" : description;
@@ -56,6 +58,7 @@ public class Product {
         this.contentFilename = contentFilename == null ? "" : contentFilename;
         this.thumbnailUri = thumbnailUri == null ? "" : thumbnailUri;
         this.thumbnailFilename = thumbnailFilename == null ? "" : thumbnailFilename;
+        this.trailer1Uri = trailer1Uri == null ? "" : trailer1Uri;
         this.like = like;
         this.dislike = dislike;
     }
@@ -173,6 +176,13 @@ public class Product {
      */
     public void setThumbnailFilename(String thumbnailFilename) {
         this.thumbnailFilename = thumbnailFilename;
+    }
+
+    /**
+     * @return trailer uri
+     */
+    public String getTrailer1Uri() {
+        return trailer1Uri;
     }
 
     /**
