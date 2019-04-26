@@ -25,7 +25,6 @@ import com.example.mitrais.onestopclick.dagger.component.ProfileFragmentComponen
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.viewmodel.ProfileViewModel;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -154,13 +153,19 @@ public class ProfileFragment extends Fragment {
     private void saveProfile() {
         showProgressBar();
 
-        /* using email address as profile image name */
-        String filename = profile.getEmail() + "." + getFileExtension(imgUri);
+        /* use existing filename or create new one */
+        String filename;
+        if (profile.getImageFilename() != null && !profile.getImageFilename().isEmpty())
+            filename = profile.getImageFilename();
+        else
+            filename = System.currentTimeMillis() + "." + getFileExtension(imgUri);
+
         uploadTask = viewModel.uploadProfileImage(imgUri, filename)
                 .addOnSuccessListener(uri2 -> {
                     String address = txtAddress.getEditText().getText().toString().trim();
                     profile.setAddress(address);
                     profile.setImageUri(uri2.toString());
+                    profile.setImageFilename(filename);
                     saveProfileTask = viewModel.saveProfile(profile)
                             .addOnCompleteListener(task -> hideProgressBar())
                             .addOnSuccessListener(aVoid -> {
