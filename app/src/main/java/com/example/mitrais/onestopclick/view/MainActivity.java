@@ -35,9 +35,6 @@ import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
-/**
- * MainActivity handle main page logic
- */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ImageView imgProfile;
     private TextView txtEmail;
@@ -69,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             initFragment();
         observeProfile();
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
@@ -152,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.main_menu));
 
-
         /* initialize drawer toggle */
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_bar_open, R.string.navigation_bar_close) {
@@ -162,10 +158,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 hideSoftKeyboard();
             }
         };
-
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         navView.setNavigationItemSelectedListener(this);
     }
 
@@ -177,11 +171,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navView.setCheckedItem(R.id.all);
     }
 
-    /**
-     * observe user profile
-     */
     private void observeProfile() {
-        viewModel.getProfileByEmail(viewModel.getCurrentUser().getEmail()).observe(this, profile -> {
+        viewModel.getProfile(viewModel.getUser().getEmail()).observe(this, profile -> {
             if (profile != null) {
                 txtEmail.setText(profile.getEmail());
                 if (profile.getImageUri() != null && !profile.getImageUri().isEmpty())
@@ -190,10 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    /**
-     * start LoginActivity
-     */
-    public void goToLoginPage() {
+    public void goToLoginScreen() {
         showProgressBar();
         new Handler().postDelayed(() -> {
             hideProgressBar();
@@ -205,12 +193,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }, Constant.PROGRESS_DELAY);
     }
 
-    /**
-     * log user out
-     */
     private void logout() {
         viewModel.logout();
-        goToLoginPage();
+        goToLoginScreen();
     }
 
     /**

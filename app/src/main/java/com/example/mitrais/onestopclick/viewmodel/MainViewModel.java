@@ -17,9 +17,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import javax.inject.Inject;
 
-/**
- * MainViewModel class handle data lifecycle for MainActivity
- */
 public class MainViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
@@ -40,23 +37,15 @@ public class MainViewModel extends AndroidViewModel {
         initDagger(application);
     }
 
-    /**
-     * log user out
-     */
     public void logout() {
         authRepository.logout();
     }
 
-    /**
-     * @return logged in user
-     */
-    public FirebaseUser getCurrentUser() {
+    public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
     /**
-     * sync user data
-     *
      * @return sync user data task
      */
     public Task<QuerySnapshot> syncUserData() {
@@ -68,12 +57,10 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     /**
-     * get profile live data by email
-     *
      * @param email user email address
      * @return profile live data
      */
-    public LiveData<Profile> getProfileByEmail(String email) {
+    public LiveData<Profile> getProfile(String email) {
         return profileRepository.getProfile(email);
     }
 

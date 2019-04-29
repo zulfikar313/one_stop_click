@@ -1,7 +1,9 @@
 package com.example.mitrais.onestopclick.view;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import io.supercharge.shimmerlayout.ShimmerLayout;
 public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
+    private Context context;
     private Uri imgUri;
     private Task<Uri> uploadTask;
     private Task<Void> saveProfileTask;
@@ -77,16 +80,33 @@ public class ProfileFragment extends Fragment {
         ButterKnife.bind(this, view);
         initDagger();
         initProfile();
-
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.context = null;
     }
 
     @OnClick(R.id.btn_save_profile)
     void onSaveProfileButtonClicked() {
         if (isAddressValid() & isProfileImageValid()) {
-            if (isUploadInProgress() || isSaveProfileInProgress())
-                Toasty.info(getActivity(), getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
-            else {
+            if (isUploadInProgress() || isSaveProfileInProgress()) {
+                if (context != null)
+                    Toasty.info(context, getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+            } else {
                 saveProfile();
             }
 
@@ -95,11 +115,13 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.img_profile)
     void onProfileImageClicked() {
-        if (isUploadInProgress() || isSaveProfileInProgress())
-            Toasty.info(getActivity(), getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (!App.isOnline())
-            Toasty.info(getActivity(), getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
-        else
+        if (isUploadInProgress() || isSaveProfileInProgress()) {
+            if (context != null)
+                Toasty.info(context, getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+        } else if (!App.isOnline()) {
+            if (context != null)
+                Toasty.info(context, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
+        } else
             openImageFileChooser();
     }
 
@@ -119,8 +141,9 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onError(Exception e) {
                     shimmerLayout.stopShimmerAnimation();
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, getString(R.string.error_failed_to_choose_image));
+                    if (context != null)
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.getMessage());
                 }
             });
         }
@@ -169,18 +192,22 @@ public class ProfileFragment extends Fragment {
                     saveProfileTask = viewModel.saveProfile(profile)
                             .addOnCompleteListener(task -> hideProgressBar())
                             .addOnSuccessListener(aVoid -> {
-                                Toasty.success(getActivity(), getString(R.string.profile_has_been_saved), Toast.LENGTH_SHORT).show();
+                                if (context != null)
+                                    Toasty.success(context, getString(R.string.profile_has_been_saved), Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
                                 hideProgressBar();
-                                Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                Log.e(TAG, getString(R.string.error_failed_to_save_profile));
+                                if (context != null)
+                                    Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, e.getMessage());
+
                             });
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e(TAG, getString(R.string.error_failed_to_upload_profile_image));
+                    if (context != null)
+                        Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, e.getMessage());
                 });
     }
 
@@ -214,8 +241,9 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onError(Exception e) {
                     shimmerLayout.stopShimmerAnimation();
-                    Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, getString(R.string.error_failed_to_load_profile_image));
+                    if (context != null)
+                        Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.getMessage());
                 }
             });
         }
@@ -233,7 +261,7 @@ public class ProfileFragment extends Fragment {
      * @return file extension
      */
     private String getFileExtension(Uri uri) {
-        ContentResolver resolver = getActivity().getContentResolver();
+        ContentResolver resolver = context.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(resolver.getType(uri));
     }
@@ -256,7 +284,8 @@ public class ProfileFragment extends Fragment {
      */
     private boolean isProfileImageValid() {
         if (imgUri == null) {
-            Toasty.error(getActivity(), getString(R.string.error_invalid_profile_image), Toast.LENGTH_SHORT).show();
+            if (context != null)
+                Toasty.error(context, getString(R.string.error_invalid_profile_image), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
