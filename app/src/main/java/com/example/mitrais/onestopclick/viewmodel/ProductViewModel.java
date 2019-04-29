@@ -71,7 +71,7 @@ public class ProductViewModel extends AndroidViewModel {
      * @return save product task
      */
     public Task<Void> saveProductTrailer(String productId, Uri trailer1Uri) {
-        return productRepository.saveProductTrailer1(productId, trailer1Uri);
+        return productRepository.saveProductTrailerUri(productId, trailer1Uri);
     }
 
     /**

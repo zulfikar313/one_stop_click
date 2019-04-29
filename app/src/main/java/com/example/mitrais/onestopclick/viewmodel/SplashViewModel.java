@@ -51,7 +51,7 @@ public class SplashViewModel extends AndroidViewModel {
      */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.retrieveProfileByEmail(user.getEmail());
+            return profileRepository.syncProfile(user.getEmail());
         else
             return null;
     }

@@ -1,7 +1,5 @@
 package com.example.mitrais.onestopclick.model.repository;
 
-import android.net.Uri;
-
 import com.example.mitrais.onestopclick.dagger.component.AuthRepositoryComponent;
 import com.example.mitrais.onestopclick.dagger.component.DaggerAuthRepositoryComponent;
 import com.example.mitrais.onestopclick.model.firestore.AuthService;
@@ -11,16 +9,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
-/**
- * AuthRepository class provide access to AuthService
- */
 public class AuthRepository {
     @Inject
     AuthService authService;
 
-    /**
-     * AuthRepository constructor
-     */
     public AuthRepository() {
         initDagger();
     }
@@ -47,7 +39,7 @@ public class AuthRepository {
 
 
     /**
-     * register user
+     * register new user
      *
      * @param email    user email address
      * @param password user password

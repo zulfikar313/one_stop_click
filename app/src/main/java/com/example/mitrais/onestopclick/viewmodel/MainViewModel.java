@@ -60,7 +60,7 @@ public class MainViewModel extends AndroidViewModel {
      * @return sync user data task
      */
     public Task<QuerySnapshot> syncUserData() {
-        return productRepository.retrieveAllProducts();
+        return productRepository.syncProducts();
 
         /*
          * TODO: retrieve other data tied to user
@@ -74,7 +74,7 @@ public class MainViewModel extends AndroidViewModel {
      * @return profile live data
      */
     public LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepository.getProfileByEmail(email);
+        return profileRepository.getProfile(email);
     }
 
     /**

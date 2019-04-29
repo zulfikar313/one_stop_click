@@ -16,9 +16,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 
 import javax.inject.Inject;
 
-/**
- * ProfileRepository class provide access to ProfileDao and ProfileService
- */
 public class ProfileRepository {
     private static final String TAG = "ProfileRepository";
     private static ListenerRegistration profileListenerRegistration;
@@ -29,32 +26,13 @@ public class ProfileRepository {
     @Inject
     ProfileService profileService;
 
-    /**
-     * ProfileRepository constructor
-     *
-     * @param application application for dao injection
-     */
     public ProfileRepository(Application application) {
         initDagger(application);
-    }
-
-    /**
-     * initialize dagger injection
-     *
-     * @param application application for dao injection
-     */
-    private void initDagger(Application application) {
-        ProfileRepositoryComponent component = DaggerProfileRepositoryComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
     }
 
     // region room
 
     /**
-     * insert profile to local database
-     *
      * @param profile user profile
      */
     private void insertProfile(Profile profile) {
@@ -62,8 +40,6 @@ public class ProfileRepository {
     }
 
     /**
-     * update profile in local database
-     *
      * @param profile user profile
      */
     public void updateProfile(Profile profile) {
@@ -71,8 +47,6 @@ public class ProfileRepository {
     }
 
     /**
-     * delete profile in local database
-     *
      * @param profile user profile
      */
     private void deleteProfile(Profile profile) {
@@ -80,26 +54,22 @@ public class ProfileRepository {
     }
 
     /**
-     * delete profile in local database by email
-     *
      * @param email user email address
      */
-    private void deleteProfileByEmail(String email) {
+    private void deleteProfile(String email) {
         new DeleteProfileByEmailAsyncTask(profileDao).execute(email);
     }
 
     /**
-     * returns profile data by email
-     *
      * @param email user email address
      * @return profile live data
      */
-    public LiveData<Profile> getProfileByEmail(String email) {
-        return profileDao.getProfileByEmail(email);
+    public LiveData<Profile> getProfile(String email) {
+        return profileDao.getProfile(email);
     }
 
     /**
-     * insert profile to local database in background
+     * insert profile to local db in background
      */
     static class InsertProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
         private final ProfileDao profileDao;
@@ -116,7 +86,7 @@ public class ProfileRepository {
     }
 
     /**
-     * update profile in local database in background
+     * update profile in local db in background
      */
     static class UpdateProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
         private final ProfileDao profileDao;
@@ -133,7 +103,7 @@ public class ProfileRepository {
     }
 
     /**
-     * delete profile in local database in background
+     * delete profile in local db in background
      */
     static class DeleteProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
         private final ProfileDao profileDao;
@@ -150,7 +120,7 @@ public class ProfileRepository {
     }
 
     /**
-     * delete profile by email in local database in background
+     * delete profile by email in local db in background
      */
     static class DeleteProfileByEmailAsyncTask extends AsyncTask<String, Void, Void> {
         private final ProfileDao profileDao;
@@ -179,14 +149,12 @@ public class ProfileRepository {
     }
 
     /**
-     * retrieve profile by email from firestore
-     *
      * @param email user email address
      * @return retrieve profile by email task
      */
-    public Task<DocumentSnapshot> retrieveProfileByEmail(String email) {
+    public Task<DocumentSnapshot> syncProfile(String email) {
         addProfileListener(email);
-        return profileService.retrieveProfileByEmail(email).addOnSuccessListener(documentSnapshot -> {
+        return profileService.syncProfile(email).addOnSuccessListener(documentSnapshot -> {
             Profile profile = documentSnapshot.toObject(Profile.class);
             if (profile != null) {
                 profile.setEmail(documentSnapshot.getId());
@@ -198,13 +166,12 @@ public class ProfileRepository {
     /**
      * add listener to listen for changes to profile data in firestore
      * only profile data with specific email adress will be listened
-     * changes will be reflected to local data
      *
      * @param email user email address
      */
     private void addProfileListener(String email) {
         if (profileListenerRegistration == null) {
-            profileListenerRegistration = profileService.retrieveProfileDocRef(email).addSnapshotListener((documentSnapshot, e) -> {
+            profileListenerRegistration = profileService.getProfileRef(email).addSnapshotListener((documentSnapshot, e) -> {
                 if (e != null)
                     Log.e(TAG, e.getMessage());
                 else {
@@ -213,10 +180,22 @@ public class ProfileRepository {
                         profile.setEmail(documentSnapshot.getId());
                         insertProfile(profile);
                     } else
-                        deleteProfileByEmail(email);
+                        deleteProfile(email);
                 }
             });
         }
     }
     // endregion
+
+    /**
+     * initialize dagger injection
+     *
+     * @param application application for dao injection
+     */
+    private void initDagger(Application application) {
+        ProfileRepositoryComponent component = DaggerProfileRepositoryComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
+    }
 }

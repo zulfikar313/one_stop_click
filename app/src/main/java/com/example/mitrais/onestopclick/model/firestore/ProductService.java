@@ -12,29 +12,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * ProductService provide access to product data in firestore
- */
 public class ProductService {
     private static final String REF_PRODUCT = "product";
     private static final String KEY_LIKE = "like";
     private static final String KEY_DISLIKE = "dislike";
-    private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
-    private static final String KEY_THUMBNAIL_FILENAME = "thumbnailFilename";
     private static final String KEY_TRAILER_URI = "trailerUri";
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_AUTHOR = "author";
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String KEY_DIRECTOR = "director";
-    private static final String KEY_ARTIST = "artist";
-    private static final String KEY_TYPE = "type";
     private static ProductService instance;
     private static FirebaseFirestore firestore;
     private static CollectionReference productRef;
 
     /**
-     * returns ProductService singleton instance
-     *
      * @return ProductService instance
      */
     public static ProductService getInstance() {
@@ -48,17 +35,15 @@ public class ProductService {
     }
 
     /**
-     * returns retrieve all products task
-     *
-     * @return retrieve all products task
+     * @return sync products task
      */
-    public Task<QuerySnapshot> retrieveAllProducts() {
+    public Task<QuerySnapshot> syncProducts() {
         return productRef.get();
     }
 
 
     /**
-     * increase like count and returns add like task
+     * increase like count
      *
      * @param id product id
      * @return add like task
@@ -76,7 +61,7 @@ public class ProductService {
     }
 
     /**
-     * increase dislike count and returns add dislike task
+     * increase dislike count
      *
      * @param id product id
      * @return add dislike task
@@ -94,7 +79,7 @@ public class ProductService {
     }
 
     /**
-     * save product and returns save product task
+     * save product
      *
      * @param product existing product
      * @return save product task
@@ -106,10 +91,10 @@ public class ProductService {
 
     /**
      * @param productId  product id
-     * @param trailerUri trailer1 uri
+     * @param trailerUri trailer uri
      * @return
      */
-    public Task<Void> saveProductTrailer1Uri(String productId, Uri trailerUri) {
+    public Task<Void> saveProductTrailerUri(String productId, Uri trailerUri) {
         DocumentReference docRef = productRef.document(productId);
 
         Map<String, Object> map = new HashMap<>();
@@ -120,7 +105,7 @@ public class ProductService {
 
 
     /**
-     * add product and returns add product task
+     * add new product
      *
      * @param product product
      * @return add product task
@@ -130,9 +115,6 @@ public class ProductService {
     }
 
     /**
-     * returns product collection reference
-     * collection reference can be listened for changes
-     *
      * @return product collection reference
      */
     public static CollectionReference getProductRef() {

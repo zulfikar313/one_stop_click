@@ -1,23 +1,15 @@
 package com.example.mitrais.onestopclick.model.firestore;
 
-import android.net.Uri;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
-/**
- * AuthService class provide access to FirebaseAuth
- */
 public class AuthService {
     private static AuthService instance;
     private static FirebaseAuth auth;
 
     /**
-     * returns AuthService singleton instance
-     *
      * @return AuthService instance
      */
     public static AuthService getInstance() {
@@ -30,7 +22,7 @@ public class AuthService {
     }
 
     /**
-     * log user in and returns login task
+     * log user in
      *
      * @param email    user email address
      * @param password user password
@@ -41,7 +33,7 @@ public class AuthService {
     }
 
     /**
-     * Register user and returns register task
+     * register new user user
      *
      * @param email    user email address
      * @param password user password
@@ -60,7 +52,6 @@ public class AuthService {
 
     /**
      * send verification email to user email address
-     * and returns send verification email task
      *
      * @param user logged in user
      * @return send verification email task
@@ -71,7 +62,6 @@ public class AuthService {
 
     /**
      * send password reset email to user email address
-     * and returns send password reset email task
      *
      * @param email user email address
      * @return send password reset email task
@@ -81,8 +71,6 @@ public class AuthService {
     }
 
     /**
-     * returns currently logged in user
-     *
      * @return logged in user
      */
     public FirebaseUser getUser() {

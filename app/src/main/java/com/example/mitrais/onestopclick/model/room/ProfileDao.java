@@ -25,5 +25,5 @@ public interface ProfileDao {
     void deleteProfileByEmail(String email);
 
     @Query("SELECT * FROM profile WHERE email = :email")
-    LiveData<Profile> getProfileByEmail(String email);
+    LiveData<Profile> getProfile(String email);
 }

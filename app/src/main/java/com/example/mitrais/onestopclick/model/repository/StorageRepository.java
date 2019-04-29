@@ -9,49 +9,37 @@ import com.google.android.gms.tasks.Task;
 
 import javax.inject.Inject;
 
-/**
- * StorageRepository class provide access to StorageService
- */
 public class StorageRepository {
     @Inject
     StorageService storageService;
 
-    /**
-     * StorageRepository constructor
-     */
     public StorageRepository() {
         initDagger();
     }
 
     /**
-     * upload profile image and returns save profile image task
-     * with image uri within
-     *
      * @param uri      profile image uri
      * @param filename profile image filename
-     * @return save profile image task and image uri
+     * @return upload profile image task and image uri
      */
     public Task<Uri> uploadProfileImage(Uri uri, String filename) {
-        return storageService.setProfileImage(uri, filename);
+        return storageService.uploadProfileImage(uri, filename);
     }
 
     /**
-     * upload product image and returns save product image task
-     * with image uri within
-     *
      * @param uri      product image uri
      * @param filename product image filename
-     * @return save product image task and image uri
+     * @return upload product image task and image uri
      */
     public Task<Uri> uploadProductImage(Uri uri, String filename) {
-        return storageService.setProductImage(uri, filename);
+        return storageService.uploadProductImage(uri, filename);
     }
 
 
     /**
      * @param uri      trailer uri
      * @param filename trailer filename
-     * @return
+     * @return upload tralier task
      */
     public Task<Uri> uploadTrailer(Uri uri, String filename) {
         return storageService.uploadTrailer(uri, filename);

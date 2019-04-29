@@ -6,8 +6,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import io.grpc.Context;
-
 public class StorageService {
     private static final String REF_PROFILE_IMG = "profile_image";
     private static final String REF_PRODUCT_IMG = "product_image";
@@ -18,8 +16,6 @@ public class StorageService {
     private static StorageReference trailerRef;
 
     /**
-     * returns StorageService singleton instance
-     *
      * @return StorageService instance
      */
     public static StorageService getInstance() {
@@ -35,25 +31,25 @@ public class StorageService {
     }
 
     /**
-     * set profile image and returns set profile image task
+     * upload profile image
      *
      * @param uri      profile image uri
-     * @param filename profile image filename
+     * @param filename profile image filenameç
      * @return set profile image task
      */
-    public Task<Uri> setProfileImage(Uri uri, String filename) {
+    public Task<Uri> uploadProfileImage(Uri uri, String filename) {
         StorageReference reference = profileImgRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 
     /**
-     * set product image and returns set product image task
+     * upload product image
      *
      * @param uri      product image uri
      * @param filename product image filename
      * @return set product image task
      */
-    public Task<Uri> setProductImage(Uri uri, String filename) {
+    public Task<Uri> uploadProductImage(Uri uri, String filename) {
         StorageReference reference = productImgRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }

@@ -22,9 +22,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-/**
- * ProductRepository class provide access to ProductDao and ProductService
- */
 public class ProductRepository {
     private static ListenerRegistration productListenerRegistration;
 
@@ -34,11 +31,6 @@ public class ProductRepository {
     @Inject
     ProductService productService;
 
-    /**
-     * ProductRepository constructor
-     *
-     * @param application application to inject ProductDao
-     */
     public ProductRepository(Application application) {
         initDagger(application);
 
@@ -49,8 +41,6 @@ public class ProductRepository {
     // region room
 
     /**
-     * insert product to local database
-     *
      * @param product product object
      */
     private void insertProduct(Product product) {
@@ -58,8 +48,6 @@ public class ProductRepository {
     }
 
     /**
-     * update product in local database
-     *
      * @param product product object
      */
     public void updateProduct(Product product) {
@@ -67,8 +55,6 @@ public class ProductRepository {
     }
 
     /**
-     * delete product in local database
-     *
      * @param product product object
      */
     public void deleteProduct(Product product) {
@@ -76,7 +62,7 @@ public class ProductRepository {
     }
 
     /**
-     * @return all products
+     * @return products live data
      */
     public LiveData<List<Product>> getAllProducts() {
         return productDao.getAllProducts();
@@ -100,17 +86,13 @@ public class ProductRepository {
     }
 
     /**
-     * returns all product live data
-     *
-     * @return product list live data
+     * @return filtered products live data
      */
     public LiveData<List<Product>> getProductsByType(String type) {
         return productDao.getProductsByType(type);
     }
 
     /**
-     * returns product live data by id
-     *
      * @param id product id
      * @return product live data
      */
@@ -119,7 +101,7 @@ public class ProductRepository {
     }
 
     /**
-     * insert product to local database in background
+     * insert product to local db in background
      */
     static class InsertProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
@@ -136,7 +118,7 @@ public class ProductRepository {
     }
 
     /**
-     * update product in local data in background
+     * update product in local db in background
      */
     static class UpdateProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
@@ -153,7 +135,7 @@ public class ProductRepository {
     }
 
     /**
-     * delete product in local data in background
+     * delete product in local db in background
      */
     static class DeleteProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
@@ -173,12 +155,10 @@ public class ProductRepository {
     // region firestore
 
     /**
-     * retrieve all products
-     *
-     * @return retrieve all products task
+     * @return sync products task
      */
-    public Task<QuerySnapshot> retrieveAllProducts() {
-        return productService.retrieveAllProducts().addOnSuccessListener(queryDocumentSnapshots -> {
+    public Task<QuerySnapshot> syncProducts() {
+        return productService.syncProducts().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
@@ -188,8 +168,6 @@ public class ProductRepository {
     }
 
     /**
-     * increase like count
-     *
      * @param id product id
      * @return add like task
      */
@@ -198,8 +176,6 @@ public class ProductRepository {
     }
 
     /**
-     * increase dislike count
-     *
      * @param id product id
      * @return add dislike task
      */
@@ -208,8 +184,6 @@ public class ProductRepository {
     }
 
     /**
-     * set product with only
-     *
      * @param product product object
      * @return save product task
      */
@@ -218,17 +192,15 @@ public class ProductRepository {
     }
 
     /**
-     * @param productId   product id
-     * @param trailer1Uri trailer1 uri
+     * @param productId  product id
+     * @param trailerUri trailer uri
      * @return save product task
      */
-    public Task<Void> saveProductTrailer1(String productId, Uri trailer1Uri) {
-        return productService.saveProductTrailer1Uri(productId, trailer1Uri);
+    public Task<Void> saveProductTrailerUri(String productId, Uri trailerUri) {
+        return productService.saveProductTrailerUri(productId, trailerUri);
     }
 
     /**
-     * add product
-     *
      * @param product product object
      * @return add product details task
      */
