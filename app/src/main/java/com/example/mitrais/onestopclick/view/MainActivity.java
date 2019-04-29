@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,6 +27,7 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerMainActivityComponent;
 import com.example.mitrais.onestopclick.dagger.component.MainActivityComponent;
+import com.example.mitrais.onestopclick.view.adapter.ProductPagerAdapter;
 import com.example.mitrais.onestopclick.viewmodel.MainViewModel;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
@@ -55,6 +59,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    @BindView(R.id.fragment_container)
+    FrameLayout fragmentContainer;
+
+    @BindView(R.id.tabs)
+    TabLayout tabs;
+
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +75,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         initDagger();
         initDrawer();
-        if (savedInstanceState == null)
-            initFragment();
+        initViewPager();
         observeProfile();
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
@@ -101,23 +113,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.all: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
-                break;
-            }
-            case R.id.movie: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MOVIE)).commit();
-                break;
-            }
-            case R.id.music: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MUSIC)).commit();
-                break;
-            }
-            case R.id.book: {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_BOOK)).commit();
+            case R.id.product: {
+                viewPager.setVisibility(View.VISIBLE);
+                tabs.setVisibility(View.VISIBLE);
+                fragmentContainer.setVisibility(View.INVISIBLE);
+                setTitle(getString(R.string.product));
                 break;
             }
             case R.id.profile: {
+                viewPager.setVisibility(View.INVISIBLE);
+                tabs.setVisibility(View.GONE);
+                fragmentContainer.setVisibility(View.VISIBLE);
+                setTitle(getString(R.string.profile));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProfileFragment.newInstance()).commit();
                 break;
             }
@@ -164,11 +171,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * initialize first fragment
+     * initialize view pager
      */
-    private void initFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL)).commit();
-        navView.setCheckedItem(R.id.all);
+    private void initViewPager() {
+        setTitle(getString(R.string.products));
+        ProductPagerAdapter adapter = new ProductPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        tabs.setupWithViewPager(viewPager);
+
     }
 
     private void observeProfile() {

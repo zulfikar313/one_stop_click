@@ -98,4 +98,6 @@
     <string name="error_failed_to_upload_trailer">Failed to upload trailer</string>
     <string name="trailer_uploaded">Trailer uploaded</string>
     <string name="upload_trailer_is_in_progress">Upload trailer is in progress</string>
+    <string name="product">Product</string>
+    <string name="products">Products</string>
 </resources>

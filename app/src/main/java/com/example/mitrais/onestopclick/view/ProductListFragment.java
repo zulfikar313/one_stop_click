@@ -149,19 +149,15 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
             productType = getArguments().getString(ARG_PRODUCT_TYPE);
             switch (productType) {
                 case Constant.PRODUCT_TYPE_BOOK:
-                    getActivity().setTitle(getString(R.string.book));
                     txtSearch.setHint(getString(R.string.search_book));
                     break;
                 case Constant.PRODUCT_TYPE_MUSIC:
-                    getActivity().setTitle(getString(R.string.music));
                     txtSearch.setHint(getString(R.string.search_music));
                     break;
                 case Constant.PRODUCT_TYPE_MOVIE:
-                    getActivity().setTitle(getString(R.string.movie));
                     txtSearch.setHint(getString(R.string.search_movie));
                     break;
                 default:
-                    getActivity().setTitle(getString(R.string.all_products));
                     break;
             }
         }

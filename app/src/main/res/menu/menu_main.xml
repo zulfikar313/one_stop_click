@@ -4,21 +4,9 @@
     tools:showIn="navigation_view">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/all"
+            android:id="@+id/product"
             android:icon="@drawable/ic_view_list"
-            android:title="@string/all" />
-        <item
-            android:id="@+id/movie"
-            android:icon="@drawable/ic_video_library"
-            android:title="@string/movie" />
-        <item
-            android:id="@+id/music"
-            android:icon="@drawable/ic_library_music"
-            android:title="@string/music" />
-        <item
-            android:id="@+id/book"
-            android:icon="@drawable/ic_library_books"
-            android:title="@string/book" />
+            android:title="@string/product" />
         <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_person"
