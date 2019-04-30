@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -30,7 +31,6 @@ import com.example.mitrais.onestopclick.dagger.component.ProductDetailActivityCo
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -44,9 +44,6 @@ import es.dmoral.toasty.Toasty;
 import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
-/**
- * ProductActivity handle product detail page logic
- */
 public class ProductActivity extends AppCompatActivity {
     private static final String TAG = "ProductActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
@@ -57,11 +54,13 @@ public class ProductActivity extends AppCompatActivity {
     private Task<Uri> uploadImageTask;
     private Task<Uri> uploadTrailerTask;
     private Task<Void> saveProductTask;
-    private Task<DocumentReference> addProductTask;
     private Uri trailerUri;
 
     @Inject
     ProductViewModel viewModel;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @BindView(R.id.shimmer_layout)
     ShimmerLayout shimmerLayout;
@@ -120,6 +119,7 @@ public class ProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product);
         ButterKnife.bind(this);
         initDagger();
+        initToolbar();
         productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
         if (productId != null && !productId.isEmpty())
             observeProduct(productId);
@@ -127,7 +127,7 @@ public class ProductActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+        if (isUploadImageInProgress() || isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadTrailerInProgress())
             Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
@@ -144,7 +144,7 @@ public class ProductActivity extends AppCompatActivity {
 
     @OnClick(R.id.img_thumbnail)
     void onThumbnailImageClicked() {
-        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+        if (isUploadImageInProgress() || isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadTrailerInProgress())
             Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
@@ -154,7 +154,7 @@ public class ProductActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_save)
     void onSaveButtonClicked() {
-        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+        if (isUploadImageInProgress() || isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadTrailerInProgress())
             Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
@@ -182,7 +182,7 @@ public class ProductActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_upload_trailer)
     void onUploadTrailerButtonClicked() {
-        if (isUploadImageInProgress() || isSaveProductInProgress() || isAddProductInProgress())
+        if (isUploadImageInProgress() || isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadTrailerInProgress())
             Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
@@ -251,6 +251,15 @@ public class ProductActivity extends AppCompatActivity {
                 .productDetailActivity(this)
                 .build();
         component.inject(this);
+    }
+
+    /**
+     * initialize toolbar
+     */
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
     /**
@@ -596,13 +605,6 @@ public class ProductActivity extends AppCompatActivity {
      */
     private boolean isUploadTrailerInProgress() {
         return uploadTrailerTask != null && !uploadTrailerTask.isComplete();
-    }
-
-    /**
-     * @return true if add product task in progress
-     */
-    private boolean isAddProductInProgress() {
-        return addProductTask != null && !addProductTask.isComplete();
     }
 
     /**

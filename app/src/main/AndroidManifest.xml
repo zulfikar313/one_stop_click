@@ -16,28 +16,29 @@
             android:name=".view.ProductActivity"
             android:parentActivityName=".view.MainActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.ForgotPasswordActivity"
             android:parentActivityName=".view.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.RegistrationActivity"
             android:parentActivityName=".view.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,7 +47,7 @@
         </activity>
         <activity
             android:name=".view.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
 
         <meta-data
