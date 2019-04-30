@@ -1,6 +1,7 @@
 package com.example.mitrais.onestopclick.view;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,6 +36,7 @@ import maes.tech.intentanim.CustomIntent;
 
 public class ProductListFragment extends Fragment implements ProductAdapter.Listener {
     private static final String ARG_PRODUCT_TYPE = "ARG_PRODUCT_TYPE";
+    private Context context;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
     private String productType;
@@ -81,6 +83,18 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.context = null;
+    }
+
     @OnClick(R.id.btn_search)
     void onSearchButtonClicked() {
         String searchInput = txtSearch.getEditText().getText().toString().trim();
@@ -107,23 +121,31 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     @Override
     public void onLikeClicked(String id) {
         if (isAddLikeInProgress())
-            Toasty.info(getActivity(), getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
-        else {
-            likeTask = viewModel
-                    .addLike(id)
-                    .addOnFailureListener(e -> Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
-        }
+            if (context != null)
+                Toasty.info(context, getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
+            else {
+                likeTask = viewModel
+                        .addLike(id)
+                        .addOnFailureListener(e -> {
+                            if (context != null)
+                                Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                        });
+            }
     }
 
     @Override
     public void onDislikeClicked(String productId) {
         if (isAddDislikeInProgress())
-            Toasty.info(getActivity(), getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
-        else {
-            dislikeTask = viewModel
-                    .addDislike(productId)
-                    .addOnFailureListener(e -> Toasty.error(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
-        }
+            if (context != null)
+                Toasty.info(context, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
+            else {
+                dislikeTask = viewModel
+                        .addDislike(productId)
+                        .addOnFailureListener(e -> {
+                            if (context != null)
+                                Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                        });
+            }
     }
 
     @Override
@@ -147,18 +169,20 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private void initArguments() {
         if (getArguments() != null) {
             productType = getArguments().getString(ARG_PRODUCT_TYPE);
-            switch (productType) {
-                case Constant.PRODUCT_TYPE_BOOK:
-                    txtSearch.setHint(getString(R.string.search_book));
-                    break;
-                case Constant.PRODUCT_TYPE_MUSIC:
-                    txtSearch.setHint(getString(R.string.search_music));
-                    break;
-                case Constant.PRODUCT_TYPE_MOVIE:
-                    txtSearch.setHint(getString(R.string.search_movie));
-                    break;
-                default:
-                    break;
+            if (productType != null) {
+                switch (productType) {
+                    case Constant.PRODUCT_TYPE_BOOK:
+                        txtSearch.setHint(getString(R.string.search_book));
+                        break;
+                    case Constant.PRODUCT_TYPE_MUSIC:
+                        txtSearch.setHint(getString(R.string.search_music));
+                        break;
+                    case Constant.PRODUCT_TYPE_MOVIE:
+                        txtSearch.setHint(getString(R.string.search_movie));
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -171,7 +195,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         productAdapter.setListener(this);
         recProduct.setHasFixedSize(true);
         recProduct.setAdapter(productAdapter);
-        recProduct.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recProduct.setLayoutManager(new LinearLayoutManager(context));
     }
 
     /**
@@ -214,10 +238,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void goToProductScreen(String id) {
-        Intent intent = new Intent(getActivity(), ProductActivity.class);
+        Intent intent = new Intent(context, ProductActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
-        CustomIntent.customType(getActivity(), Constant.ANIMATION_FADEIN_TO_FADEOUT);
+        CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     /**
@@ -243,8 +267,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void hideSoftKeyboard() {
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
+        if (context != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Service.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
+        }
     }
     // endregion
 }
