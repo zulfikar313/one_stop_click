@@ -1,7 +1,6 @@
 package com.example.mitrais.onestopclick.view;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +44,7 @@ public class ProfileFragment extends Fragment {
     private Uri imgUri;
     private Task<Uri> uploadTask;
     private Task<Void> saveProfileTask;
-    private Profile profile;
+    private String email;
 
     @Inject
     ProfileViewModel viewModel;
@@ -78,13 +77,13 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
         initDagger();
-        initProfile();
-        return view;
-    }
+        if (viewModel.getUser() != null) {
+            email = viewModel.getUser().getEmail();
+            txtEmail.setText(email);
+            observeProfile();
+        }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+        return view;
     }
 
     @Override
@@ -101,7 +100,7 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.btn_save_profile)
     void onSaveProfileButtonClicked() {
-        if (isAddressValid() & isProfileImageValid()) {
+        if (isAddressValid()) {
             if (isUploadInProgress() || isSaveProfileInProgress()) {
                 if (context != null)
                     Toasty.info(context, getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
@@ -130,21 +129,7 @@ public class ProfileFragment extends Fragment {
         if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK
                 && data != null && data.getData() != null) {
             imgUri = data.getData();
-            shimmerLayout.startShimmerAnimation();
-            Picasso.get().load(imgUri).placeholder(R.drawable.skeleton).into(imgProfile, new Callback() {
-                @Override
-                public void onSuccess() {
-                    shimmerLayout.stopShimmerAnimation();
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    shimmerLayout.stopShimmerAnimation();
-                    if (context != null)
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, e.getMessage());
-                }
-            });
+            uploadProfileImage();
         }
     }
 
@@ -161,52 +146,54 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * initialize profile data
-     */
-    private void initProfile() {
-        if (viewModel.getUser() != null) {
-            observeProfile();
-        }
-    }
-
-    /**
      * save profile data
      */
     private void saveProfile() {
         showProgressBar();
-
-        /* use existing filename or create new one */
-        String filename;
-        if (profile.getImageFilename() != null && !profile.getImageFilename().isEmpty())
-            filename = profile.getImageFilename();
-        else
-            filename = System.currentTimeMillis() + "." + getFileExtension(imgUri);
-
-        uploadTask = viewModel.uploadProfileImage(imgUri, filename)
-                .addOnSuccessListener(uri2 -> {
-                    String address = txtAddress.getEditText().getText().toString().trim();
-                    profile.setAddress(address);
-                    profile.setImageUri(uri2.toString());
-                    profile.setImageFilename(filename);
-                    saveProfileTask = viewModel.saveProfile(profile)
-                            .addOnCompleteListener(task -> hideProgressBar())
-                            .addOnSuccessListener(aVoid -> {
-                                if (context != null)
-                                    Toasty.success(context, getString(R.string.profile_has_been_saved), Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                hideProgressBar();
-                                if (context != null)
-                                    Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                Log.e(TAG, e.getMessage());
-
-                            });
+        String address = txtAddress.getEditText().getText().toString().trim();
+        Profile profile = new Profile();
+        profile.setEmail(viewModel.getUser().getEmail());
+        profile.setAddress(address);
+        saveProfileTask = viewModel.saveProfile(profile)
+                .addOnCompleteListener(task -> hideProgressBar())
+                .addOnSuccessListener(aVoid -> {
+                    imgProfile.setVisibility(View.VISIBLE);
+                    if (context != null)
+                        Toasty.success(context, getString(R.string.profile_has_been_saved), Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
                     if (context != null)
-                        Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, e.getMessage());
+                });
+    }
+
+    /**
+     * upload profile image
+     */
+    private void uploadProfileImage() {
+        showProgressBar();
+        String filename = email + "." + getFileExtension(imgUri);
+        uploadTask = viewModel.uploadProfileImage(imgUri, filename)
+                .addOnSuccessListener(uri -> {
+                    saveProfileTask = viewModel.saveProfileImageUri(email, uri)
+                            .addOnCompleteListener(task -> hideProgressBar())
+                            .addOnSuccessListener(aVoid -> {
+                                if (context != null)
+                                    Toasty.success(context, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                                if (context != null)
+                                    Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                    if (context != null)
+                        Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -215,9 +202,9 @@ public class ProfileFragment extends Fragment {
      */
     private void observeProfile() {
         viewModel.getProfileByEmail(viewModel.getUser().getEmail()).observe(this, profile -> {
-            this.profile = profile;
             if (profile != null) {
                 bindProfile(profile);
+                imgProfile.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -275,18 +262,6 @@ public class ProfileFragment extends Fragment {
             return false;
         }
         txtAddress.setError("");
-        return true;
-    }
-
-    /**
-     * @return true if profile image valid
-     */
-    private boolean isProfileImageValid() {
-        if (imgUri == null) {
-            if (context != null)
-                Toasty.error(context, getString(R.string.error_invalid_profile_image), Toast.LENGTH_SHORT).show();
-            return false;
-        }
         return true;
     }
 

@@ -64,6 +64,10 @@ public class MainViewModel extends AndroidViewModel {
         return profileRepository.getProfile(email);
     }
 
+    public void deleteUserData(){
+        profileRepository.deleteProfile();
+    }
+
     /**
      * initialize dagger injection
      *

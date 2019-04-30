@@ -228,23 +228,6 @@ public class ProductActivity extends AppCompatActivity {
                 && data != null && data.getData() != null) {
             Uri uri = data.getData();
             thumbnailUri = uri;
-
-            /* load image */
-            shimmerLayout.startShimmerAnimation();
-            Picasso.get().load(uri).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
-                @Override
-                public void onSuccess() {
-                    shimmerLayout.stopShimmerAnimation();
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    shimmerLayout.stopShimmerAnimation();
-                    Log.e(TAG, e.toString());
-                }
-            });
-
-            /* upload image in background */
             uploadThumbnail();
         }
 
@@ -297,6 +280,7 @@ public class ProductActivity extends AppCompatActivity {
     private void bindProduct(Product product) {
         if (!product.getThumbnailUri().isEmpty()) {
             thumbnailUri = Uri.parse(product.getThumbnailUri());
+            shimmerLayout.startShimmerAnimation();
             Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
                 @Override
                 public void onSuccess() {

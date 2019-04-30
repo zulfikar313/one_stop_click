@@ -2,6 +2,7 @@ package com.example.mitrais.onestopclick.model.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.example.mitrais.onestopclick.dagger.component.ProfileRepositoryCompon
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.firestore.ProfileService;
 import com.example.mitrais.onestopclick.model.room.ProfileDao;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -47,17 +49,10 @@ public class ProfileRepository {
     }
 
     /**
-     * @param profile user profile
+     * delete user profile
      */
-    private void deleteProfile(Profile profile) {
-        new DeleteProfileAsyncTask(profileDao).execute(profile);
-    }
-
-    /**
-     * @param email user email address
-     */
-    private void deleteProfile(String email) {
-        new DeleteProfileByEmailAsyncTask(profileDao).execute(email);
+    public void deleteProfile() {
+        new DeleteProfileAsyncTask(profileDao).execute();
     }
 
     /**
@@ -105,7 +100,7 @@ public class ProfileRepository {
     /**
      * delete profile in local db in background
      */
-    static class DeleteProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
+    static class DeleteProfileAsyncTask extends AsyncTask<Void, Void, Void> {
         private final ProfileDao profileDao;
 
         DeleteProfileAsyncTask(ProfileDao profileDao) {
@@ -113,8 +108,8 @@ public class ProfileRepository {
         }
 
         @Override
-        protected Void doInBackground(Profile... profiles) {
-            profileDao.deleteProfile(profiles[0]);
+        protected Void doInBackground(Void... voids) {
+            profileDao.deleteProfile();
             return null;
         }
     }
@@ -144,8 +139,22 @@ public class ProfileRepository {
      * @return save profile task
      */
     public Task<Void> saveProfile(Profile profile) {
-        addProfileListener(profile.getEmail());
-        return profileService.saveProfile(profile);
+        return profileService.saveProfile(profile)
+                .addOnSuccessListener(aVoid -> {
+                    addProfileListener(profile.getEmail());
+                });
+    }
+
+    /**
+     * @param email email address
+     * @param uri   image uri
+     * @return save profile task
+     */
+    public Task<Void> saveProfileImageUri(String email, Uri uri) {
+        return profileService.saveProfileImageUri(email, uri)
+                .addOnSuccessListener(aVoid -> {
+                    addProfileListener(email);
+                });
     }
 
     /**
@@ -153,10 +162,10 @@ public class ProfileRepository {
      * @return retrieve profile by email task
      */
     public Task<DocumentSnapshot> syncProfile(String email) {
-        addProfileListener(email);
         return profileService.syncProfile(email).addOnSuccessListener(documentSnapshot -> {
             Profile profile = documentSnapshot.toObject(Profile.class);
             if (profile != null) {
+                addProfileListener(email);
                 profile.setEmail(documentSnapshot.getId());
                 insertProfile(profile);
             }
@@ -180,7 +189,7 @@ public class ProfileRepository {
                         profile.setEmail(documentSnapshot.getId());
                         insertProfile(profile);
                     } else
-                        deleteProfile(email);
+                        deleteProfile();
                 }
             });
         }

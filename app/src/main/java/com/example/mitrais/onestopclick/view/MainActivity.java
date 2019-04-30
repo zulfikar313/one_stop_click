@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void observeProfile() {
         viewModel.getProfile(viewModel.getUser().getEmail()).observe(this, profile -> {
             if (profile != null) {
+                imgProfile.setVisibility(View.VISIBLE);
                 txtEmail.setText(profile.getEmail());
                 if (profile.getImageUri() != null && !profile.getImageUri().isEmpty())
                     Picasso.get().load(profile.getImageUri()).placeholder(R.drawable.skeleton).into(imgProfile);
@@ -205,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void logout() {
         viewModel.logout();
+        viewModel.deleteUserData();
         goToLoginScreen();
     }
 

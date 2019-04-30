@@ -73,6 +73,15 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     /**
+     * @param email email address
+     * @param uri   image uri
+     * @return save profile task
+     */
+    public Task<Void> saveProfileImageUri(String email, Uri uri) {
+        return profileRepository.saveProfileImageUri(email, uri);
+    }
+
+    /**
      * initialize dagger injection
      *
      * @param application application to inject repository class

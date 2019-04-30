@@ -18,8 +18,8 @@ public interface ProfileDao {
     @Update
     void updateProfile(Profile profile);
 
-    @Delete
-    void deleteProfile(Profile profile);
+    @Query("DELETE FROM profile")
+    void deleteProfile();
 
     @Query("DELETE FROM profile WHERE email = :email")
     void deleteProfileByEmail(String email);
