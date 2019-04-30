@@ -192,12 +192,21 @@ public class ProductRepository {
     }
 
     /**
-     * @param productId  product id
-     * @param trailerUri trailer uri
+     * @param productId product id
+     * @param uri       trailer uri
      * @return save product task
      */
-    public Task<Void> saveProductTrailerUri(String productId, Uri trailerUri) {
-        return productService.saveProductTrailerUri(productId, trailerUri);
+    public Task<Void> saveProductTrailerUri(String productId, Uri uri) {
+        return productService.saveProductTrailerUri(productId, uri);
+    }
+
+    /**
+     * @param productId product id
+     * @param uri       music uri
+     * @return save product task
+     */
+    public Task<Void> saveProductMusicUri(String productId, Uri uri) {
+        return productService.saveProductMusicUri(productId, uri);
     }
 
     /**

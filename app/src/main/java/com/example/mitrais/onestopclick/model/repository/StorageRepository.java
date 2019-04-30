@@ -46,6 +46,15 @@ public class StorageRepository {
     }
 
     /**
+     * @param uri      music uri
+     * @param filename music filename
+     * @return upload music task
+     */
+    public Task<Uri> uploadMusic(Uri uri, String filename) {
+        return storageService.uploadMusic(uri, filename);
+    }
+
+    /**
      * initialize dagger injection
      */
     private void initDagger() {

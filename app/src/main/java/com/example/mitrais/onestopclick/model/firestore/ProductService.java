@@ -17,6 +17,7 @@ public class ProductService {
     private static final String KEY_LIKE = "like";
     private static final String KEY_DISLIKE = "dislike";
     private static final String KEY_TRAILER_URI = "trailerUri";
+    private static final String KEY_MUSIC_URI = "musicUri";
     private static ProductService instance;
     private static FirebaseFirestore firestore;
     private static CollectionReference productRef;
@@ -90,19 +91,32 @@ public class ProductService {
     }
 
     /**
-     * @param productId  product id
-     * @param trailerUri trailer uri
-     * @return
+     * @param productId product id
+     * @param uri       trailer uri
+     * @return save product task
      */
-    public Task<Void> saveProductTrailerUri(String productId, Uri trailerUri) {
+    public Task<Void> saveProductTrailerUri(String productId, Uri uri) {
         DocumentReference docRef = productRef.document(productId);
 
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TRAILER_URI, trailerUri.toString());
+        map.put(KEY_TRAILER_URI, uri.toString());
 
         return docRef.update(map);
     }
 
+    /**
+     * @param productId product id
+     * @param uri       music uri
+     * @return save product task
+     */
+    public Task<Void> saveProductMusicUri(String productId, Uri uri) {
+        DocumentReference docRef = productRef.document(productId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_MUSIC_URI, uri.toString());
+
+        return docRef.update(map);
+    }
 
     /**
      * add new product

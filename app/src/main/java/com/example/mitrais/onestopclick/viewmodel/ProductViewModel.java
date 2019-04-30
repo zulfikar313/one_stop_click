@@ -12,7 +12,6 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 
 import javax.inject.Inject;
 
@@ -55,6 +54,15 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     /**
+     * @param uri      music uri
+     * @param filename music filename
+     * @return upload music task
+     */
+    public Task<Uri> uploadMusic(Uri uri, String filename) {
+        return storageRepository.uploadMusic(uri, filename);
+    }
+
+    /**
      * set product
      *
      * @param product product object
@@ -66,22 +74,21 @@ public class ProductViewModel extends AndroidViewModel {
 
 
     /**
-     * @param productId   product id
-     * @param trailer1Uri trailer1 uri
+     * @param productId product id
+     * @param uri       trailer uri
      * @return save product task
      */
-    public Task<Void> saveProductTrailer(String productId, Uri trailer1Uri) {
-        return productRepository.saveProductTrailerUri(productId, trailer1Uri);
+    public Task<Void> saveProductTrailer(String productId, Uri uri) {
+        return productRepository.saveProductTrailerUri(productId, uri);
     }
 
     /**
-     * add product
-     *
-     * @param product product object
-     * @return add product task
+     * @param productId product id
+     * @param uri       music uri
+     * @return save product task
      */
-    public Task<DocumentReference> addProduct(Product product) {
-        return productRepository.addProduct(product);
+    public Task<Void> saveProductMusic(String productId, Uri uri) {
+        return productRepository.saveProductMusicUri(productId, uri);
     }
 
     /**
