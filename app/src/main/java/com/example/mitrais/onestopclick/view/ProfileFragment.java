@@ -177,7 +177,11 @@ public class ProfileFragment extends Fragment {
         String filename = email + "." + getFileExtension(imgUri);
         uploadTask = viewModel.uploadProfileImage(imgUri, filename)
                 .addOnSuccessListener(uri -> {
-                    saveProfileTask = viewModel.saveProfileImageUri(email, uri)
+                    Profile profile = new Profile();
+                    profile.setEmail(email);
+                    profile.setImageUri(uri.toString());
+
+                    saveProfileTask = viewModel.saveProfileImageUri(profile)
                             .addOnCompleteListener(task -> hideProgressBar())
                             .addOnSuccessListener(aVoid -> {
                                 if (context != null)

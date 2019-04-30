@@ -2,7 +2,6 @@ package com.example.mitrais.onestopclick.model.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,7 +10,6 @@ import com.example.mitrais.onestopclick.dagger.component.ProfileRepositoryCompon
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.firestore.ProfileService;
 import com.example.mitrais.onestopclick.model.room.ProfileDao;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -34,23 +32,14 @@ public class ProfileRepository {
 
     // region room
 
-    /**
-     * @param profile user profile
-     */
     private void insertProfile(Profile profile) {
         new InsertProfileAsyncTask(profileDao).execute(profile);
     }
 
-    /**
-     * @param profile user profile
-     */
     public void updateProfile(Profile profile) {
         new UpdateProfileAsyncTask(profileDao).execute(profile);
     }
 
-    /**
-     * delete user profile
-     */
     public void deleteProfile() {
         new DeleteProfileAsyncTask(profileDao).execute();
     }
@@ -114,22 +103,6 @@ public class ProfileRepository {
         }
     }
 
-    /**
-     * delete profile by email in local db in background
-     */
-    static class DeleteProfileByEmailAsyncTask extends AsyncTask<String, Void, Void> {
-        private final ProfileDao profileDao;
-
-        DeleteProfileByEmailAsyncTask(ProfileDao profileDao) {
-            this.profileDao = profileDao;
-        }
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            profileDao.deleteProfileByEmail(strings[0]);
-            return null;
-        }
-    }
     // endregion
 
     // region firestore
@@ -146,14 +119,13 @@ public class ProfileRepository {
     }
 
     /**
-     * @param email email address
-     * @param uri   image uri
+     * @param profile user profile
      * @return save profile task
      */
-    public Task<Void> saveProfileImageUri(String email, Uri uri) {
-        return profileService.saveProfileImageUri(email, uri)
+    public Task<Void> saveProfileImageUri(Profile profile) {
+        return profileService.saveProfileImageUri(profile)
                 .addOnSuccessListener(aVoid -> {
-                    addProfileListener(email);
+                    addProfileListener(profile.getEmail());
                 });
     }
 
@@ -162,14 +134,15 @@ public class ProfileRepository {
      * @return retrieve profile by email task
      */
     public Task<DocumentSnapshot> syncProfile(String email) {
-        return profileService.syncProfile(email).addOnSuccessListener(documentSnapshot -> {
-            Profile profile = documentSnapshot.toObject(Profile.class);
-            if (profile != null) {
-                addProfileListener(email);
-                profile.setEmail(documentSnapshot.getId());
-                insertProfile(profile);
-            }
-        });
+        return profileService.syncProfile(email)
+                .addOnSuccessListener(documentSnapshot -> {
+                    Profile profile = documentSnapshot.toObject(Profile.class);
+                    if (profile != null) {
+                        profile.setEmail(documentSnapshot.getId());
+                        insertProfile(profile);
+                        addProfileListener(email);
+                    }
+                });
     }
 
     /**
@@ -180,18 +153,18 @@ public class ProfileRepository {
      */
     private void addProfileListener(String email) {
         if (profileListenerRegistration == null) {
-            profileListenerRegistration = profileService.getProfileRef(email).addSnapshotListener((documentSnapshot, e) -> {
-                if (e != null)
-                    Log.e(TAG, e.getMessage());
-                else {
-                    Profile profile = documentSnapshot.toObject(Profile.class);
-                    if (profile != null) {
-                        profile.setEmail(documentSnapshot.getId());
-                        insertProfile(profile);
-                    } else
-                        deleteProfile();
-                }
-            });
+            profileListenerRegistration = profileService.getProfileRef(email)
+                    .addSnapshotListener((documentSnapshot, e) -> {
+                        if (e != null)
+                            Log.e(TAG, e.getMessage());
+                        else {
+                            Profile profile = documentSnapshot.toObject(Profile.class);
+                            if (profile != null) {
+                                profile.setEmail(documentSnapshot.getId());
+                                insertProfile(profile);
+                            }
+                        }
+                    });
         }
     }
     // endregion

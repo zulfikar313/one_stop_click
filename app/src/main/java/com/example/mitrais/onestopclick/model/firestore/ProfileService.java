@@ -1,7 +1,5 @@
 package com.example.mitrais.onestopclick.model.firestore;
 
-import android.net.Uri;
-
 import com.example.mitrais.onestopclick.model.Profile;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -41,15 +39,14 @@ public class ProfileService {
     }
 
     /**
-     * @param email email address
-     * @param uri   image uri
+     * @param profile user profile
      * @return save profile task
      */
-    public Task<Void> saveProfileImageUri(String email, Uri uri) {
-        DocumentReference docRef = profileRef.document(email);
+    public Task<Void> saveProfileImageUri(Profile profile) {
+        DocumentReference docRef = profileRef.document(profile.getEmail());
 
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_IMAGE_URI, uri.toString());
+        map.put(KEY_IMAGE_URI, profile.getImageUri());
 
         return docRef.update(map);
     }

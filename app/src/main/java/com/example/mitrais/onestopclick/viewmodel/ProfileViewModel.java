@@ -73,12 +73,11 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     /**
-     * @param email email address
-     * @param uri   image uri
+     * @param profile user profile
      * @return save profile task
      */
-    public Task<Void> saveProfileImageUri(String email, Uri uri) {
-        return profileRepository.saveProfileImageUri(email, uri);
+    public Task<Void> saveProfileImageUri(Profile profile) {
+        return profileRepository.saveProfileImageUri(profile);
     }
 
     /**
