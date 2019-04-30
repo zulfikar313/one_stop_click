@@ -46,13 +46,11 @@ public class StorageService {
     }
 
     /**
-     * upload product image
-     *
-     * @param uri      product image uri
-     * @param filename product image filename
-     * @return set product image task
+     * @param uri      thumbnail uri
+     * @param filename thumbnail filename
+     * @return upload thumnail task
      */
-    public Task<Uri> uploadProductImage(Uri uri, String filename) {
+    public Task<Uri> uploadThumbnail(Uri uri, String filename) {
         StorageReference reference = productImgRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }

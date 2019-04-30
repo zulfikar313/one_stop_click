@@ -42,7 +42,8 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/skeleton" />
+                    android:src="@drawable/skeleton"
+                    android:visibility="gone" />
             </io.supercharge.shimmerlayout.ShimmerLayout>
 
             <LinearLayout

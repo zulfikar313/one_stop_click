@@ -27,12 +27,12 @@ public class StorageRepository {
     }
 
     /**
-     * @param uri      product image uri
-     * @param filename product image filename
-     * @return upload product image task and image uri
+     * @param uri      thumbnail uri
+     * @param filename thumbnail filename
+     * @return upload thumnail task
      */
-    public Task<Uri> uploadProductImage(Uri uri, String filename) {
-        return storageService.uploadProductImage(uri, filename);
+    public Task<Uri> uploadThumbnail(Uri uri, String filename) {
+        return storageService.uploadThumbnail(uri, filename);
     }
 
 

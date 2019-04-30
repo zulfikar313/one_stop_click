@@ -100,4 +100,6 @@
     <string name="upload_trailer_is_in_progress">Upload trailer is in progress</string>
     <string name="product">Product</string>
     <string name="products">Products</string>
+    <string name="edit_product">Edit product</string>
+    <string name="upload_thumbnail_is_in_progress">Upload thumbnail is in progress</string>
 </resources>

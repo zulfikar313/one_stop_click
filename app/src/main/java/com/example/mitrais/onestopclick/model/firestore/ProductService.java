@@ -16,6 +16,7 @@ public class ProductService {
     private static final String REF_PRODUCT = "product";
     private static final String KEY_LIKE = "like";
     private static final String KEY_DISLIKE = "dislike";
+    private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
     private static final String KEY_TRAILER_URI = "trailerUri";
     private static final String KEY_MUSIC_URI = "musicUri";
     private static ProductService instance;
@@ -88,6 +89,20 @@ public class ProductService {
     public Task<Void> saveProduct(Product product) {
         DocumentReference docRef = productRef.document(product.getId());
         return docRef.set(product);
+    }
+
+    /**
+     * @param productId product id
+     * @param uri       thumbnail uri
+     * @return save product task
+     */
+    public Task<Void> saveProductThumbnailUri(String productId, Uri uri) {
+        DocumentReference docRef = productRef.document(productId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_THUMBNAIL_URI, uri.toString());
+
+        return docRef.update(map);
     }
 
     /**

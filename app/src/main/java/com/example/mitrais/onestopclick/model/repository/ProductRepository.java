@@ -193,6 +193,15 @@ public class ProductRepository {
 
     /**
      * @param productId product id
+     * @param uri       thumbnail uri
+     * @return save product task
+     */
+    public Task<Void> saveThumbnailUri(String productId, Uri uri) {
+        return productService.saveProductThumbnailUri(productId, uri);
+    }
+
+    /**
+     * @param productId product id
      * @param uri       trailer uri
      * @return save product task
      */
