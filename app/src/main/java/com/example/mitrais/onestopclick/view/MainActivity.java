@@ -62,12 +62,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
 
-    @BindView(R.id.tabs)
-    TabLayout tabs;
-
-    @BindView(R.id.view_pager)
-    ViewPager viewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         initDagger();
         initDrawer();
-        initViewPager();
+        initFragment();
         observeProfile();
     }
 
@@ -114,16 +108,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.product: {
-                viewPager.setVisibility(View.VISIBLE);
-                tabs.setVisibility(View.VISIBLE);
-                fragmentContainer.setVisibility(View.INVISIBLE);
                 setTitle(getString(R.string.product));
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
                 break;
             }
             case R.id.profile: {
-                viewPager.setVisibility(View.INVISIBLE);
-                tabs.setVisibility(View.GONE);
-                fragmentContainer.setVisibility(View.VISIBLE);
                 setTitle(getString(R.string.profile));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProfileFragment.newInstance()).commit();
                 break;
@@ -170,15 +159,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navView.setNavigationItemSelectedListener(this);
     }
 
-    /**
-     * initialize view pager
-     */
-    private void initViewPager() {
-        setTitle(getString(R.string.products));
-        ProductPagerAdapter adapter = new ProductPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
-        tabs.setupWithViewPager(viewPager);
-
+    private void initFragment() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
     }
 
     private void observeProfile() {
