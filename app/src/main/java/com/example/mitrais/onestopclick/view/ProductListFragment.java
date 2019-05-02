@@ -1,18 +1,15 @@
 package com.example.mitrais.onestopclick.view;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +27,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
@@ -49,9 +45,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @BindView(R.id.rec_product)
     RecyclerView recProduct;
-
-    @BindView(R.id.txt_search)
-    TextInputLayout txtSearch;
 
     @BindView(R.id.txt_product_not_found)
     TextView txtProductNotFound;
@@ -95,22 +88,9 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         this.context = null;
     }
 
-    @OnClick(R.id.btn_search)
-    void onSearchButtonClicked() {
-        String searchInput = txtSearch.getEditText().getText().toString().trim();
-        searchProducts(productType, searchInput);
-    }
-
     @OnClick(R.id.img_add_product)
     void onAddProductImageClicked() {
         goToProductScreen("");
-    }
-
-    @OnEditorAction(R.id.txt_edit_search)
-    boolean onSearchTextEditorAction() {
-        String search = txtSearch.getEditText().getText().toString();
-        searchProducts(productType, search);
-        return true;
     }
 
     @Override
@@ -167,24 +147,8 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
      * initialize argument data
      */
     private void initArguments() {
-        if (getArguments() != null) {
+        if (getArguments() != null)
             productType = getArguments().getString(ARG_PRODUCT_TYPE);
-            if (productType != null) {
-                switch (productType) {
-                    case Constant.PRODUCT_TYPE_BOOK:
-                        txtSearch.setHint(getString(R.string.search_book));
-                        break;
-                    case Constant.PRODUCT_TYPE_MUSIC:
-                        txtSearch.setHint(getString(R.string.search_music));
-                        break;
-                    case Constant.PRODUCT_TYPE_MOVIE:
-                        txtSearch.setHint(getString(R.string.search_movie));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
     }
 
     /**
@@ -216,27 +180,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
             });
     }
 
-    /**
-     * @param type   product type
-     * @param search search input
-     */
-    private void searchProducts(String type, String search) {
-        txtSearch.getEditText().setText("");
-        txtSearch.getEditText().clearFocus();
-        hideSoftKeyboard();
-
-        if (type.equals(Constant.PRODUCT_TYPE_ALL))
-            viewModel.searchProducts(search).observe(getViewLifecycleOwner(), products -> {
-                productAdapter.submitList(products);
-                txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-            });
-        else
-            viewModel.searchProductsByType(type, search).observe(getViewLifecycleOwner(), products -> {
-                productAdapter.submitList(products);
-                txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-            });
-    }
-
     private void goToProductScreen(String id) {
         Intent intent = new Intent(context, ProductActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
@@ -258,19 +201,5 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         return dislikeTask != null && !dislikeTask.isComplete();
     }
 
-    private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        progressBar.setVisibility(View.INVISIBLE);
-    }
-
-    private void hideSoftKeyboard() {
-        if (context != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Service.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
-        }
-    }
     // endregion
 }

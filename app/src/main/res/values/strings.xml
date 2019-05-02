@@ -102,4 +102,9 @@
     <string name="products">Products</string>
     <string name="edit_product">Edit product</string>
     <string name="upload_thumbnail_is_in_progress">Upload thumbnail is in progress</string>
+    <string name="set_music">Set music</string>
+    <string name="upload_music">Upload music</string>
+    <string name="music_uploaded">Music uploaded</string>
+    <string name="error_failed_to_upload_music">Failed to upload music</string>
+    <string name="home">Home</string>
 </resources>

@@ -4,9 +4,9 @@
     tools:showIn="navigation_view">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/product"
-            android:icon="@drawable/ic_view_list"
-            android:title="@string/product" />
+            android:id="@+id/home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home" />
         <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_person"

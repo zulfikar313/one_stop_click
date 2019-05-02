@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +26,6 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerMainActivityComponent;
 import com.example.mitrais.onestopclick.dagger.component.MainActivityComponent;
-import com.example.mitrais.onestopclick.view.adapter.ProductPagerAdapter;
 import com.example.mitrais.onestopclick.viewmodel.MainViewModel;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView imgProfile;
     private TextView txtEmail;
     private Task productSyncTask;
+    private SearchView searchView;
 
     @Inject
     MainViewModel viewModel;
@@ -76,6 +75,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -107,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.product: {
-                setTitle(getString(R.string.product));
+            case R.id.home: {
+                setTitle(getString(R.string.home));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
                 break;
             }
