@@ -16,14 +16,14 @@ import com.google.firebase.firestore.DocumentReference;
 
 import javax.inject.Inject;
 
-public class ProductViewModel extends AndroidViewModel {
+public class ProductDetailViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
     @Inject
     StorageRepository storageRepository;
 
-    public ProductViewModel(@NonNull Application application) {
+    public ProductDetailViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }

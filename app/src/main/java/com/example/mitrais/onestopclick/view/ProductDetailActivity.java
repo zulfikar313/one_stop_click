@@ -3,7 +3,9 @@ package com.example.mitrais.onestopclick.view;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -29,7 +32,7 @@ import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.dagger.component.DaggerProductDetailActivityComponent;
 import com.example.mitrais.onestopclick.dagger.component.ProductDetailActivityComponent;
 import com.example.mitrais.onestopclick.model.Product;
-import com.example.mitrais.onestopclick.viewmodel.ProductViewModel;
+import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.squareup.picasso.Callback;
@@ -45,20 +48,23 @@ import es.dmoral.toasty.Toasty;
 import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
-public class ProductActivity extends AppCompatActivity {
-    private static final String TAG = "ProductActivity";
+public class ProductDetailActivity extends AppCompatActivity {
+    private static final String TAG = "ProductDetailActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
-    private static final int REQUEST_CHOOSE_TRAILER = 2;
+    private static final int REQUEST_CHOOSE_MUSIC = 2;
+    private static final int REQUEST_CHOOSE_TRAILER = 3;
     private String productId;
-    private Uri thumbnailUri;
     private Task<Uri> uploadImageTask;
     private Task<Uri> uploadTrailerTask;
     private Task<Void> saveProductTask;
     private Task<DocumentReference> addProductTask;
+    private Uri thumbnailUri;
     private Uri trailerUri;
+    private Uri musicUri;
+    private MediaPlayer musicPlayer;
 
     @Inject
-    ProductViewModel viewModel;
+    ProductDetailViewModel viewModel;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -93,6 +99,15 @@ public class ProductActivity extends AppCompatActivity {
     @BindView(R.id.movie_container)
     LinearLayout movieContainer;
 
+    @BindView(R.id.music_edit_container)
+    LinearLayout musicEditContainer;
+
+    @BindView(R.id.img_music_sheet)
+    ImageView imgMusicSheet;
+
+    @BindView(R.id.btn_play)
+    ImageButton btnPlay;
+
     @BindView(R.id.movie_edit_container)
     LinearLayout movieEditContainer;
 
@@ -117,7 +132,7 @@ public class ProductActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_product);
+        setContentView(R.layout.activity_product_detail);
         ButterKnife.bind(this);
         initDagger();
         initToolbar();
@@ -136,8 +151,13 @@ public class ProductActivity extends AppCompatActivity {
             Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadTrailerInProgress())
             Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
-        else
+        else {
+            if (musicPlayer != null && musicPlayer.isPlaying())
+                musicPlayer.stop();
+
             super.onBackPressed();
+        }
+
 
     }
 
@@ -189,6 +209,28 @@ public class ProductActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.btn_play)
+    void onPlayButtonClicked() {
+        if (musicPlayer.isPlaying()) {
+            musicPlayer.pause();
+            btnPlay.setBackgroundResource(R.drawable.ic_play_arrow);
+        } else {
+            musicPlayer.start();
+            btnPlay.setBackgroundResource(R.drawable.ic_pause);
+        }
+    }
+
+    @OnClick(R.id.btn_upload_music)
+    void onUploadMusicButtonClicked() {
+        if (isSaveProductInProgress() || isAddProductInProgress())
+            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadThumbnailInProgress())
+            Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
+        else
+            openMusicFileChooser();
+    }
+
+
     @OnClick(R.id.btn_upload_trailer)
     void onUploadTrailerButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
@@ -229,6 +271,16 @@ public class ProductActivity extends AppCompatActivity {
             Uri uri = data.getData();
             thumbnailUri = uri;
             uploadThumbnail();
+        }
+
+        if (requestCode == REQUEST_CHOOSE_MUSIC && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            musicUri = data.getData();
+            musicPlayer = MediaPlayer.create(this, musicUri);
+            musicPlayer.setVolume(0.5f, 0.5f);
+            musicPlayer.setLooping(true);
+            btnPlay.setVisibility(View.VISIBLE);
+            uploadMusic();
         }
 
         if (requestCode == REQUEST_CHOOSE_TRAILER && resultCode == RESULT_OK
@@ -313,6 +365,21 @@ public class ProductActivity extends AppCompatActivity {
                 rbMusic.setChecked(true);
                 rbBook.setEnabled(false);
                 rbMovie.setEnabled(false);
+
+                if (product.getMusicUri() != null && !product.getMusicUri().isEmpty()) {
+//                    new AsyncTask<Void, Void, Void>() {
+//
+//                        @Override
+//                        protected Void doInBackground(Void... voids) {
+//                            musicUri = Uri.parse(product.getMusicUri());
+//                            musicPlayer = MediaPlayer.create(ProductDetailActivity.this, musicUri);
+//                            musicPlayer.setVolume(0.5f, 0.5f);
+//                            musicPlayer.setLooping(true);
+//                            btnPlay.setVisibility(View.VISIBLE);
+//                            return null;
+//                        }
+//                    }.execute();
+                }
                 break;
             }
             case Constant.PRODUCT_TYPE_MOVIE: {
@@ -358,22 +425,22 @@ public class ProductActivity extends AppCompatActivity {
             saveProductTask = viewModel.saveProduct(product)
                     .addOnCompleteListener(task -> hideProgressBar())
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     })
                     .addOnFailureListener(e -> {
-                        Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, getString(R.string.error_failed_to_save_product));
                     });
         } else { /* add new product*/
             addProductTask = viewModel.addProduct(product)
                     .addOnCompleteListener(task -> hideProgressBar())
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     })
                     .addOnFailureListener(e -> {
-                        Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, getString(R.string.error_failed_to_save_product));
                     });
         }
@@ -399,22 +466,22 @@ public class ProductActivity extends AppCompatActivity {
             saveProductTask = viewModel.saveProduct(product)
                     .addOnCompleteListener(task -> hideProgressBar())
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     })
                     .addOnFailureListener(e -> {
-                        Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, getString(R.string.error_failed_to_save_product));
                     });
         } else {
             addProductTask = viewModel.addProduct(product)
                     .addOnCompleteListener(task -> hideProgressBar())
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     })
                     .addOnFailureListener(e -> {
-                        Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, getString(R.string.error_failed_to_save_product));
                     });
         }
@@ -441,22 +508,22 @@ public class ProductActivity extends AppCompatActivity {
             saveProductTask = viewModel.saveProduct(product)
                     .addOnCompleteListener(task -> hideProgressBar())
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     })
                     .addOnFailureListener(e -> {
-                        Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, getString(R.string.error_failed_to_save_product));
                     });
         } else {
             addProductTask = viewModel.addProduct(product)
                     .addOnCompleteListener(task -> hideProgressBar())
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(ProductActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
                         onBackPressed();
                     })
                     .addOnFailureListener(e -> {
-                        Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, getString(R.string.error_failed_to_save_product));
                     });
         }
@@ -472,16 +539,41 @@ public class ProductActivity extends AppCompatActivity {
                 .addOnSuccessListener(uri -> {
                     saveProductTask = viewModel.saveThumbnailUri(productId, uri)
                             .addOnCompleteListener(task -> hideProgressBar())
-                            .addOnSuccessListener(aVoid -> Toasty.success(ProductActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
+                            .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
-                                Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
                     Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
-                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    /**
+     * upload movie trailer
+     */
+    private void uploadMusic() {
+        showProgressBar();
+        String filename = productId + "msc." + getFileExtension(musicUri);
+        uploadTrailerTask = viewModel.uploadMusic(musicUri, filename)
+                .addOnSuccessListener(uri ->
+                        saveProductTask = viewModel.saveProductMusic(productId, uri)
+                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnSuccessListener(aVoid ->
+                                {
+                                    Toasty.success(ProductDetailActivity.this, getString(R.string.music_uploaded), Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, getString(R.string.error_failed_to_upload_music));
+                                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                }))
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Log.e(TAG, getString(R.string.error_failed_to_upload_music));
+                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -497,17 +589,17 @@ public class ProductActivity extends AppCompatActivity {
                                 .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(aVoid ->
                                 {
-                                    Toasty.success(ProductActivity.this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show();
+                                    Toasty.success(ProductDetailActivity.this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show();
                                     vidTrailer.start();
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
-                                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 }))
                 .addOnFailureListener(e -> {
                     hideProgressBar();
                     Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
-                    Toasty.error(ProductActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -516,6 +608,13 @@ public class ProductActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+    }
+
+    private void openMusicFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("audio/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, REQUEST_CHOOSE_MUSIC);
     }
 
     private void openTrailerFileChooser() {
@@ -645,6 +744,8 @@ public class ProductActivity extends AppCompatActivity {
         txtAuthor.setVisibility(View.GONE);
         txtArtist.setVisibility(View.VISIBLE);
         movieContainer.setVisibility(View.GONE);
+        if (productId != null && !productId.isEmpty())
+            musicEditContainer.setVisibility(View.VISIBLE);
     }
 
     /**

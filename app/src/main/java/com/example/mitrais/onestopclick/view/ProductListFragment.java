@@ -171,7 +171,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void goToProductPage(String id) {
-        Intent intent = new Intent(context, ProductActivity.class);
+        Intent intent = new Intent(context, ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);

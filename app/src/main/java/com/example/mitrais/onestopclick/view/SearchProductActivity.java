@@ -107,7 +107,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     }
 
     private void goToProductPage(String id) {
-        Intent intent = new Intent(this, ProductActivity.class);
+        Intent intent = new Intent(this, ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);

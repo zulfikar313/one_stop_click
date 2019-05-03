@@ -17,7 +17,7 @@
             android:parentActivityName=".view.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ProductActivity"
+            android:name=".view.ProductDetailActivity"
             android:parentActivityName=".view.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
