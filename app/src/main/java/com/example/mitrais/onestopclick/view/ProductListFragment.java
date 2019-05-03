@@ -100,32 +100,32 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @Override
     public void onLikeClicked(String id) {
-        if (isAddLikeInProgress())
+        if (isAddLikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
-            else {
-                likeTask = viewModel
-                        .addLike(id)
-                        .addOnFailureListener(e -> {
-                            if (context != null)
-                                Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                        });
-            }
+        } else {
+            likeTask = viewModel
+                    .addLike(id)
+                    .addOnFailureListener(e -> {
+                        if (context != null)
+                            Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+        }
     }
 
     @Override
     public void onDislikeClicked(String productId) {
-        if (isAddDislikeInProgress())
+        if (isAddDislikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
-            else {
-                dislikeTask = viewModel
-                        .addDislike(productId)
-                        .addOnFailureListener(e -> {
-                            if (context != null)
-                                Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                        });
-            }
+        } else {
+            dislikeTask = viewModel
+                    .addDislike(productId)
+                    .addOnFailureListener(e -> {
+                        if (context != null)
+                            Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+        }
     }
 
     @Override
