@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
-import com.example.mitrais.onestopclick.dagger.component.DaggerProductFragmentComponent;
-import com.example.mitrais.onestopclick.dagger.component.ProductFragmentComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerProductListFragmentComponent;
+import com.example.mitrais.onestopclick.dagger.component.ProductListFragmentComponent;
 import com.example.mitrais.onestopclick.view.adapter.ProductAdapter;
 import com.example.mitrais.onestopclick.viewmodel.ProductListViewModel;
 import com.google.android.gms.tasks.Task;
@@ -90,12 +90,12 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @OnClick(R.id.img_add_product)
     void onAddProductImageClicked() {
-        goToProductScreen("");
+        goToProductPage("");
     }
 
     @Override
     public void onItemClicked(String productId) {
-        goToProductScreen(productId);
+        goToProductPage(productId);
     }
 
     @Override
@@ -133,27 +133,18 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     }
 
-    /**
-     * initialize dagger injection
-     */
     private void initDagger() {
-        ProductFragmentComponent component = DaggerProductFragmentComponent.builder()
+        ProductListFragmentComponent component = DaggerProductListFragmentComponent.builder()
                 .productFragment(this)
                 .build();
         component.inject(this);
     }
 
-    /**
-     * initialize argument data
-     */
     private void initArguments() {
         if (getArguments() != null)
             productType = getArguments().getString(ARG_PRODUCT_TYPE);
     }
 
-    /**
-     * initialize recycler view
-     */
     private void initRecyclerView() {
         productAdapter = new ProductAdapter();
         productAdapter.setListener(this);
@@ -162,25 +153,24 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         recProduct.setLayoutManager(new LinearLayoutManager(context));
     }
 
-    /**
-     * @param type product type
-     */
     private void observeProducts(String type) {
         if (type.equals(Constant.PRODUCT_TYPE_ALL)) {
             viewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
-                {
+                if (products != null) {
                     productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else
             viewModel.getProductsByType(type).observe(getViewLifecycleOwner(), products -> {
-                productAdapter.submitList(products);
-                txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+                if (products != null) {
+                    productAdapter.submitList(products);
+                    txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+                }
             });
     }
 
-    private void goToProductScreen(String id) {
+    private void goToProductPage(String id) {
         Intent intent = new Intent(context, ProductActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);

@@ -1,14 +1,14 @@
 package com.example.mitrais.onestopclick.dagger.component;
 
 import com.example.mitrais.onestopclick.dagger.module.ProductAdapterModule;
-import com.example.mitrais.onestopclick.dagger.module.ProductViewModelModule;
+import com.example.mitrais.onestopclick.dagger.module.ProductListViewModelModule;
 import com.example.mitrais.onestopclick.view.ProductListFragment;
 
 import dagger.BindsInstance;
 import dagger.Component;
 
-@Component(modules = {ProductViewModelModule.class, ProductAdapterModule.class})
-public interface ProductFragmentComponent {
+@Component(modules = {ProductListViewModelModule.class, ProductAdapterModule.class})
+public interface ProductListFragmentComponent {
     void inject(ProductListFragment fragment);
 
     @Component.Builder
@@ -16,6 +16,6 @@ public interface ProductFragmentComponent {
         @BindsInstance
         Builder productFragment(ProductListFragment fragment);
 
-        ProductFragmentComponent build();
+        ProductListFragmentComponent build();
     }
 }

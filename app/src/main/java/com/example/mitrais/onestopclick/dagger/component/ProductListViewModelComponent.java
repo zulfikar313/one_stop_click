@@ -9,7 +9,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 
 @Component(modules = ProductRepositoryModule.class)
-public interface ProductViewModelComponent {
+public interface ProductListViewModelComponent {
     void inject(ProductListViewModel productListViewModel);
 
     @Component.Builder
@@ -17,6 +17,6 @@ public interface ProductViewModelComponent {
         @BindsInstance
         Builder application(Application application);
 
-        ProductViewModelComponent build();
+        ProductListViewModelComponent build();
     }
 }

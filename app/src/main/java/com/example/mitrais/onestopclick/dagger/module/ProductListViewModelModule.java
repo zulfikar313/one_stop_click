@@ -9,7 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class ProductViewModelModule {
+public class ProductListViewModelModule {
     @Provides
     ProductListViewModel provideProductViewModel(ProductListFragment fragment) {
         return ViewModelProviders.of(fragment).get(ProductListViewModel.class);

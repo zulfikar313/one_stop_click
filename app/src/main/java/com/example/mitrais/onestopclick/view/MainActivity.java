@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView imgProfile;
     private TextView txtEmail;
     private Task productSyncTask;
-    private SearchView searchView;
 
     @Inject
     MainViewModel viewModel;
@@ -75,21 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
-
-        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-
+        initSearchView(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -138,9 +123,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // region private methods
 
-    /**
-     * initialize dagger injection
-     */
     private void initDagger() {
         MainActivityComponent component = DaggerMainActivityComponent.builder()
                 .mainActivity(this)
@@ -148,9 +130,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         component.inject(this);
     }
 
-    /**
-     * initialize drawer menu
-     */
     private void initDrawer() {
         View navHeaderView = navView.getHeaderView(0);
         imgProfile = navHeaderView.findViewById(R.id.img_profile);
@@ -177,6 +156,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
     }
 
+    private void initSearchView(Menu menu) {
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String search) {
+                searchView.clearFocus();
+                goToSearchProductPage(search);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+    }
+
     private void observeProfile() {
         viewModel.getProfile(viewModel.getUser().getEmail()).observe(this, profile -> {
             if (profile != null) {
@@ -188,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    public void goToLoginScreen() {
+    private void goToLoginScreen() {
         showProgressBar();
         new Handler().postDelayed(() -> {
             hideProgressBar();
@@ -200,15 +196,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }, Constant.PROGRESS_DELAY);
     }
 
+    private void goToSearchProductPage(String search) {
+        Intent intent = new Intent(this, SearchProductActivity.class);
+        intent.putExtra(SearchProductActivity.EXTRA_SEARCH_QUERY, search);
+        startActivity(intent);
+    }
+
     private void logout() {
         viewModel.logout();
         viewModel.deleteUserData();
         goToLoginScreen();
     }
 
-    /**
-     * synchronized user data
-     */
     private void syncUserData() {
         showProgressBar();
         productSyncTask = viewModel.syncUserData()
@@ -224,11 +223,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return productSyncTask != null && !productSyncTask.isComplete();
     }
 
-    public void showProgressBar() {
+    private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    public void hideProgressBar() {
+    private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }
 
