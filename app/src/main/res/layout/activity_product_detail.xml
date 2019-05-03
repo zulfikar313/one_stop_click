@@ -185,6 +185,39 @@
                     android:text="@string/save" />
 
                 <LinearLayout
+                    android:id="@+id/music_edit_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/img_music_sheet"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/ic_music_note_gray"
+                        android:contentDescription="@null" />
+
+                    <ImageButton
+                        android:id="@+id/btn_play"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/ic_play_arrow"
+                        android:contentDescription="@null"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btn_upload_music"
+                        style="@style/RedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/upload_music" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/movie_edit_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

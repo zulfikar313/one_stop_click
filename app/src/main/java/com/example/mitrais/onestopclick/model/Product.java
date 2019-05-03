@@ -22,6 +22,7 @@ public class Product {
     private String contentFilename;
     private String thumbnailUri;
     private String thumbnailFilename;
+    private String musicUri;
     private String trailerUri;
     private int like;
     private int dislike;
@@ -42,11 +43,12 @@ public class Product {
      * @param contentFilename   content filename in storage
      * @param thumbnailUri      thumbnail uri depicting product
      * @param thumbnailFilename thumbnail filename in storage
+     * @param musicUri          music uri
      * @param trailerUri        trailer uri
      * @param like              product like count
      * @param dislike           product dislike count
      */
-    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, String trailerUri, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, String musicUri, String trailerUri, int like, int dislike) {
         this.id = id;
         this.title = title == null ? " " : title;
         this.description = description == null ? "" : description;
@@ -59,6 +61,7 @@ public class Product {
         this.thumbnailUri = thumbnailUri == null ? "" : thumbnailUri;
         this.thumbnailFilename = thumbnailFilename == null ? "" : thumbnailFilename;
         this.trailerUri = trailerUri == null ? "" : trailerUri;
+        this.musicUri = musicUri == null ? "" : musicUri;
         this.like = like;
         this.dislike = dislike;
     }
@@ -128,6 +131,10 @@ public class Product {
 
     public void setThumbnailFilename(String thumbnailFilename) {
         this.thumbnailFilename = thumbnailFilename;
+    }
+
+    public String getMusicUri() {
+        return musicUri;
     }
 
     public String getTrailerUri() {
