@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -419,6 +418,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         product.setAuthor(author);
         product.setType(Constant.PRODUCT_TYPE_BOOK);
         product.setDescription(description);
+        product.setThumbnailUri(thumbnailUri.toString());
 
         if (productId != null && !productId.isEmpty()) {
             product.setId(productId);
@@ -460,6 +460,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         product.setArtist(artist);
         product.setType(Constant.PRODUCT_TYPE_MUSIC);
         product.setDescription(description);
+        product.setThumbnailUri(thumbnailUri.toString());
 
         if (productId != null && !productId.isEmpty()) {
             product.setId(productId);
@@ -502,6 +503,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         product.setDirector(director);
         product.setType(Constant.PRODUCT_TYPE_MOVIE);
         product.setDescription(description);
+        product.setThumbnailUri(thumbnailUri.toString());
 
         if (productId != null && !productId.isEmpty()) {
             product.setId(productId);

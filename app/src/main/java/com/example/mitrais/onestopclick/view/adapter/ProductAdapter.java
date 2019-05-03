@@ -63,10 +63,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                         product.getArtist().equals(t1.getArtist()) &&
                         product.getAuthor().equals(t1.getAuthor()) &&
                         product.getDirector().equals(t1.getDirector()) &&
-                        product.getContentUri().equals(t1.getContentUri()) &&
-                        product.getContentFilename().equals(t1.getContentFilename()) &&
                         product.getThumbnailUri().equals(t1.getThumbnailUri()) &&
-                        product.getThumbnailFilename().equals(t1.getThumbnailFilename()) &&
                         product.getLike() == t1.getLike() &&
                         product.getDislike() == t1.getDislike();
             }

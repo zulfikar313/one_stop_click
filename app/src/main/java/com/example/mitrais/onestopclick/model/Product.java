@@ -18,10 +18,7 @@ public class Product {
     private String artist;
     private String author;
     private String director;
-    private String contentUri;
-    private String contentFilename;
     private String thumbnailUri;
-    private String thumbnailFilename;
     private String musicUri;
     private String trailerUri;
     private int like;
@@ -31,37 +28,17 @@ public class Product {
     public Product() {
     }
 
-    /**
-     * @param id                product id
-     * @param title             product title
-     * @param description       product description
-     * @param type              product type either book, music or movie
-     * @param artist            used if product type is music
-     * @param author            used if product type is book
-     * @param director          used if product type is movie
-     * @param contentUri        content uri for product file
-     * @param contentFilename   content filename in storage
-     * @param thumbnailUri      thumbnail uri depicting product
-     * @param thumbnailFilename thumbnail filename in storage
-     * @param musicUri          music uri
-     * @param trailerUri        trailer uri
-     * @param like              product like count
-     * @param dislike           product dislike count
-     */
-    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String contentUri, String contentFilename, String thumbnailUri, String thumbnailFilename, String musicUri, String trailerUri, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String thumbnailUri, String musicUri, String trailerUri, int like, int dislike) {
         this.id = id;
-        this.title = title == null ? " " : title;
-        this.description = description == null ? "" : description;
-        this.type = type == null ? "" : type;
-        this.artist = artist == null ? "" : artist;
-        this.author = author == null ? "" : author;
-        this.director = director == null ? "" : director;
-        this.contentUri = contentUri == null ? "" : contentUri;
-        this.contentFilename = contentFilename == null ? "" : contentFilename;
-        this.thumbnailUri = thumbnailUri == null ? "" : thumbnailUri;
-        this.thumbnailFilename = thumbnailFilename == null ? "" : thumbnailFilename;
-        this.trailerUri = trailerUri == null ? "" : trailerUri;
-        this.musicUri = musicUri == null ? "" : musicUri;
+        this.title = title != null ? title : "";
+        this.description = description != null ? description : "";
+        this.type = type != null ? type : "";
+        this.artist = artist != null ? artist : "";
+        this.author = author != null ? author : "";
+        this.director = director != null ? director : "";
+        this.thumbnailUri = thumbnailUri != null ? thumbnailUri : "";
+        this.musicUri = musicUri != null ? musicUri : "";
+        this.trailerUri = trailerUri != null ? trailerUri : "";
         this.like = like;
         this.dislike = dislike;
     }
@@ -101,20 +78,8 @@ public class Product {
         return director;
     }
 
-    public String getContentUri() {
-        return contentUri;
-    }
-
-    public String getContentFilename() {
-        return contentFilename;
-    }
-
     public String getThumbnailUri() {
         return thumbnailUri;
-    }
-
-    public String getThumbnailFilename() {
-        return thumbnailFilename;
     }
 
     public int getLike() {
@@ -127,10 +92,6 @@ public class Product {
 
     public void setThumbnailUri(String thumbnailUri) {
         this.thumbnailUri = thumbnailUri;
-    }
-
-    public void setThumbnailFilename(String thumbnailFilename) {
-        this.thumbnailFilename = thumbnailFilename;
     }
 
     public String getMusicUri() {
