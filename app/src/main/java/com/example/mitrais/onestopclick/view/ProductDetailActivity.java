@@ -57,9 +57,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     private Task<Uri> uploadTrailerTask;
     private Task<Void> saveProductTask;
     private Task<DocumentReference> addProductTask;
-    private Uri thumbnailUri;
-    private Uri trailerUri;
-    private Uri musicUri;
+    private Uri thumbnailUri = Uri.parse("");
+    private Uri trailerUri = Uri.parse("");
+    private Uri musicUri = Uri.parse("");
     private MediaPlayer musicPlayer;
 
     @Inject
