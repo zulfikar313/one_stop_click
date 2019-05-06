@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +72,12 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     }
 
     private void observeProduct(String search) {
-        viewModel.searchProduct(search).observe(this, products -> productAdapter.submitList(products));
+        viewModel.searchProduct(search).observe(this, products -> {
+            if (products != null) {
+                productAdapter.submitList(products);
+                txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+            }
+        });
     }
 
     @Override

@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initFragment() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
+        navView.setCheckedItem(R.id.home);
     }
 
     private void initSearchView(Menu menu) {
