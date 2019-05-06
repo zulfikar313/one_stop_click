@@ -184,12 +184,12 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/save" />
 
-                <LinearLayout
+                <android.support.constraint.ConstraintLayout
                     android:id="@+id/music_edit_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <ImageView
@@ -197,7 +197,10 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:background="@drawable/ic_music_note_gray"
-                        android:contentDescription="@null" />
+                        android:contentDescription="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageButton
                         android:id="@+id/btn_play"
@@ -206,16 +209,34 @@
                         android:layout_marginTop="8dp"
                         android:background="@drawable/ic_play_arrow"
                         android:contentDescription="@null"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/img_music_sheet" />
 
                     <Button
                         android:id="@+id/btn_upload_music"
                         style="@style/RedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/btn_play"
                         android:layout_marginTop="8dp"
-                        android:text="@string/upload_music" />
-                </LinearLayout>
+                        android:text="@string/upload_music"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_play" />
+
+                    <ProgressBar
+                        android:id="@+id/music_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@id/img_music_sheet"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/img_music_sheet" />
+                </android.support.constraint.ConstraintLayout>
 
                 <LinearLayout
                     android:id="@+id/movie_edit_container"

@@ -82,29 +82,22 @@ dependencies {
         }
     }
 
-    /**
-     * dagger 2 libraries
-     */
+    // Dagger 2
     implementation 'com.google.dagger:dagger:2.21'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.21'
 
-    /**
-     * toasty library
-     */
+    // Toasty
     implementation 'com.github.GrenderG:Toasty:1.4.1'
 
-    /**
-     * intent animation library
-     */
+    // Intent animation
     implementation 'com.github.hajiyevelnur92:intentanimation:1.0'
 
-    /**
-     * picasso library
-     */
+    // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    /**
-     * shimmer layout
-     */
+    // ShimmerLayout
     implementation 'io.supercharge:shimmerlayout:2.1.0'
+
+    // ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
 }

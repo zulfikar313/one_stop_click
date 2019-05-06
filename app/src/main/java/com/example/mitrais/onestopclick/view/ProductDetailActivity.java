@@ -3,8 +3,8 @@ package com.example.mitrais.onestopclick.view;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +32,16 @@ import com.example.mitrais.onestopclick.dagger.component.DaggerProductDetailActi
 import com.example.mitrais.onestopclick.dagger.component.ProductDetailActivityComponent;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.squareup.picasso.Callback;
@@ -60,7 +70,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     private Uri thumbnailUri = Uri.parse("");
     private Uri trailerUri = Uri.parse("");
     private Uri musicUri = Uri.parse("");
-    private MediaPlayer musicPlayer;
+    private ExoPlayer musicPlayer;
+    private Boolean isMusicPlaying;
 
     @Inject
     ProductDetailViewModel viewModel;
@@ -99,7 +110,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     LinearLayout movieContainer;
 
     @BindView(R.id.music_edit_container)
-    LinearLayout musicEditContainer;
+    ConstraintLayout musicEditContainer;
 
     @BindView(R.id.img_music_sheet)
     ImageView imgMusicSheet;
@@ -128,6 +139,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
+    @BindView(R.id.music_progress_bar)
+    ProgressBar musicProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,8 +165,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         else if (isUploadTrailerInProgress())
             Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
         else {
-            if (musicPlayer != null && musicPlayer.isPlaying())
-                musicPlayer.stop();
+            if (musicPlayer != null && isMusicPlaying)
+                musicPlayer.setPlayWhenReady(false);
 
             super.onBackPressed();
         }
@@ -210,12 +224,14 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_play)
     void onPlayButtonClicked() {
-        if (musicPlayer.isPlaying()) {
-            musicPlayer.pause();
-            btnPlay.setBackgroundResource(R.drawable.ic_play_arrow);
-        } else {
-            musicPlayer.start();
-            btnPlay.setBackgroundResource(R.drawable.ic_pause);
+        if (musicPlayer != null) {
+            if (!isMusicPlaying) {
+                musicPlayer.setPlayWhenReady(true);
+                btnPlay.setBackgroundResource(R.drawable.ic_pause);
+            } else {
+                musicPlayer.setPlayWhenReady(false);
+                btnPlay.setBackgroundResource(R.drawable.ic_play_arrow);
+            }
         }
     }
 
@@ -267,18 +283,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
-            Uri uri = data.getData();
-            thumbnailUri = uri;
+            thumbnailUri = data.getData();
             uploadThumbnail();
         }
 
         if (requestCode == REQUEST_CHOOSE_MUSIC && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
             musicUri = data.getData();
-            musicPlayer = MediaPlayer.create(this, musicUri);
-            musicPlayer.setVolume(0.5f, 0.5f);
-            musicPlayer.setLooping(true);
-            btnPlay.setVisibility(View.VISIBLE);
+            prepareMusicPlayer(data.getData());
+//            btnPlay.setVisibility(View.VISIBLE);
             uploadMusic();
         }
 
@@ -366,18 +379,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                 rbMovie.setEnabled(false);
 
                 if (product.getMusicUri() != null && !product.getMusicUri().isEmpty()) {
-//                    new AsyncTask<Void, Void, Void>() {
-//
-//                        @Override
-//                        protected Void doInBackground(Void... voids) {
-//                            musicUri = Uri.parse(product.getMusicUri());
-//                            musicPlayer = MediaPlayer.create(ProductDetailActivity.this, musicUri);
-//                            musicPlayer.setVolume(0.5f, 0.5f);
-//                            musicPlayer.setLooping(true);
-//                            btnPlay.setVisibility(View.VISIBLE);
-//                            return null;
-//                        }
-//                    }.execute();
+                    prepareMusicPlayer(Uri.parse(product.getMusicUri()));
+//                    btnPlay.setVisibility(View.VISIBLE);
                 }
                 break;
             }
@@ -603,6 +606,34 @@ public class ProductDetailActivity extends AppCompatActivity {
                     Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
                     Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+    }
+
+    /**
+     * @param uri music uri
+     */
+    private void prepareMusicPlayer(Uri uri) {
+        musicProgressBar.setVisibility(View.VISIBLE);
+        // prepare music player
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        musicPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        musicPlayer.addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                super.onPlayerStateChanged(playWhenReady, playbackState);
+                isMusicPlaying = playWhenReady && playbackState == Player.STATE_READY;
+                if (playbackState == Player.STATE_READY) {
+                    musicProgressBar.setVisibility(View.INVISIBLE);
+                    btnPlay.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        // prepare music data source
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
+        MediaSource musicSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+
+        // configure music player
+        musicPlayer.prepare(musicSource);
     }
 
     private void openImageFileChooser() {
