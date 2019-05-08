@@ -41,7 +41,7 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private Context context;
-    private Uri imgUri;
+    private Uri profileImgUri = Uri.parse("");
     private Task<Uri> uploadTask;
     private Task<Void> saveProfileTask;
     private String email;
@@ -128,7 +128,7 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK
                 && data != null && data.getData() != null) {
-            imgUri = data.getData();
+            profileImgUri = data.getData();
             uploadProfileImage();
         }
     }
@@ -154,6 +154,7 @@ public class ProfileFragment extends Fragment {
         Profile profile = new Profile();
         profile.setEmail(viewModel.getUser().getEmail());
         profile.setAddress(address);
+        profile.setImageUri(profileImgUri.toString());
         saveProfileTask = viewModel.saveProfile(profile)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> {
@@ -174,8 +175,8 @@ public class ProfileFragment extends Fragment {
      */
     private void uploadProfileImage() {
         showProgressBar();
-        String filename = email + "." + getFileExtension(imgUri);
-        uploadTask = viewModel.uploadProfileImage(imgUri, filename)
+        String filename = email + "." + getFileExtension(profileImgUri);
+        uploadTask = viewModel.uploadProfileImage(profileImgUri, filename)
                 .addOnSuccessListener(uri -> {
                     Profile profile = new Profile();
                     profile.setEmail(email);
@@ -201,9 +202,6 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    /**
-     * observe profile data
-     */
     private void observeProfile() {
         viewModel.getProfileByEmail(viewModel.getUser().getEmail()).observe(this, profile -> {
             if (profile != null) {
@@ -213,16 +211,13 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    /**
-     * bind profile data to view
-     */
     private void bindProfile(Profile profile) {
         txtEmail.setText(profile.getEmail());
         txtAddress.getEditText().setText(profile.getAddress());
         if (profile.getImageUri() != null && !profile.getImageUri().isEmpty()) {
-            imgUri = Uri.parse(profile.getImageUri());
+            profileImgUri = Uri.parse(profile.getImageUri());
             shimmerLayout.startShimmerAnimation();
-            Picasso.get().load(imgUri).placeholder(R.drawable.skeleton).into(imgProfile, new Callback() {
+            Picasso.get().load(profileImgUri).placeholder(R.drawable.skeleton).into(imgProfile, new Callback() {
                 @Override
                 public void onSuccess() {
                     shimmerLayout.stopShimmerAnimation();
@@ -246,10 +241,6 @@ public class ProfileFragment extends Fragment {
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
     }
 
-    /**
-     * @param uri file uri
-     * @return file extension
-     */
     private String getFileExtension(Uri uri) {
         ContentResolver resolver = context.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
