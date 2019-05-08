@@ -2,7 +2,6 @@ package com.example.mitrais.onestopclick.model.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerProfileRepositoryComponent;
@@ -15,6 +14,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import javax.inject.Inject;
+
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class ProfileRepository {
     private static final String TAG = "ProfileRepository";
@@ -31,86 +36,78 @@ public class ProfileRepository {
     }
 
     // region room
-
     private void insertProfile(Profile profile) {
-        new InsertProfileAsyncTask(profileDao).execute(profile);
+        Completable.fromAction(() -> profileDao.insertProfile(profile))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "Insert profile completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
     }
 
     public void updateProfile(Profile profile) {
-        new UpdateProfileAsyncTask(profileDao).execute(profile);
+        Completable.fromAction(() -> profileDao.updateProfile(profile))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "Update profile completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
     }
 
     public void deleteProfile() {
-        new DeleteProfileAsyncTask(profileDao).execute();
+        Completable.fromAction(() -> profileDao.deleteProfile())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "Delete profile complete");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
     }
 
-    /**
-     * @param email user email address
-     * @return profile live data
-     */
     public LiveData<Profile> getProfile(String email) {
         return profileDao.getProfile(email);
     }
-
-    /**
-     * insert profile to local db in background
-     */
-    static class InsertProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
-        private final ProfileDao profileDao;
-
-        InsertProfileAsyncTask(ProfileDao profileDao) {
-            this.profileDao = profileDao;
-        }
-
-        @Override
-        protected Void doInBackground(Profile... profiles) {
-            profileDao.insertProfile(profiles[0]);
-            return null;
-        }
-    }
-
-    /**
-     * update profile in local db in background
-     */
-    static class UpdateProfileAsyncTask extends AsyncTask<Profile, Void, Void> {
-        private final ProfileDao profileDao;
-
-        UpdateProfileAsyncTask(ProfileDao profileDao) {
-            this.profileDao = profileDao;
-        }
-
-        @Override
-        protected Void doInBackground(Profile... profiles) {
-            profileDao.updateProfile(profiles[0]);
-            return null;
-        }
-    }
-
-    /**
-     * delete profile in local db in background
-     */
-    static class DeleteProfileAsyncTask extends AsyncTask<Void, Void, Void> {
-        private final ProfileDao profileDao;
-
-        DeleteProfileAsyncTask(ProfileDao profileDao) {
-            this.profileDao = profileDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            profileDao.deleteProfile();
-            return null;
-        }
-    }
-
     // endregion
 
     // region firestore
-
-    /**
-     * @param profile user profile
-     * @return save profile task
-     */
     public Task<Void> saveProfile(Profile profile) {
         return profileService.saveProfile(profile)
                 .addOnSuccessListener(aVoid -> {
@@ -118,10 +115,6 @@ public class ProfileRepository {
                 });
     }
 
-    /**
-     * @param profile user profile
-     * @return save profile task
-     */
     public Task<Void> saveProfileImageUri(Profile profile) {
         return profileService.saveProfileImageUri(profile)
                 .addOnSuccessListener(aVoid -> {
@@ -129,10 +122,6 @@ public class ProfileRepository {
                 });
     }
 
-    /**
-     * @param email user email address
-     * @return retrieve profile by email task
-     */
     public Task<DocumentSnapshot> syncProfile(String email) {
         return profileService.syncProfile(email)
                 .addOnSuccessListener(documentSnapshot -> {
@@ -146,8 +135,7 @@ public class ProfileRepository {
     }
 
     /**
-     * add listener to listen for changes to profile data in firestore
-     * only profile data with specific email adress will be listened
+     * listen to profile data changes in firestore
      *
      * @param email user email address
      */
@@ -169,11 +157,6 @@ public class ProfileRepository {
     }
     // endregion
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application application for dao injection
-     */
     private void initDagger(Application application) {
         ProfileRepositoryComponent component = DaggerProfileRepositoryComponent.builder()
                 .application(application)

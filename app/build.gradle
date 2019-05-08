@@ -52,11 +52,11 @@ dependencies {
     /**
      * firebase libraries
      */
-    implementation 'com.google.firebase:firebase-core:16.0.8'
-    implementation 'com.google.firebase:firebase-auth:16.2.1'
-    implementation 'com.google.firebase:firebase-storage:16.1.0'
-    implementation 'com.google.firebase:firebase-firestore:18.2.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+    implementation 'com.google.firebase:firebase-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
+    implementation 'com.google.firebase:firebase-firestore:19.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.0'
 
     /**
      * room libraries
@@ -100,4 +100,14 @@ dependencies {
 
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
+
+    // RxRoom
+    implementation "android.arch.persistence.room:rxjava2:1.1.1"
+
+    // RxJava
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
+
+    // RxAndroid
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+
 }
