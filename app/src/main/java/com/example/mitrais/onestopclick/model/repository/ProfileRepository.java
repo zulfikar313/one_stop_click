@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ProfileRepository {
     private static final String TAG = "ProfileRepository";
-    private static ListenerRegistration profileListenerRegistration;
+    private ListenerRegistration profileListenerRegistration;
 
     @Inject
     ProfileDao profileDao;
@@ -140,20 +140,22 @@ public class ProfileRepository {
      * @param email user email address
      */
     private void addProfileListener(String email) {
-        if (profileListenerRegistration == null) {
-            profileListenerRegistration = profileService.getProfileRef(email)
-                    .addSnapshotListener((documentSnapshot, e) -> {
-                        if (e != null)
-                            Log.e(TAG, e.getMessage());
-                        else {
-                            Profile profile = documentSnapshot.toObject(Profile.class);
-                            if (profile != null) {
-                                profile.setEmail(documentSnapshot.getId());
-                                insertProfile(profile);
-                            }
+        if (profileListenerRegistration != null)
+            profileListenerRegistration.remove();
+
+        profileListenerRegistration = profileService.getProfileRef(email)
+                .addSnapshotListener((documentSnapshot, e) -> {
+                    Log.i(TAG, "addProfileListener:called");
+                    if (e != null)
+                        Log.e(TAG, e.getMessage());
+                    else {
+                        Profile profile = documentSnapshot.toObject(Profile.class);
+                        if (profile != null) {
+                            profile.setEmail(documentSnapshot.getId());
+                            insertProfile(profile);
                         }
-                    });
-        }
+                    }
+                });
     }
     // endregion
 
