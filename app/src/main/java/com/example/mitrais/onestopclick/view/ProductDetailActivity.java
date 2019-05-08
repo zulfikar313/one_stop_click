@@ -15,16 +15,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
@@ -39,6 +36,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -118,17 +116,17 @@ public class ProductDetailActivity extends AppCompatActivity {
     @BindView(R.id.btn_play)
     ImageButton btnPlay;
 
-    @BindView(R.id.movie_edit_container)
-    LinearLayout movieEditContainer;
-
     @BindView(R.id.txt_director)
     TextInputLayout txtDirector;
 
-    @BindView(R.id.trailer_container)
-    FrameLayout trailerContainer;
+    @BindView(R.id.movie_edit_container)
+    ConstraintLayout movieEditContainer;
 
-    @BindView(R.id.vid_trailer)
-    VideoView vidTrailer;
+    @BindView(R.id.trailer_view)
+    PlayerView trailerView;
+
+    @BindView(R.id.trailer_progress_bar)
+    ProgressBar trailerProgressBar;
 
     @BindView(R.id.btn_upload_trailer)
     AppCompatButton btnSetTrailer;
@@ -290,16 +288,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CHOOSE_MUSIC && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
             musicUri = data.getData();
-            prepareMusicPlayer(data.getData());
-//            btnPlay.setVisibility(View.VISIBLE);
             uploadMusic();
         }
 
         if (requestCode == REQUEST_CHOOSE_TRAILER && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
             trailerUri = data.getData();
-            vidTrailer.setVideoURI(data.getData());
-            vidTrailer.setMediaController(new MediaController(this));
             uploadTrailer();
         }
     }
@@ -379,8 +373,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                 rbMovie.setEnabled(false);
 
                 if (product.getMusicUri() != null && !product.getMusicUri().isEmpty()) {
+                    musicUri = Uri.parse(product.getMusicUri());
                     prepareMusicPlayer(Uri.parse(product.getMusicUri()));
-//                    btnPlay.setVisibility(View.VISIBLE);
                 }
                 break;
             }
@@ -391,11 +385,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
                 if (product.getTrailerUri() != null && !product.getTrailerUri().isEmpty()) {
                     trailerUri = Uri.parse(product.getTrailerUri());
-                    vidTrailer.setVideoURI(Uri.parse(product.getTrailerUri()));
-                    vidTrailer.setMediaController(new MediaController(this));
-                    vidTrailer.start();
-                } else {
-                    trailerContainer.setBackground(getDrawable(R.drawable.skeleton));
+                    prepareTrailerPlayer(trailerUri);
                 }
 
                 break;
@@ -561,12 +551,14 @@ public class ProductDetailActivity extends AppCompatActivity {
      * upload movie trailer
      */
     private void uploadMusic() {
-        showProgressBar();
+        musicProgressBar.setVisibility(View.VISIBLE);
+        btnPlay.setVisibility(View.GONE);
+
         String filename = productId + "msc." + getFileExtension(musicUri);
         uploadTrailerTask = viewModel.uploadMusic(musicUri, filename)
                 .addOnSuccessListener(uri ->
                         saveProductTask = viewModel.saveProductMusic(productId, uri)
-                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnCompleteListener(task -> musicProgressBar.setVisibility(View.INVISIBLE))
                                 .addOnSuccessListener(aVoid ->
                                 {
                                     Toasty.success(ProductDetailActivity.this, getString(R.string.music_uploaded), Toast.LENGTH_SHORT).show();
@@ -586,16 +578,16 @@ public class ProductDetailActivity extends AppCompatActivity {
      * upload movie trailer
      */
     private void uploadTrailer() {
-        showProgressBar();
+        trailerProgressBar.setVisibility(View.VISIBLE);
+
         String filename = productId + "tr1." + getFileExtension(trailerUri);
         uploadTrailerTask = viewModel.uploadTrailer(trailerUri, filename)
                 .addOnSuccessListener(uri1 ->
                         saveProductTask = viewModel.saveProductTrailer(productId, uri1)
-                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnCompleteListener(task -> trailerProgressBar.setVisibility(View.INVISIBLE))
                                 .addOnSuccessListener(aVoid ->
                                 {
                                     Toasty.success(ProductDetailActivity.this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show();
-                                    vidTrailer.start();
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
@@ -634,6 +626,32 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         // configure music player
         musicPlayer.prepare(musicSource);
+    }
+
+    private void prepareTrailerPlayer(Uri uri) {
+        trailerProgressBar.setVisibility(View.VISIBLE);
+
+        // prepare video player
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        ExoPlayer videoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        videoPlayer.addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                super.onPlayerStateChanged(playWhenReady, playbackState);
+                if (playbackState == Player.STATE_READY) {
+                    trailerProgressBar.setVisibility(View.INVISIBLE);
+                    trailerView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        // prepare video source
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
+        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+
+        // configure video player
+        videoPlayer.prepare(videoSource);
+        trailerView.setPlayer(videoPlayer);
     }
 
     private void openImageFileChooser() {

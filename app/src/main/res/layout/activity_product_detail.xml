@@ -238,26 +238,20 @@
                         app:layout_constraintTop_toTopOf="@id/img_music_sheet" />
                 </android.support.constraint.ConstraintLayout>
 
-                <LinearLayout
+                <android.support.constraint.ConstraintLayout
                     android:id="@+id/movie_edit_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_marginTop="8dp"
                     android:visibility="gone">
 
-                    <FrameLayout
-                        android:id="@+id/trailer_container"
+                    <com.google.android.exoplayer2.ui.PlayerView
+                        android:id="@+id/trailer_view"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:layout_marginTop="8dp"
-                        android:background="#000">
-
-                        <VideoView
-                            android:id="@+id/vid_trailer"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical" />
-                    </FrameLayout>
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <android.support.v7.widget.AppCompatButton
                         android:id="@+id/btn_upload_trailer"
@@ -265,8 +259,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@string/upload_trailer" />
-                </LinearLayout>
+                        android:text="@string/upload_trailer"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/trailer_view" />
+
+                    <ProgressBar
+                        android:id="@+id/trailer_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@id/trailer_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/trailer_view" />
+                </android.support.constraint.ConstraintLayout>
             </LinearLayout>
 
             <ProgressBar
