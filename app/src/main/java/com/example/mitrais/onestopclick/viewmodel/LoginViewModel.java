@@ -8,6 +8,7 @@ import com.example.mitrais.onestopclick.dagger.component.DaggerLoginViewModelCom
 import com.example.mitrais.onestopclick.dagger.component.LoginViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,9 +16,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import javax.inject.Inject;
 
-/**
- * LoginViewModel class handle data lifecycle for LoginActivity
- */
 public class LoginViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
@@ -25,11 +23,6 @@ public class LoginViewModel extends AndroidViewModel {
     @Inject
     ProfileRepository profileRepository;
 
-    /**
-     * LoginViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
     public LoginViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
@@ -48,7 +41,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     /**
-     * log user in
+     * login using email and password
      *
      * @param email    user email address
      * @param password user password
@@ -59,14 +52,24 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     /**
+     * sign in using google account
+     *
+     * @param account google sign in account
+     * @return google sign in task
+     */
+    public Task<AuthResult> googleSignIn(GoogleSignInAccount account) {
+        return authRepository.googleSignIn(account);
+    }
+
+    /**
      * @return logged in user
      */
-    public FirebaseUser getCurrentUser() {
+    public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
     /**
-     * send verification email
+     * send verification email to user email address
      *
      * @param user logged in user
      * @return send verification email task
@@ -75,12 +78,6 @@ public class LoginViewModel extends AndroidViewModel {
         return authRepository.sendVerificationEmail(user);
     }
 
-    /**
-     * synchronize user data
-     *
-     * @param user logged in user
-     * @return sync data task
-     */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
             return profileRepository.syncProfile(user.getEmail());

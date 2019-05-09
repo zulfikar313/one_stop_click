@@ -3,7 +3,6 @@ package com.example.mitrais.onestopclick.view;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -27,9 +26,6 @@ import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
-/**
- * ForgotPasswordActivity handle forgot password logic
- */
 public class ForgotPasswordActivity extends AppCompatActivity {
     private static final String TAG = "ForgotPasswordActivity";
     private Task<Void> sendEmailTask;
@@ -67,12 +63,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     void onResetPasswordButtonClicked() {
         if (isEmailValid()) {
             if (isSendEmailInProgress())
-                Toasty.info(this, getString(R.string.send_reset_password_is_in_progress), Toast.LENGTH_SHORT).show();
+                Toasty.info(this, getString(R.string.send_reset_password_in_progress), Toast.LENGTH_SHORT).show();
             else {
-                String email = Objects.requireNonNull(txtEmail.getEditText(), getString(R.string.error_no_edit_text)).getText().toString().trim();
+                String email = txtEmail.getEditText().getText().toString().trim();
                 sendPasswordResetEmail(email);
             }
-
         }
     }
 
@@ -103,10 +98,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    /**
-     * show dialog informing user that email has been sent
-     * where user can continue to reset password
-     */
     private void showCheckEmailToResetPasswordDialog() {
         CheckEmailToResetPasswordDialog dialog = new CheckEmailToResetPasswordDialog();
         dialog.setCancelable(false);
@@ -114,43 +105,27 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), TAG);
     }
 
-    /**
-     * returns true if email valid
-     *
-     * @return email validation
-     */
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
         if (email.isEmpty()) {
-            txtEmail.setError(getString(R.string.error_empty_email));
+            txtEmail.setError(getString(R.string.email_cant_be_empty));
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            txtEmail.setError(getString(R.string.error_invalid_email));
+            txtEmail.setError(getString(R.string.email_is_not_valid));
             return false;
         }
         txtEmail.setError("");
         return true;
     }
 
-    /**
-     * returns true if send email in progress
-     *
-     * @return send email progress status
-     */
     private boolean isSendEmailInProgress() {
         return sendEmailTask != null && !sendEmailTask.isComplete();
     }
 
-    /**
-     * set progress bar visible
-     */
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * set progress bar invisible
-     */
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }

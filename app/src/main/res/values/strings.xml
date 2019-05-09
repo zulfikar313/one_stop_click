@@ -3,8 +3,8 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="error_empty_email">Email can\'t be empty</string>
-    <string name="error_invalid_email">Email is invalid</string>
+    <string name="email_cant_be_empty">Email can\'t be empty</string>
+    <string name="email_is_not_valid">Email is not valid</string>
     <string name="error_empty_password">Password can\'t be empty</string>
     <string name="register">Register</string>
     <string name="confirm_password">Confirm password</string>
@@ -25,10 +25,10 @@
     <string name="forgot_password">Forgot password</string>
     <string name="reset_password">Reset password</string>
     <string name="message_check_email_to_reset_password">Please check your email to reset password</string>
-    <string name="login_process_is_running">Login process is running</string>
+    <string name="login_is_in_progress">Login is in progress</string>
     <string name="registration_is_in_progress">Registration is in progress</string>
-    <string name="send_verification_email_is_in_progress">Send verification email is in progress</string>
-    <string name="send_reset_password_is_in_progress">Send reset password is in progress</string>
+    <string name="send_verification_email_in_progress">Send verification email in progress</string>
+    <string name="send_reset_password_in_progress">Send reset password in progress</string>
     <string name="error_no_edit_text">There must be TextInputEditText inside TextInputLayout</string>
     <string name="movie">Movie</string>
     <string name="music">Music</string>

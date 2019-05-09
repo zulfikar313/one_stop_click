@@ -110,10 +110,10 @@ public class RegistrationActivity extends AppCompatActivity {
     private boolean isEmailValid() {
         String email = txtEmail.getEditText().getText().toString().trim();
         if (email.isEmpty()) {
-            txtEmail.setError(getString(R.string.error_empty_email));
+            txtEmail.setError(getString(R.string.email_cant_be_empty));
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            txtEmail.setError(getString(R.string.error_invalid_email));
+            txtEmail.setError(getString(R.string.email_is_not_valid));
             return false;
         }
         txtEmail.setError("");
