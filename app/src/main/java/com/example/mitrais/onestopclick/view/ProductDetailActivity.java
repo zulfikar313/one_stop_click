@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
@@ -58,14 +59,15 @@ import maes.tech.intentanim.CustomIntent;
 public class ProductDetailActivity extends AppCompatActivity {
     private static final String TAG = "ProductDetailActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
-    private static final int REQUEST_CHOOSE_MUSIC = 2;
-    private static final int REQUEST_CHOOSE_TRAILER = 3;
+    private static final int REQUEST_CHOOSE_BOOK = 2;
+    private static final int REQUEST_CHOOSE_MUSIC = 3;
+    private static final int REQUEST_CHOOSE_TRAILER = 4;
     private String productId;
-    private Task<Uri> uploadImageTask;
-    private Task<Uri> uploadTrailerTask;
+    private Task<Uri> UploadTask;
     private Task<Void> saveProductTask;
     private Task<DocumentReference> addProductTask;
     private Uri thumbnailUri = Uri.parse("");
+    private Uri bookUri = Uri.parse("");
     private Uri trailerUri = Uri.parse("");
     private Uri musicUri = Uri.parse("");
     private ExoPlayer musicPlayer;
@@ -125,11 +127,20 @@ public class ProductDetailActivity extends AppCompatActivity {
     @BindView(R.id.trailer_view)
     PlayerView trailerView;
 
-    @BindView(R.id.trailer_progress_bar)
-    ProgressBar trailerProgressBar;
-
     @BindView(R.id.btn_upload_trailer)
     AppCompatButton btnSetTrailer;
+
+    @BindView(R.id.book_edit_container)
+    ConstraintLayout bookEditContainer;
+
+    @BindView(R.id.book_not_found_view)
+    LinearLayout bookNotFoundView;
+
+    @BindView(R.id.txt_book_filename)
+    TextView txtBookFilename;
+
+    @BindView(R.id.book_found_view)
+    LinearLayout bookFoundView;
 
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
@@ -137,8 +148,14 @@ public class ProductDetailActivity extends AppCompatActivity {
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
+    @BindView(R.id.book_progress_bar)
+    ProgressBar bookProgressBar;
+
     @BindView(R.id.music_progress_bar)
     ProgressBar musicProgressBar;
+
+    @BindView(R.id.trailer_progress_bar)
+    ProgressBar trailerProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,10 +175,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadThumbnailInProgress())
-            Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadTrailerInProgress())
-            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else {
             if (musicPlayer != null && isMusicPlaying)
                 musicPlayer.setPlayWhenReady(false);
@@ -182,10 +197,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     void onThumbnailImageClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadThumbnailInProgress())
-            Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadTrailerInProgress())
-            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
             openImageFileChooser();
     }
@@ -194,10 +207,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     void onSaveButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadTrailerInProgress())
-            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadThumbnailInProgress())
-            Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else {
             hideSoftKeyboard();
             switch (rgType.getCheckedRadioButtonId()) {
@@ -233,12 +244,22 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.btn_upload_book)
+    void onUploadBookButtonClicked() {
+        if (isSaveProductInProgress() || isAddProductInProgress())
+            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
+        else
+            openBookFileChooser();
+    }
+
     @OnClick(R.id.btn_upload_music)
     void onUploadMusicButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadThumbnailInProgress())
-            Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
             openMusicFileChooser();
     }
@@ -248,10 +269,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     void onUploadTrailerButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadTrailerInProgress())
-            Toasty.info(this, getString(R.string.upload_trailer_is_in_progress), Toast.LENGTH_SHORT).show();
-        else if (isUploadThumbnailInProgress())
-            Toasty.info(this, getString(R.string.upload_thumbnail_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
             openTrailerFileChooser();
     }
@@ -283,6 +302,12 @@ public class ProductDetailActivity extends AppCompatActivity {
                 && data != null && data.getData() != null) {
             thumbnailUri = data.getData();
             uploadThumbnail();
+        }
+
+        if (requestCode == REQUEST_CHOOSE_BOOK && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            bookUri = data.getData();
+            uploadBook();
         }
 
         if (requestCode == REQUEST_CHOOSE_MUSIC && resultCode == RESULT_OK
@@ -318,9 +343,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
-    /**
-     * @param id product id
-     */
     private void observeProduct(String id) {
         viewModel.getProductById(id).observe(this, product -> {
             if (product != null) {
@@ -330,11 +352,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * bind product data to view
-     *
-     * @param product product objects
-     */
     private void bindProduct(Product product) {
         if (!product.getThumbnailUri().isEmpty()) {
             thumbnailUri = Uri.parse(product.getThumbnailUri());
@@ -353,18 +370,25 @@ public class ProductDetailActivity extends AppCompatActivity {
             });
         }
 
-
         txtTitle.getEditText().setText(product.getTitle());
         txtAuthor.getEditText().setText(product.getAuthor());
         txtArtist.getEditText().setText(product.getArtist());
         txtDirector.getEditText().setText(product.getDirector());
 
-
         switch (product.getType()) {
             case Constant.PRODUCT_TYPE_BOOK: {
                 rbBook.setChecked(true);
+                setBookView();
                 rbMusic.setEnabled(false);
                 rbMovie.setEnabled(false);
+
+                if (product.getBookUri() != null && !product.getBookUri().isEmpty()) {
+                    bookUri = Uri.parse(product.getBookUri());
+                    txtBookFilename.setText(product.getTitle());
+                    bookNotFoundView.setVisibility(View.GONE);
+                    bookFoundView.setVisibility(View.VISIBLE);
+                }
+
                 break;
             }
             case Constant.PRODUCT_TYPE_MUSIC: {
@@ -397,9 +421,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtDescription.getEditText().setText(product.getDescription());
     }
 
-    /**
-     * save book product
-     */
     private void saveBook() {
         showProgressBar();
         String title = txtTitle.getEditText().getText().toString().trim();
@@ -412,6 +433,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         product.setType(Constant.PRODUCT_TYPE_BOOK);
         product.setDescription(description);
         product.setThumbnailUri(thumbnailUri.toString());
+        product.setBookUri(bookUri.toString());
 
         if (productId != null && !productId.isEmpty()) {
             product.setId(productId);
@@ -454,6 +476,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         product.setType(Constant.PRODUCT_TYPE_MUSIC);
         product.setDescription(description);
         product.setThumbnailUri(thumbnailUri.toString());
+        product.setMusicUri(musicUri.toString());
 
         if (productId != null && !productId.isEmpty()) {
             product.setId(productId);
@@ -497,6 +520,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         product.setType(Constant.PRODUCT_TYPE_MOVIE);
         product.setDescription(description);
         product.setThumbnailUri(thumbnailUri.toString());
+        product.setTrailerUri(trailerUri.toString());
 
         if (productId != null && !productId.isEmpty()) {
             product.setId(productId);
@@ -530,7 +554,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void uploadThumbnail() {
         showProgressBar();
         String filename = productId + "thmb." + getFileExtension(thumbnailUri);
-        uploadImageTask = viewModel.uploadThumbnail(thumbnailUri, filename)
+        UploadTask = viewModel.uploadThumbnail(thumbnailUri, filename)
                 .addOnSuccessListener(uri -> {
                     saveProductTask = viewModel.saveThumbnailUri(productId, uri)
                             .addOnCompleteListener(task -> hideProgressBar())
@@ -548,6 +572,32 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * upload book file
+     */
+    private void uploadBook() {
+        bookProgressBar.setVisibility(View.VISIBLE);
+
+        String filename = productId + "book." + getFileExtension(bookUri);
+        UploadTask = viewModel.uploadBook(bookUri, filename)
+                .addOnSuccessListener(uri ->
+                        saveProductTask = viewModel.saveProductBook(productId, uri)
+                                .addOnCompleteListener(task -> bookProgressBar.setVisibility(View.INVISIBLE))
+                                .addOnSuccessListener(aVoid ->
+                                {
+                                    Toasty.success(ProductDetailActivity.this, getString(R.string.book_uploaded), Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Update product book uri failed");
+                                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                }))
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Log.e(TAG, "Upload product book failed");
+                    Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    /**
      * upload movie trailer
      */
     private void uploadMusic() {
@@ -555,7 +605,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnPlay.setVisibility(View.GONE);
 
         String filename = productId + "msc." + getFileExtension(musicUri);
-        uploadTrailerTask = viewModel.uploadMusic(musicUri, filename)
+        UploadTask = viewModel.uploadMusic(musicUri, filename)
                 .addOnSuccessListener(uri ->
                         saveProductTask = viewModel.saveProductMusic(productId, uri)
                                 .addOnCompleteListener(task -> musicProgressBar.setVisibility(View.INVISIBLE))
@@ -581,7 +631,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         trailerProgressBar.setVisibility(View.VISIBLE);
 
         String filename = productId + "tr1." + getFileExtension(trailerUri);
-        uploadTrailerTask = viewModel.uploadTrailer(trailerUri, filename)
+        UploadTask = viewModel.uploadTrailer(trailerUri, filename)
                 .addOnSuccessListener(uri1 ->
                         saveProductTask = viewModel.saveProductTrailer(productId, uri1)
                                 .addOnCompleteListener(task -> trailerProgressBar.setVisibility(View.INVISIBLE))
@@ -661,6 +711,13 @@ public class ProductDetailActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
     }
 
+    private void openBookFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("application/pdf");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, REQUEST_CHOOSE_BOOK);
+    }
+
     private void openMusicFileChooser() {
         Intent intent = new Intent();
         intent.setType("audio/*");
@@ -675,19 +732,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CHOOSE_TRAILER);
     }
 
-    /**
-     * @param uri image uri
-     * @return file extension based on uri
-     */
     private String getFileExtension(Uri uri) {
         ContentResolver resolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(resolver.getType(uri));
     }
 
-    /**
-     * @return true if title valid
-     */
     private boolean isTitleValid() {
         String title = txtTitle.getEditText().getText().toString().trim();
         if (title.isEmpty()) {
@@ -698,9 +748,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * @return true if author valid
-     */
     private boolean isAuthorValid() {
         String author = txtAuthor.getEditText().getText().toString().trim();
         if (author.isEmpty()) {
@@ -711,9 +758,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * @return true if artist valid
-     */
     private boolean isArtistValid() {
         String artist = txtArtist.getEditText().getText().toString().trim();
         if (artist.isEmpty()) {
@@ -724,9 +768,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * @return true if director valid
-     */
     private boolean isDirectorValid() {
         String director = txtDirector.getEditText().getText().toString().trim();
         if (director.isEmpty()) {
@@ -737,9 +778,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * @return true if description valid
-     */
     private boolean isDescriptionValid() {
         String description = txtDescription.getEditText().getText().toString().trim();
         if (description.isEmpty()) {
@@ -750,33 +788,17 @@ public class ProductDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * @return true if save task in progress
-     */
     private boolean isSaveProductInProgress() {
         return saveProductTask != null && !saveProductTask.isComplete();
     }
 
-    /**
-     * @return true if add product in progress
-     */
     private boolean isAddProductInProgress() {
         return addProductTask != null && !addProductTask.isComplete();
     }
 
 
-    /**
-     * @return true if upload thumbnail in progress
-     */
-    private boolean isUploadThumbnailInProgress() {
-        return uploadImageTask != null && !uploadImageTask.isComplete();
-    }
-
-    /**
-     * @return true if upload trailer in progress
-     */
-    private boolean isUploadTrailerInProgress() {
-        return uploadTrailerTask != null && !uploadTrailerTask.isComplete();
+    private boolean isUploadInProgress() {
+        return UploadTask != null && !UploadTask.isComplete();
     }
 
     /**
@@ -786,6 +808,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtAuthor.setVisibility(View.VISIBLE);
         txtArtist.setVisibility(View.GONE);
         movieContainer.setVisibility(View.GONE);
+        if (productId != null && !productId.isEmpty())
+            bookEditContainer.setVisibility(View.VISIBLE);
     }
 
     /**

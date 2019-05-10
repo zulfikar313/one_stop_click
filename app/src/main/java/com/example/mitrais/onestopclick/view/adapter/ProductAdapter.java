@@ -79,8 +79,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProductViewHolder productViewHolder, int i) {
-        productViewHolder.bind(getItem(i));
+    public void onBindViewHolder(@NonNull ProductViewHolder productViewHolder, int position) {
+        if (position != RecyclerView.NO_POSITION)
+            productViewHolder.bind(getItem(position));
     }
 
     /**
@@ -156,7 +157,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             txtDescription.setText(product.getDescription());
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
-            if (!product.getThumbnailUri().isEmpty()) {
+            if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
                 shimmerLayout.startShimmerAnimation();
                 Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
                     @Override
@@ -167,7 +168,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                     @Override
                     public void onError(Exception e) {
                         shimmerLayout.stopShimmerAnimation();
-                        Log.e(TAG, Integer.toString(getAdapterPosition()) + " " + e.toString());
+                        Log.e(TAG, getAdapterPosition() + " " + e.toString());
                     }
                 });
             } else {

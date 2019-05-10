@@ -37,9 +37,27 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * @param uri      product image uri
-     * @param filename product image filename
-     * @return upload product image task
+     * @param uri      book uri
+     * @param filename book filename
+     * @return task
+     */
+    public Task<Uri> uploadBook(Uri uri, String filename) {
+        return storageRepository.uploadBook(uri, filename);
+    }
+
+    /**
+     * @param uri      music uri
+     * @param filename music filename
+     * @return task
+     */
+    public Task<Uri> uploadMusic(Uri uri, String filename) {
+        return storageRepository.uploadMusic(uri, filename);
+    }
+
+    /**
+     * @param uri      thumbnail uri
+     * @param filename thumbnail filename
+     * @return task
      */
     public Task<Uri> uploadThumbnail(Uri uri, String filename) {
         return storageRepository.uploadThumbnail(uri, filename);
@@ -48,67 +66,62 @@ public class ProductDetailViewModel extends AndroidViewModel {
     /**
      * @param uri      trailer uri
      * @param filename trailer filename
-     * @return upload trailer task
+     * @return task
      */
     public Task<Uri> uploadTrailer(Uri uri, String filename) {
         return storageRepository.uploadTrailer(uri, filename);
     }
 
     /**
-     * @param uri      music uri
-     * @param filename music filename
-     * @return upload music task
-     */
-    public Task<Uri> uploadMusic(Uri uri, String filename) {
-        return storageRepository.uploadMusic(uri, filename);
-    }
-
-    /**
-     * set product
-     *
      * @param product product object
-     * @return save product task
+     * @return task
      */
     public Task<Void> saveProduct(Product product) {
         return productRepository.saveProduct(product);
     }
 
     /**
-     * add product
-     *
      * @param product product object
-     * @return save product task
+     * @return task
      */
     public Task<DocumentReference> addProduct(Product product) {
         return productRepository.addProduct(product);
     }
 
-
     /**
-     * @param productId product id
-     * @param uri       thumbnail uri
+     * @param id  product id
+     * @param uri thumbnail uri
      * @return save product task
      */
-    public Task<Void> saveThumbnailUri(String productId, Uri uri) {
-        return productRepository.saveThumbnailUri(productId, uri);
+    public Task<Void> saveThumbnailUri(String id, Uri uri) {
+        return productRepository.saveThumbnailUri(id, uri);
     }
 
     /**
-     * @param productId product id
-     * @param uri       trailer uri
-     * @return save product task
+     * @param id  product id
+     * @param uri book uri
+     * @return task
      */
-    public Task<Void> saveProductTrailer(String productId, Uri uri) {
-        return productRepository.saveProductTrailerUri(productId, uri);
+    public Task<Void> saveProductBook(String id, Uri uri) {
+        return productRepository.saveProductBookUri(id, uri);
     }
 
     /**
-     * @param productId product id
-     * @param uri       music uri
-     * @return save product task
+     * @param id  product id
+     * @param uri music uri
+     * @return task
      */
-    public Task<Void> saveProductMusic(String productId, Uri uri) {
-        return productRepository.saveProductMusicUri(productId, uri);
+    public Task<Void> saveProductMusic(String id, Uri uri) {
+        return productRepository.saveProductMusicUri(id, uri);
+    }
+
+    /**
+     * @param id  product id
+     * @param uri trailer uri
+     * @return task
+     */
+    public Task<Void> saveProductTrailer(String id, Uri uri) {
+        return productRepository.saveProductTrailerUri(id, uri);
     }
 
     /**

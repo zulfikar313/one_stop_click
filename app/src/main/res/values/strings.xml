@@ -107,4 +107,11 @@
     <string name="music_uploaded">Music uploaded</string>
     <string name="error_failed_to_upload_music">Failed to upload music</string>
     <string name="home">Home</string>
+    <string name="book_file_not_found">Book file not found</string>
+    <string name="upload_book">Upload book</string>
+    <string name="edit_book">Edit book</string>
+    <string name="book_file_name">Book filename</string>
+    <string name="read_book">Read book</string>
+    <string name="upload_in_progress">Upload in progress</string>
+    <string name="book_uploaded">Book uploaded</string>
 </resources>

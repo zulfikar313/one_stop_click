@@ -185,6 +185,96 @@
                     android:text="@string/save" />
 
                 <android.support.constraint.ConstraintLayout
+                    android:id="@+id/book_edit_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/book_not_found_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/txt_book_not_found"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="8dp"
+                            android:text="@string/book_file_not_found"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/btn_upload_book"
+                            style="@style/OrangeButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/upload_book" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/book_found_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/book_not_found_view">
+
+                        <TextView
+                            android:id="@+id/txt_book_filename"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="8dp"
+                            android:text="@string/book_file_name" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                            <android.support.v7.widget.AppCompatButton
+                                android:id="@+id/btn_read_book"
+                                style="@style/OrangeButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="50"
+                                android:text="@string/read_book" />
+
+                            <android.support.v7.widget.AppCompatButton
+                                android:id="@+id/btn_edit_book"
+                                style="@style/RedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="50"
+                                android:text="@string/edit_book" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/book_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
                     android:id="@+id/music_edit_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

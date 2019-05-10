@@ -238,6 +238,9 @@ public class ProductRepository {
         return productService.addProduct(product);
     }
 
+    /**
+     * listen to product changes
+     */
     private void setProductListener() {
         productListenerRegistration = ProductService.getProductRef().addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null) {
