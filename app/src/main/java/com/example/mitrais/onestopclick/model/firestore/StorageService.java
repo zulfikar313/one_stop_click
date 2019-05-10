@@ -11,34 +11,33 @@ public class StorageService {
     private static final String REF_PRODUCT_IMG = "product_image";
     private static final String REF_TRAILER = "trailer";
     private static final String REF_MUSIC = "music";
+    private static final String REF_BOOK = "book";
     private static StorageService instance;
     private static StorageReference profileImgRef;
     private static StorageReference productImgRef;
-    private static StorageReference trailerRef;
+    private static StorageReference bookRef;
     private static StorageReference musicRef;
+    private static StorageReference trailerRef;
 
-    /**
-     * @return StorageService instance
-     */
+
     public static StorageService getInstance() {
         if (instance == null) {
             instance = new StorageService();
             FirebaseStorage storage = FirebaseStorage.getInstance();
             profileImgRef = storage.getReference(REF_PROFILE_IMG);
             productImgRef = storage.getReference(REF_PRODUCT_IMG);
-            trailerRef = storage.getReference(REF_TRAILER);
+            bookRef = storage.getReference(REF_BOOK);
             musicRef = storage.getReference(REF_MUSIC);
+            trailerRef = storage.getReference(REF_TRAILER);
         }
 
         return instance;
     }
 
     /**
-     * upload profile image
-     *
      * @param uri      profile image uri
-     * @param filename profile image filenameç
-     * @return set profile image task
+     * @param filename profile image filename
+     * @return task
      */
     public Task<Uri> uploadProfileImage(Uri uri, String filename) {
         StorageReference reference = profileImgRef.child(filename);
@@ -56,12 +55,12 @@ public class StorageService {
     }
 
     /**
-     * @param uri      trailer uri
-     * @param filename trailer filename
-     * @return upload trailer task
+     * @param uri      book uri
+     * @param filename book filename
+     * @return task
      */
-    public Task<Uri> uploadTrailer(Uri uri, String filename) {
-        StorageReference reference = trailerRef.child(filename);
+    public Task<Uri> uploadBook(Uri uri, String filename) {
+        StorageReference reference = bookRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 
@@ -72,6 +71,16 @@ public class StorageService {
      */
     public Task<Uri> uploadMusic(Uri uri, String filename) {
         StorageReference reference = musicRef.child(filename);
+        return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
+    }
+
+    /**
+     * @param uri      trailer uri
+     * @param filename trailer filename
+     * @return upload trailer task
+     */
+    public Task<Uri> uploadTrailer(Uri uri, String filename) {
+        StorageReference reference = trailerRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 }

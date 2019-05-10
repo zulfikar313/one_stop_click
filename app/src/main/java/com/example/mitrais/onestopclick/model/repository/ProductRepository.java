@@ -40,12 +40,12 @@ public class ProductRepository {
 
     public ProductRepository(Application application) {
         initDagger(application);
-
         if (productListenerRegistration == null)
             setProductListener();
     }
 
     // region room
+
     private void insertProduct(Product product) {
         Completable.fromAction(() -> productDao.insertProduct(product))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -58,12 +58,12 @@ public class ProductRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Insert product complete");
+                        Log.i(TAG, "Insert product completed");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
+                        Log.e(TAG, "Insert product failed");
                     }
                 });
     }
@@ -80,17 +80,17 @@ public class ProductRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Update product complete");
+                        Log.i(TAG, "Update product completed");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
+                        Log.e(TAG, "Update product failed");
                     }
                 });
     }
 
-    public void deleteProduct(Product product) {
+    private void deleteProduct(Product product) {
         Completable.fromAction(() -> productDao.deleteProduct(product))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -102,38 +102,64 @@ public class ProductRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Delete product complete");
+                        Log.i(TAG, "Delete product completed");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
+                        Log.e(TAG, "Delete product failed");
                     }
                 });
     }
 
+    /**
+     * @return product list live data
+     */
     public LiveData<List<Product>> getAllProducts() {
         return productDao.getAllProducts();
     }
 
+    /**
+     * @param search search query
+     * @return product list live data
+     */
     public LiveData<List<Product>> searchProducts(String search) {
         return productDao.searchProducts("%" + search + "%");
     }
 
+    /**
+     * @param type   product type
+     * @param search search query
+     * @return product list live data
+     */
     public LiveData<List<Product>> searchProductsByType(String type, String search) {
         return productDao.searchProductsByType(type, "%" + search + "%");
     }
 
+    /**
+     * @param type product type
+     * @return product list live data
+     */
     public LiveData<List<Product>> getProductsByType(String type) {
         return productDao.getProductsByType(type);
     }
 
+    /**
+     * @param id product id
+     * @return product live data
+     */
     public LiveData<Product> getProductById(String id) {
         return productDao.getProductById(id);
     }
     //endregion
 
     // region firestore
+
+    /**
+     * sync local product data
+     *
+     * @return task
+     */
     public Task<QuerySnapshot> syncProducts() {
         return productService.syncProducts().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
@@ -144,30 +170,70 @@ public class ProductRepository {
         });
     }
 
+    /**
+     * @param id product id
+     * @return task
+     */
     public Task<Void> addLike(String id) {
         return productService.addLike(id);
     }
 
+    /**
+     * @param id product id
+     * @return task
+     */
     public Task<Void> addDislike(String id) {
         return productService.addDislike(id);
     }
 
+    /**
+     * @param product product object
+     * @return task
+     */
     public Task<Void> saveProduct(Product product) {
         return productService.saveProduct(product);
     }
 
-    public Task<Void> saveThumbnailUri(String productId, Uri uri) {
-        return productService.saveProductThumbnailUri(productId, uri);
+    /**
+     * @param id  product id
+     * @param uri thumbnail uri
+     * @return task
+     */
+    public Task<Void> saveThumbnailUri(String id, Uri uri) {
+        return productService.saveProductThumbnailUri(id, uri);
     }
 
-    public Task<Void> saveProductTrailerUri(String productId, Uri uri) {
-        return productService.saveProductTrailerUri(productId, uri);
+    /**
+     * @param id  product id
+     * @param uri book uri
+     * @return task
+     */
+    public Task<Void> saveProductBookUri(String id, Uri uri) {
+        return productService.saveProductBookUri(id, uri);
     }
 
-    public Task<Void> saveProductMusicUri(String productId, Uri uri) {
-        return productService.saveProductMusicUri(productId, uri);
+    /**
+     * @param id  product id
+     * @param uri music uri
+     * @return task
+     */
+    public Task<Void> saveProductMusicUri(String id, Uri uri) {
+        return productService.saveProductMusicUri(id, uri);
     }
 
+    /**
+     * @param id  product id
+     * @param uri trailer uri
+     * @return task
+     */
+    public Task<Void> saveProductTrailerUri(String id, Uri uri) {
+        return productService.saveProductTrailerUri(id, uri);
+    }
+
+    /**
+     * @param product product object
+     * @return task
+     */
     public Task<DocumentReference> addProduct(Product product) {
         return productService.addProduct(product);
     }
@@ -199,6 +265,11 @@ public class ProductRepository {
     }
     // endregion
 
+    /**
+     * initialize dagger injection
+     *
+     * @param application application to inject dao
+     */
     private void initDagger(Application application) {
         ProductRepositoryComponent component = DaggerProductRepositoryComponent.builder()
                 .application(application)

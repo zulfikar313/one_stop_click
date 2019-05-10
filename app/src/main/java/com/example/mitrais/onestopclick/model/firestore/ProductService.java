@@ -17,15 +17,13 @@ public class ProductService {
     private static final String KEY_LIKE = "like";
     private static final String KEY_DISLIKE = "dislike";
     private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
-    private static final String KEY_TRAILER_URI = "trailerUri";
+    private static final String KEY_BOOK_URI = "bookUri";
     private static final String KEY_MUSIC_URI = "musicUri";
+    private static final String KEY_TRAILER_URI = "trailerUri";
     private static ProductService instance;
     private static FirebaseFirestore firestore;
     private static CollectionReference productRef;
 
-    /**
-     * @return ProductService instance
-     */
     public static ProductService getInstance() {
         if (instance == null) {
             instance = new ProductService();
@@ -37,16 +35,15 @@ public class ProductService {
     }
 
     /**
-     * @return sync products task
+     * sync local product data
+     *
+     * @return task
      */
     public Task<QuerySnapshot> syncProducts() {
         return productRef.get();
     }
 
-
     /**
-     * increase like count
-     *
      * @param id product id
      * @return add like task
      */
@@ -63,8 +60,6 @@ public class ProductService {
     }
 
     /**
-     * increase dislike count
-     *
      * @param id product id
      * @return add dislike task
      */
@@ -81,10 +76,8 @@ public class ProductService {
     }
 
     /**
-     * save product
-     *
-     * @param product existing product
-     * @return save product task
+     * @param product product object
+     * @return task
      */
     public Task<Void> saveProduct(Product product) {
         DocumentReference docRef = productRef.document(product.getId());
@@ -92,12 +85,12 @@ public class ProductService {
     }
 
     /**
-     * @param productId product id
-     * @param uri       thumbnail uri
-     * @return save product task
+     * @param id  product id
+     * @param uri thumbnail uri
+     * @return task
      */
-    public Task<Void> saveProductThumbnailUri(String productId, Uri uri) {
-        DocumentReference docRef = productRef.document(productId);
+    public Task<Void> saveProductThumbnailUri(String id, Uri uri) {
+        DocumentReference docRef = productRef.document(id);
 
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_THUMBNAIL_URI, uri.toString());
@@ -106,26 +99,26 @@ public class ProductService {
     }
 
     /**
-     * @param productId product id
-     * @param uri       trailer uri
-     * @return save product task
+     * @param id  product id
+     * @param uri book uri
+     * @return task
      */
-    public Task<Void> saveProductTrailerUri(String productId, Uri uri) {
-        DocumentReference docRef = productRef.document(productId);
+    public Task<Void> saveProductBookUri(String id, Uri uri) {
+        DocumentReference docRef = productRef.document(id);
 
         Map<String, Object> map = new HashMap<>();
-        map.put(KEY_TRAILER_URI, uri.toString());
+        map.put(KEY_BOOK_URI, uri.toString());
 
         return docRef.update(map);
     }
 
     /**
-     * @param productId product id
-     * @param uri       music uri
-     * @return save product task
+     * @param id  product id
+     * @param uri music uri
+     * @return task
      */
-    public Task<Void> saveProductMusicUri(String productId, Uri uri) {
-        DocumentReference docRef = productRef.document(productId);
+    public Task<Void> saveProductMusicUri(String id, Uri uri) {
+        DocumentReference docRef = productRef.document(id);
 
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_MUSIC_URI, uri.toString());
@@ -134,17 +127,29 @@ public class ProductService {
     }
 
     /**
-     * add new product
-     *
-     * @param product product
-     * @return add product task
+     * @param id  product id
+     * @param uri trailer uri
+     * @return task
+     */
+    public Task<Void> saveProductTrailerUri(String id, Uri uri) {
+        DocumentReference docRef = productRef.document(id);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_TRAILER_URI, uri.toString());
+
+        return docRef.update(map);
+    }
+
+    /**
+     * @param product product object
+     * @return task
      */
     public Task<DocumentReference> addProduct(Product product) {
         return productRef.add(product);
     }
 
     /**
-     * @return product collection reference
+     * @return product reference
      */
     public static CollectionReference getProductRef() {
         return productRef;
