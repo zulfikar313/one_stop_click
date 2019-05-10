@@ -92,10 +92,6 @@ public class Product {
         return dislike;
     }
 
-    public void setThumbnailUri(String thumbnailUri) {
-        this.thumbnailUri = thumbnailUri;
-    }
-
     public String getBookUri() {
         return bookUri;
     }
@@ -106,6 +102,22 @@ public class Product {
 
     public String getTrailerUri() {
         return trailerUri;
+    }
+
+    public void setBookUri(String bookUri) {
+        this.bookUri = bookUri;
+    }
+
+    public void setMusicUri(String musicUri) {
+        this.musicUri = musicUri;
+    }
+
+    public void setTrailerUri(String trailerUri) {
+        this.trailerUri = trailerUri;
+    }
+
+    public void setThumbnailUri(String thumbnailUri) {
+        this.thumbnailUri = thumbnailUri;
     }
 
     public void setTitle(String title) {

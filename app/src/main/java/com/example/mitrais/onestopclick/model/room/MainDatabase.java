@@ -17,7 +17,7 @@ public abstract class MainDatabase extends RoomDatabase {
     public abstract ProductDao productDao();
 
     /**
-     * @param context context to build database
+     * @param context context to build room database
      * @return MainDatabase instance
      */
     public static synchronized MainDatabase getInstance(Context context) {
