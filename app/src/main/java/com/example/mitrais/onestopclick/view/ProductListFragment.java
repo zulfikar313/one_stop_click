@@ -90,7 +90,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @OnClick(R.id.img_add_product)
     void onAddProductImageClicked() {
-        goToProductPage("");
+        goToAddProductPage();
     }
 
     @Override
@@ -168,6 +168,12 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
+    }
+
+    private void goToAddProductPage() {
+        Intent intent = new Intent(context, AddProductActivity.class);
+        startActivity(intent);
+        CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     private void goToProductPage(String id) {

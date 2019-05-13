@@ -114,4 +114,9 @@
     <string name="read_book">Read book</string>
     <string name="upload_in_progress">Upload in progress</string>
     <string name="book_uploaded">Book uploaded</string>
+    <string name="title_add_product">Add Product</string>
+    <string name="product_has_been_added">Product has been added</string>
+    <string name="failed_to_add_product">Failed to add product</string>
+    <string name="add_product_in_progress">Add product in progress</string>
+    <string name="add">Add</string>
 </resources>
