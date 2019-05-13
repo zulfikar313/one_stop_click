@@ -13,6 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".view.ReadBookActivity"
+            android:parentActivityName=".view.ProductDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".view.SearchProductActivity"
             android:parentActivityName=".view.MainActivity"
             android:screenOrientation="portrait" />
@@ -59,4 +63,5 @@
             android:name="io.fabric.ApiKey"
             android:value="9ff704fc5cf7f800c4c135a7994497585a0a576e" />
     </application>
+
 </manifest>

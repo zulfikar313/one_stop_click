@@ -21,6 +21,7 @@ public class Constant {
 
     // extras
     public static final String EXTRA_PRODUCT_ID = "EXTRA_PRODUCT_ID";
+    public static final String EXTRA_BOOK_URI = "EXTRA_BOOK_URI";
 
     public static final String WEB_CLIENT_ID = "665475513149-6tbkh6j6u5jeg0g2e6kc3g4fvdfdsic7.apps.googleusercontent.com";
 }

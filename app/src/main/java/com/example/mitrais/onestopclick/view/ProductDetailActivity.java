@@ -244,8 +244,29 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.btn_read_book)
+    void onReadBookButtonClicked() {
+//        TODO: Download the book then use external storage uri/ check external storage existence
+//        if (isSaveProductInProgress() || isAddProductInProgress())
+//            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+//        else if (isUploadInProgress())
+//            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
+//        else
+//            goToReadBookPage(bookUri);
+    }
+
     @OnClick(R.id.btn_upload_book)
     void onUploadBookButtonClicked() {
+        if (isSaveProductInProgress() || isAddProductInProgress())
+            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
+        else
+            openBookFileChooser();
+    }
+
+    @OnClick(R.id.btn_edit_book)
+    void onEditBookButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
             Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
@@ -702,6 +723,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         // configure video player
         videoPlayer.prepare(videoSource);
         trailerView.setPlayer(videoPlayer);
+    }
+
+    /**
+     * @param uri book uri
+     */
+    private void goToReadBookPage(Uri uri) {
+        Intent intent = new Intent(this, ReadBookActivity.class);
+        intent.putExtra(Constant.EXTRA_BOOK_URI, uri.toString());
+        startActivity(intent);
     }
 
     private void openImageFileChooser() {
