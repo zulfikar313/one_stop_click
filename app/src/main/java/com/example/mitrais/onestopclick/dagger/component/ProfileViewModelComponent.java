@@ -2,15 +2,13 @@ package com.example.mitrais.onestopclick.dagger.component;
 
 import android.app.Application;
 
-import com.example.mitrais.onestopclick.dagger.module.AuthRepositoryModule;
-import com.example.mitrais.onestopclick.dagger.module.ProfileRepositoryModule;
-import com.example.mitrais.onestopclick.dagger.module.StorageRepositoryModule;
+import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
 import com.example.mitrais.onestopclick.viewmodel.ProfileViewModel;
 
 import dagger.BindsInstance;
 import dagger.Component;
 
-@Component(modules = {AuthRepositoryModule.class, StorageRepositoryModule.class, ProfileRepositoryModule.class})
+@Component(modules = RepositoryModule.class)
 public interface ProfileViewModelComponent {
     void inject(ProfileViewModel profileViewModel);
 

@@ -2,14 +2,13 @@ package com.example.mitrais.onestopclick.dagger.component;
 
 import android.app.Application;
 
-import com.example.mitrais.onestopclick.dagger.module.ProductRepositoryModule;
-import com.example.mitrais.onestopclick.dagger.module.StorageRepositoryModule;
+import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
 import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
 
 import dagger.BindsInstance;
 import dagger.Component;
 
-@Component(modules = {ProductRepositoryModule.class, StorageRepositoryModule.class})
+@Component(modules = RepositoryModule.class)
 public interface ProductDetailViewModelComponent {
     void inject(ProductDetailViewModel viewModel);
 
