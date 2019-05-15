@@ -5,8 +5,8 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerMainViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.MainViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
@@ -74,10 +74,9 @@ public class MainViewModel extends AndroidViewModel {
      * @param application application to inject repository class
      */
     private void initDagger(Application application) {
-        MainViewModelComponent component = DaggerMainViewModelComponent.builder()
+        ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)
                 .build();
-
         component.inject(this);
     }
 }

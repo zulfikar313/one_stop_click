@@ -5,8 +5,8 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerProductListViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.ProductListViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +41,7 @@ public class ProductListViewModel extends AndroidViewModel {
     }
 
     private void initDagger(Application application) {
-        ProductListViewModelComponent component = DaggerProductListViewModelComponent.builder()
+        ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);

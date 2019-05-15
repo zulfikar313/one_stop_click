@@ -4,8 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerSplashViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.SplashViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.tasks.Task;
@@ -62,7 +62,7 @@ public class SplashViewModel extends AndroidViewModel {
      * @param application application to inject repository class
      */
     private void initDagger(Application application) {
-        SplashViewModelComponent component = DaggerSplashViewModelComponent.builder()
+        ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);

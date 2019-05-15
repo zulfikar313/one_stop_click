@@ -4,8 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerForgotPasswordViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.ForgotPasswordViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerServiceViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ServiceViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.google.android.gms.tasks.Task;
 
@@ -42,7 +42,7 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
      * initialize dagger injection
      */
     private void initDagger() {
-        ForgotPasswordViewModelComponent component = DaggerForgotPasswordViewModelComponent.builder()
+        ServiceViewModelComponent component = DaggerServiceViewModelComponent.builder()
                 .build();
         component.inject(this);
     }

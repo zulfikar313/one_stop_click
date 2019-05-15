@@ -4,8 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerRegistrationViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.RegistrationViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerServiceViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ServiceViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -64,7 +64,7 @@ public class RegistrationViewModel extends AndroidViewModel {
      * initialize dagger injection
      */
     private void initDagger() {
-        RegistrationViewModelComponent component = DaggerRegistrationViewModelComponent.builder()
+        ServiceViewModelComponent component = DaggerServiceViewModelComponent.builder()
                 .build();
         component.inject(this);
     }

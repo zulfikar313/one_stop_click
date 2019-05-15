@@ -6,8 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerProductDetailViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.ProductDetailViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
@@ -140,7 +140,7 @@ public class ProductDetailViewModel extends AndroidViewModel {
      * @param application application to inject repository class
      */
     private void initDagger(Application application) {
-        ProductDetailViewModelComponent component = DaggerProductDetailViewModelComponent.builder()
+        ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);
