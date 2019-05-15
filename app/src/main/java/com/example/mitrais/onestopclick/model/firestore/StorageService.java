@@ -3,6 +3,7 @@ package com.example.mitrais.onestopclick.model.firestore;
 import android.net.Uri;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -62,6 +63,16 @@ public class StorageService {
     public Task<Uri> uploadBook(Uri uri, String filename) {
         StorageReference reference = bookRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
+    }
+
+    /**
+     * @param localUri book local uri
+     * @param filename book filename
+     * @return task
+     */
+    public FileDownloadTask downloadBook(Uri localUri, String filename) {
+        StorageReference reference = bookRef.child(filename);
+        return reference.getFile(localUri);
     }
 
     /**

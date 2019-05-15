@@ -9,6 +9,8 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.github.barteksc.pdfviewer.PDFView;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -35,7 +37,8 @@ public class ReadBookActivity extends AppCompatActivity {
      * @param uri book uri
      */
     private void initPDF(Uri uri) {
-        pdfView.fromUri(Uri.parse("http://detective.gumer.info/anto/christie_24_2.pdf"))
+        File file = new File(uri.toString());
+        pdfView.fromFile(file)
                 .swipeHorizontal(false)
                 .enableSwipe(true)
                 .enableDoubletap(true)

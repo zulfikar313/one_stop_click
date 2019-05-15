@@ -6,6 +6,7 @@ import com.example.mitrais.onestopclick.dagger.component.DaggerStorageRepository
 import com.example.mitrais.onestopclick.dagger.component.StorageRepositoryComponent;
 import com.example.mitrais.onestopclick.model.firestore.StorageService;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FileDownloadTask;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,15 @@ public class StorageRepository {
      */
     public Task<Uri> uploadBook(Uri uri, String filename) {
         return storageService.uploadBook(uri, filename);
+    }
+
+    /**
+     * @param localUri book local uri
+     * @param filename book filename
+     * @return task
+     */
+    public FileDownloadTask downloadBook(Uri localUri, String filename) {
+        return storageService.downloadBook(localUri, filename);
     }
 
     /**

@@ -246,13 +246,12 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_read_book)
     void onReadBookButtonClicked() {
-//        TODO: Download the book then use external storage uri/ check external storage existence
-//        if (isSaveProductInProgress() || isAddProductInProgress())
-//            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
-//        else if (isUploadInProgress())
-//            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
-//        else
-//            goToReadBookPage(bookUri);
+        if (isSaveProductInProgress() || isAddProductInProgress())
+            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+        else if (isUploadInProgress())
+            Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
+        else
+            goToReadBookPage(bookUri);
     }
 
     @OnClick(R.id.btn_upload_book)
@@ -729,9 +728,21 @@ public class ProductDetailActivity extends AppCompatActivity {
      * @param uri book uri
      */
     private void goToReadBookPage(Uri uri) {
-        Intent intent = new Intent(this, ReadBookActivity.class);
-        intent.putExtra(Constant.EXTRA_BOOK_URI, uri.toString());
-        startActivity(intent);
+        showProgressBar();
+        Uri bookLocalUri = Uri.parse(getFilesDir() + productId + "book.pdf");
+        String filename = productId + "book.pdf";
+        viewModel.downloadBook(bookLocalUri, filename)
+                .addOnCompleteListener(task -> hideProgressBar())
+                .addOnSuccessListener(taskSnapshot -> {
+                    Intent intent = new Intent(ProductDetailActivity.this, ReadBookActivity.class);
+                    intent.putExtra(Constant.EXTRA_BOOK_URI, bookLocalUri.toString());
+                    startActivity(intent);
+                })
+                .addOnFailureListener(e -> {
+                    String errorMessage = getString(R.string.failed_to_download_book) + ": " + e.getMessage();
+                    Toast.makeText(ProductDetailActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, errorMessage);
+                });
     }
 
     private void openImageFileChooser() {
