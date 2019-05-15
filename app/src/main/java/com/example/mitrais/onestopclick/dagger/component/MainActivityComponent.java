@@ -1,12 +1,12 @@
 package com.example.mitrais.onestopclick.dagger.component;
 
-import com.example.mitrais.onestopclick.dagger.module.MainViewModelModule;
+import com.example.mitrais.onestopclick.dagger.module.ViewModelModule;
 import com.example.mitrais.onestopclick.view.MainActivity;
 
 import dagger.BindsInstance;
 import dagger.Component;
 
-@Component(modules = MainViewModelModule.class)
+@Component(modules = ViewModelModule.class)
 public interface MainActivityComponent {
     void inject(MainActivity mainActivity);
 
