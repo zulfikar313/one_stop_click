@@ -4,33 +4,23 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerServiceViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.ServiceViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.google.android.gms.tasks.Task;
 
 import javax.inject.Inject;
 
-/**
- * ForgotPasswordViewModel class handle data lifecycle for ForgotPasswordActivity
- */
 public class ForgotPasswordViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
 
-    /**
-     * ForgotPasswordViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
     public ForgotPasswordViewModel(@NonNull Application application) {
         super(application);
-        initDagger();
+        initDagger(application);
     }
 
     /**
-     * send password reset email to user email address
-     *
      * @param email user email address
      * @return send password reset email task
      */
@@ -41,8 +31,9 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
     /**
      * initialize dagger injection
      */
-    private void initDagger() {
-        ServiceViewModelComponent component = DaggerServiceViewModelComponent.builder()
+    private void initDagger(Application application) {
+        ViewModelComponent component = DaggerViewModelComponent.builder()
+                .application(application)
                 .build();
         component.inject(this);
     }

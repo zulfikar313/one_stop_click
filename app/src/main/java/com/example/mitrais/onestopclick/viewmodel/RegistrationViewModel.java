@@ -4,8 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerServiceViewModelComponent;
-import com.example.mitrais.onestopclick.dagger.component.ServiceViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
+import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -13,26 +13,16 @@ import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
-/**
- * RegistrationViewModelClass handle data lifecycle for RegistrationActivity
- */
 public class RegistrationViewModel extends AndroidViewModel {
     @Inject
     AuthRepository authRepository;
 
-    /**
-     * RegistrationViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
     public RegistrationViewModel(@NonNull Application application) {
         super(application);
-        initDagger();
+        initDagger(application);
     }
 
     /**
-     * get logged in user
-     *
      * @return logged in user
      */
     public FirebaseUser getCurrentUser() {
@@ -40,8 +30,6 @@ public class RegistrationViewModel extends AndroidViewModel {
     }
 
     /**
-     * register new user
-     *
      * @param email    user email address
      * @param password user password
      * @return register task
@@ -51,8 +39,6 @@ public class RegistrationViewModel extends AndroidViewModel {
     }
 
     /**
-     * send verification email to verify user email address
-     *
      * @param user logged in user
      * @return send verification email task
      */
@@ -63,8 +49,9 @@ public class RegistrationViewModel extends AndroidViewModel {
     /**
      * initialize dagger injection
      */
-    private void initDagger() {
-        ServiceViewModelComponent component = DaggerServiceViewModelComponent.builder()
+    private void initDagger(Application application) {
+        ViewModelComponent component = DaggerViewModelComponent.builder()
+                .application(application)
                 .build();
         component.inject(this);
     }

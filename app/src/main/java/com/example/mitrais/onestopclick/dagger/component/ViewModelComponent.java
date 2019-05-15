@@ -3,11 +3,13 @@ package com.example.mitrais.onestopclick.dagger.component;
 import android.app.Application;
 
 import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
+import com.example.mitrais.onestopclick.viewmodel.ForgotPasswordViewModel;
 import com.example.mitrais.onestopclick.viewmodel.LoginViewModel;
 import com.example.mitrais.onestopclick.viewmodel.MainViewModel;
 import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
 import com.example.mitrais.onestopclick.viewmodel.ProductListViewModel;
 import com.example.mitrais.onestopclick.viewmodel.ProfileViewModel;
+import com.example.mitrais.onestopclick.viewmodel.RegistrationViewModel;
 import com.example.mitrais.onestopclick.viewmodel.SearchProductViewModel;
 import com.example.mitrais.onestopclick.viewmodel.SplashViewModel;
 
@@ -16,6 +18,10 @@ import dagger.Component;
 
 @Component(modules = RepositoryModule.class)
 public interface ViewModelComponent {
+    void inject(RegistrationViewModel registrationViewModel);
+
+    void inject(ForgotPasswordViewModel forgotPasswordViewModel);
+
     void inject(SplashViewModel splashViewModel);
 
     void inject(LoginViewModel loginViewModel);
