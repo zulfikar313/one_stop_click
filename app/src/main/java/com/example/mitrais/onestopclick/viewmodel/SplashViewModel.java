@@ -24,28 +24,16 @@ public class SplashViewModel extends AndroidViewModel {
     @Inject
     ProfileRepository profileRepository;
 
-    /**
-     * SplashViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
     public SplashViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    /**
-     * get logged in user
-     *
-     * @return logged in user
-     */
     public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
     /**
-     * synchronized user data
-     *
      * @param user logged in user
      * @return sync data task
      */
@@ -59,7 +47,7 @@ public class SplashViewModel extends AndroidViewModel {
     /**
      * initialize dagger injection
      *
-     * @param application application to inject repository class
+     * @param application for repository injection
      */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()

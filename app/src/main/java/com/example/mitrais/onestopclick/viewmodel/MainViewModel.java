@@ -27,11 +27,6 @@ public class MainViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
-    /**
-     * MainViewModel constructor
-     *
-     * @param application application to inject repository class
-     */
     public MainViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
@@ -50,10 +45,6 @@ public class MainViewModel extends AndroidViewModel {
      */
     public Task<QuerySnapshot> syncUserData() {
         return productRepository.syncProducts();
-
-        /*
-         * TODO: retrieve other data tied to user
-         */
     }
 
     /**

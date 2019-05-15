@@ -40,6 +40,11 @@ public class ProductListViewModel extends AndroidViewModel {
         return productRepository.addDislike(id);
     }
 
+    /**
+     * initialize dagger injection
+     *
+     * @param application for repository injection
+     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

@@ -24,13 +24,6 @@ public class SearchProductViewModel extends AndroidViewModel {
         initDagger(application);
     }
 
-    private void initDagger(Application application) {
-        ViewModelComponent component = DaggerViewModelComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
-    }
-
     public LiveData<List<Product>> searchProduct(String search) {
         return productRepository.searchProducts(search);
     }
@@ -41,5 +34,17 @@ public class SearchProductViewModel extends AndroidViewModel {
 
     public Task<Void> addDislike(String id) {
         return productRepository.addDislike(id);
+    }
+
+    /**
+     * init dagger injection
+     *
+     * @param application for repository injection
+     */
+    private void initDagger(Application application) {
+        ViewModelComponent component = DaggerViewModelComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
     }
 }

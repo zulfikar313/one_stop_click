@@ -22,10 +22,7 @@ public class RegistrationViewModel extends AndroidViewModel {
         initDagger(application);
     }
 
-    /**
-     * @return logged in user
-     */
-    public FirebaseUser getCurrentUser() {
+    public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
@@ -48,6 +45,8 @@ public class RegistrationViewModel extends AndroidViewModel {
 
     /**
      * initialize dagger injection
+     *
+     * @param application for repository injection
      */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()

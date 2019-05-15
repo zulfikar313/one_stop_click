@@ -35,8 +35,6 @@ public class ProfileViewModel extends AndroidViewModel {
     // region public methods
 
     /**
-     * get profile live data by email
-     *
      * @param email user email address
      * @return user profile live data
      */
@@ -44,18 +42,11 @@ public class ProfileViewModel extends AndroidViewModel {
         return profileRepository.getProfile(email);
     }
 
-    /**
-     * get logged in user
-     *
-     * @return logged in user
-     */
     public FirebaseUser getUser() {
         return authRepository.getUser();
     }
 
     /**
-     * upload profile image
-     *
      * @param uri      profile image uri
      * @param filename profile image filename
      * @return upload profile image task
@@ -83,7 +74,7 @@ public class ProfileViewModel extends AndroidViewModel {
     /**
      * initialize dagger injection
      *
-     * @param application application to inject repository class
+     * @param application for repository injection
      */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()

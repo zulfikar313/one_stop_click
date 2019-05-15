@@ -98,7 +98,7 @@ public class RegistrationActivity extends AppCompatActivity {
         registerTask = viewModel.register(email, password)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(authResult -> {
-                    user = viewModel.getCurrentUser();
+                    user = viewModel.getUser();
                     sendVerificationEmail(user);
                 })
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());

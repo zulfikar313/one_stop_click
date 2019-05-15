@@ -30,6 +30,8 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
 
     /**
      * initialize dagger injection
+     *
+     * @param application for repository injection
      */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()

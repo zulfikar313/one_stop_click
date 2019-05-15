@@ -29,20 +29,6 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     /**
-     * initialize dagger injection
-     *
-     * @param application application to inject repository class
-     */
-    private void initDagger(Application application) {
-        ViewModelComponent component = DaggerViewModelComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
-    }
-
-    /**
-     * login using email and password
-     *
      * @param email    user email address
      * @param password user password
      * @return login task
@@ -82,6 +68,20 @@ public class LoginViewModel extends AndroidViewModel {
         if (user != null)
             return profileRepository.syncProfile(user.getEmail());
         else
+
             return null;
     }
+    /**
+     * initialize dagger injection
+     *
+     * @param application for repository injection
+     */
+    private void initDagger(Application application) {
+        ViewModelComponent component = DaggerViewModelComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
+    }
+
+
 }
