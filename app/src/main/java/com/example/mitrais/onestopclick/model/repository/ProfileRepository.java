@@ -4,8 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerProfileRepositoryComponent;
-import com.example.mitrais.onestopclick.dagger.component.ProfileRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.RepositoryComponent;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.firestore.ProfileService;
 import com.example.mitrais.onestopclick.model.room.ProfileDao;
@@ -160,7 +160,7 @@ public class ProfileRepository {
     // endregion
 
     private void initDagger(Application application) {
-        ProfileRepositoryComponent component = DaggerProfileRepositoryComponent.builder()
+        RepositoryComponent component = DaggerRepositoryComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);

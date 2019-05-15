@@ -5,8 +5,8 @@ import android.arch.lifecycle.LiveData;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerProductRepositoryComponent;
-import com.example.mitrais.onestopclick.dagger.component.ProductRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.RepositoryComponent;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.firestore.ProductService;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
@@ -274,7 +274,7 @@ public class ProductRepository {
      * @param application application to inject dao
      */
     private void initDagger(Application application) {
-        ProductRepositoryComponent component = DaggerProductRepositoryComponent.builder()
+        RepositoryComponent component = DaggerRepositoryComponent.builder()
                 .application(application)
                 .build();
         component.inject(this);

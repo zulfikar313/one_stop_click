@@ -1,7 +1,7 @@
 package com.example.mitrais.onestopclick.model.repository;
 
-import com.example.mitrais.onestopclick.dagger.component.AuthRepositoryComponent;
-import com.example.mitrais.onestopclick.dagger.component.DaggerAuthRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerServiceRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.ServiceRepositoryComponent;
 import com.example.mitrais.onestopclick.model.firestore.AuthService;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +19,7 @@ public class AuthRepository {
     }
 
     private void initDagger() {
-        AuthRepositoryComponent component = DaggerAuthRepositoryComponent.builder()
+        ServiceRepositoryComponent component = DaggerServiceRepositoryComponent.builder()
                 .build();
         component.inject(this);
     }
