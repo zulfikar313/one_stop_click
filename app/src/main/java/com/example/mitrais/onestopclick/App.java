@@ -4,10 +4,6 @@ import android.app.Application;
 import android.app.Service;
 import android.net.ConnectivityManager;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
-
 public class App extends Application {
     public static Preferences prefs;
     public static ConnectivityManager connectivityManager;

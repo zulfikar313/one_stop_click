@@ -23,9 +23,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.supercharge.shimmerlayout.ShimmerLayout;
 
-/**
- * Adapter to handle product list recycler view
- */
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
     private static final String TAG = "ProductAdapter";
     private Listener listener;
@@ -41,9 +38,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         void onShareClicked(String productId);
     }
 
-    /**
-     * @param listener set adapter listeners
-     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }

@@ -11,7 +11,6 @@
     <string name="registration">Registration</string>
     <string name="error_empty_confirm_password">Confirm password can\'t be empty</string>
     <string name="error_passwords_not_matched">Passwords not matched</string>
-    <string name="error_unverified_email">Email not verified</string>
     <string name="error">Error</string>
     <string name="message_not_verified_email">Email is not verified. Would you like to verify your email address?</string>
     <string name="no">No</string>
@@ -29,7 +28,6 @@
     <string name="registration_is_in_progress">Registration is in progress</string>
     <string name="send_verification_email_in_progress">Send verification email in progress</string>
     <string name="send_reset_password_in_progress">Send reset password in progress</string>
-    <string name="error_no_edit_text">There must be TextInputEditText inside TextInputLayout</string>
     <string name="movie">Movie</string>
     <string name="music">Music</string>
     <string name="book">Book</string>
@@ -38,16 +36,12 @@
     <string name="navigation_bar_close">Close navigation bar</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="product_list">Product list</string>
-    <string name="display_name">Display name</string>
     <string name="save_profile">Save profile</string>
     <string name="address">Address</string>
-    <string name="profile_update_success">Profile update success</string>
     <string name="error_empty_address">Address can\'t be empty</string>
     <string name="save_profile_is_in_progress">Save profile is in progress</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title">Title</string>
     <string name="author">Author</string>
     <string name="type">Type</string>
@@ -59,7 +53,6 @@
     <string name="product_sync_success">Product sync success</string>
     <string name="add_like_in_progress">Add like in progress</string>
     <string name="add_dislike_in_progress">Add dislike in progress</string>
-    <string name="product_id">Product Id</string>
     <string name="save">Save</string>
     <string name="error_product_not_found">Product not found</string>
     <string name="artist">Artist</string>
@@ -69,40 +62,19 @@
     <string name="error_empty_artist">Artist can\'t be empty</string>
     <string name="error_empty_director">Director can\'t be empty</string>
     <string name="error_empty_description">Description can\'t be empty</string>
-    <string name="save_image_is_in_progress">Save image is in progress</string>
     <string name="image_has_been_saved">Image has been saved</string>
     <string name="save_product_is_in_progress">Save product is in progress</string>
     <string name="product_has_been_saved">Product has been saved</string>
     <string name="remember_me">Remember me</string>
-    <string name="all">All</string>
-    <string name="all_products">All products</string>
     <string name="internet_required">internet is required to proceed</string>
-    <string name="error_invalid_product_image">Please add product image</string>
-    <string name="error_invalid_profile_image">Please choose profile image</string>
     <string name="search">Search</string>
-    <string name="error_empty_search_input">Search input can\'t be empty</string>
-    <string name="add_trailer">Add trailer</string>
-    <string name="set_trailer">Set trailer</string>
-    <string name="error_failed_to_choose_image">Failed to choose image</string>
-    <string name="error_failed_to_load_profile_image">Failed to load profile image</string>
-    <string name="error_failed_to_upload_profile_image">Failed to upload profile image</string>
-    <string name="error_failed_to_save_profile">Failed to save profile</string>
     <string name="profile_has_been_saved">Profile has been saved</string>
-    <string name="search_book">Search book</string>
-    <string name="search_music">Search music</string>
-    <string name="search_movie">Search movie</string>
-    <string name="error_invalid_trailer">Please add trailer</string>
     <string name="error_failed_to_upload_product_image">Failed to upload product image</string>
     <string name="error_failed_to_save_product">Failed to save product</string>
     <string name="upload_trailer">Upload trailer</string>
     <string name="error_failed_to_upload_trailer">Failed to upload trailer</string>
     <string name="trailer_uploaded">Trailer uploaded</string>
-    <string name="upload_trailer_is_in_progress">Upload trailer is in progress</string>
-    <string name="product">Product</string>
-    <string name="products">Products</string>
     <string name="edit_product">Edit product</string>
-    <string name="upload_thumbnail_is_in_progress">Upload thumbnail is in progress</string>
-    <string name="set_music">Set music</string>
     <string name="upload_music">Upload music</string>
     <string name="music_uploaded">Music uploaded</string>
     <string name="error_failed_to_upload_music">Failed to upload music</string>

@@ -16,8 +16,6 @@ import com.example.mitrais.onestopclick.view.dialog.CheckEmailToResetPasswordDia
 import com.example.mitrais.onestopclick.viewmodel.ForgotPasswordViewModel;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Objects;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -52,11 +50,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     @OnClick(R.id.btn_reset_password)

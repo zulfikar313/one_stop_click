@@ -38,13 +38,6 @@
     </style>
 
 
-    <style name="GreenTextButton">
-        <item name="android:textColor">@android:color/holo_green_light</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Medium
-        </item>
-        <item name="android:padding">8dp</item>
-    </style>
-
     <style name="OrangeTextButton">
         <item name="android:textColor">@android:color/holo_orange_light</item>
         <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Medium

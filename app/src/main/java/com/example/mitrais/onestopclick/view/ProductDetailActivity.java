@@ -251,7 +251,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
-            goToReadBookPage(bookUri);
+            goToReadBookPage();
     }
 
     @OnClick(R.id.btn_upload_book)
@@ -724,10 +724,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         trailerView.setPlayer(videoPlayer);
     }
 
-    /**
-     * @param uri book uri
-     */
-    private void goToReadBookPage(Uri uri) {
+    private void goToReadBookPage() {
         showProgressBar();
         Uri bookLocalUri = Uri.parse(getFilesDir() + productId + "book.pdf");
         String filename = productId + "book.pdf";
