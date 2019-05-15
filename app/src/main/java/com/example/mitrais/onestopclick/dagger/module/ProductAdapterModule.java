@@ -1,6 +1,6 @@
 package com.example.mitrais.onestopclick.dagger.module;
 
-import com.example.mitrais.onestopclick.view.adapter.ProductAdapter;
+import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 
 import dagger.Module;
 import dagger.Provides;

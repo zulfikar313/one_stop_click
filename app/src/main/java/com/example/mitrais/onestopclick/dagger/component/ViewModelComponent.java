@@ -3,15 +3,15 @@ package com.example.mitrais.onestopclick.dagger.component;
 import android.app.Application;
 
 import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
-import com.example.mitrais.onestopclick.viewmodel.ForgotPasswordViewModel;
-import com.example.mitrais.onestopclick.viewmodel.LoginViewModel;
-import com.example.mitrais.onestopclick.viewmodel.MainViewModel;
-import com.example.mitrais.onestopclick.viewmodel.ProductDetailViewModel;
-import com.example.mitrais.onestopclick.viewmodel.ProductListViewModel;
-import com.example.mitrais.onestopclick.viewmodel.ProfileViewModel;
-import com.example.mitrais.onestopclick.viewmodel.RegistrationViewModel;
-import com.example.mitrais.onestopclick.viewmodel.SearchProductViewModel;
-import com.example.mitrais.onestopclick.viewmodel.SplashViewModel;
+import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordViewModel;
+import com.example.mitrais.onestopclick.view.login.LoginViewModel;
+import com.example.mitrais.onestopclick.view.main.MainViewModel;
+import com.example.mitrais.onestopclick.view.product_detail.ProductDetailViewModel;
+import com.example.mitrais.onestopclick.view.main.product_list.ProductListViewModel;
+import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileViewModel;
+import com.example.mitrais.onestopclick.view.registration.RegistrationViewModel;
+import com.example.mitrais.onestopclick.view.search_product.SearchProductViewModel;
+import com.example.mitrais.onestopclick.view.splash.SplashViewModel;
 
 import dagger.BindsInstance;
 import dagger.Component;

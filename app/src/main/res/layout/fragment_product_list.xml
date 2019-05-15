@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    tools:context=".view.ProductListFragment">
+    tools:context=".view.main.product_list.ProductListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rec_product"

@@ -14,42 +14,42 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.AddProductActivity"
-            android:parentActivityName=".view.MainActivity"
+            android:name=".view.add_product.AddProductActivity"
+            android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ReadBookActivity"
-            android:parentActivityName=".view.ProductDetailActivity"
+            android:name=".view.read_book.ReadBookActivity"
+            android:parentActivityName=".view.product_detail.ProductDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.SearchProductActivity"
-            android:parentActivityName=".view.MainActivity"
+            android:name=".view.search_product.SearchProductActivity"
+            android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ProductDetailActivity"
-            android:parentActivityName=".view.MainActivity"
+            android:name=".view.product_detail.ProductDetailActivity"
+            android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.ForgotPasswordActivity"
-            android:parentActivityName=".view.LoginActivity"
+            android:name=".view.forgot_password.ForgotPasswordActivity"
+            android:parentActivityName=".view.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.RegistrationActivity"
-            android:parentActivityName=".view.LoginActivity"
+            android:name=".view.registration.RegistrationActivity"
+            android:parentActivityName=".view.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".view.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.SplashActivity"
+            android:name=".view.splash.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
@@ -59,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.main.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
