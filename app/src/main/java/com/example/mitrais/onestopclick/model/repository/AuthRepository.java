@@ -20,13 +20,6 @@ public class AuthRepository {
         initDagger(application);
     }
 
-    private void initDagger(Application application) {
-        RepositoryComponent component = DaggerRepositoryComponent.builder()
-                .application(application)
-                .build();
-        component.inject(this);
-    }
-
     /**
      * @param email    user email address
      * @param password user password
@@ -53,9 +46,6 @@ public class AuthRepository {
         return authService.register(email, password);
     }
 
-    /**
-     * @return logged in user
-     */
     public FirebaseUser getUser() {
         return authService.getUser();
     }
@@ -76,10 +66,19 @@ public class AuthRepository {
         return authService.sendPasswordResetEmail(email);
     }
 
-    /**
-     * log user out
-     */
     public void logout() {
         authService.logout();
+    }
+
+    /**
+     * initialize dagger injection
+     *
+     * @param application for dao injection
+     */
+    private void initDagger(Application application) {
+        RepositoryComponent component = DaggerRepositoryComponent.builder()
+                .application(application)
+                .build();
+        component.inject(this);
     }
 }

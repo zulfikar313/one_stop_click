@@ -22,8 +22,6 @@ public class AuthService {
     }
 
     /**
-     * login using email and password
-     *
      * @param email    user email address
      * @param password user password
      * @return login task
@@ -33,8 +31,6 @@ public class AuthService {
     }
 
     /**
-     * sign in using google account
-     *
      * @param account google sign in account
      * @return google sign in task
      */
@@ -44,8 +40,6 @@ public class AuthService {
     }
 
     /**
-     * register new user user
-     *
      * @param email    user email address
      * @param password user password
      * @return register task
@@ -54,16 +48,11 @@ public class AuthService {
         return auth.createUserWithEmailAndPassword(email, password);
     }
 
-    /**
-     * log user out
-     */
     public void logout() {
         auth.signOut();
     }
 
     /**
-     * send verification email to user email address
-     *
      * @param user logged in user
      * @return send verification email task
      */
@@ -72,8 +61,6 @@ public class AuthService {
     }
 
     /**
-     * send password reset email to user email address
-     *
      * @param email user email address
      * @return send password reset email task
      */

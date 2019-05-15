@@ -20,7 +20,6 @@ public class StorageService {
     private static StorageReference musicRef;
     private static StorageReference trailerRef;
 
-
     public static StorageService getInstance() {
         if (instance == null) {
             instance = new StorageService();

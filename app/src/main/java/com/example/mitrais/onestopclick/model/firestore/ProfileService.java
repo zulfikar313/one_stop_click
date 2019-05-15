@@ -16,9 +16,6 @@ public class ProfileService {
     private static ProfileService instance;
     private static CollectionReference profileRef;
 
-    /**
-     * @return ProfileService instance
-     */
     public static ProfileService getInstance() {
         if (instance == null) {
             instance = new ProfileService();

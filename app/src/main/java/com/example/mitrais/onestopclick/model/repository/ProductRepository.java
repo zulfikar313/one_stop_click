@@ -45,7 +45,6 @@ public class ProductRepository {
     }
 
     // region room
-
     private void insertProduct(Product product) {
         Completable.fromAction(() -> productDao.insertProduct(product))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -53,39 +52,16 @@ public class ProductRepository {
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Insert product completed");
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "Insert product failed");
-                    }
-                });
-    }
-
-    public void updateProduct(Product product) {
-        Completable.fromAction(() -> productDao.updateProduct(product))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "Update product completed");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "Update product failed");
+                        Log.e(TAG, e.getMessage());
                     }
                 });
     }
@@ -102,12 +78,12 @@ public class ProductRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Delete product completed");
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "Delete product failed");
+                        Log.e(TAG, e.getMessage());
                     }
                 });
     }
@@ -125,15 +101,6 @@ public class ProductRepository {
      */
     public LiveData<List<Product>> searchProducts(String search) {
         return productDao.searchProducts("%" + search + "%");
-    }
-
-    /**
-     * @param type   product type
-     * @param search search query
-     * @return product list live data
-     */
-    public LiveData<List<Product>> searchProductsByType(String type, String search) {
-        return productDao.searchProductsByType(type, "%" + search + "%");
     }
 
     /**
@@ -271,7 +238,7 @@ public class ProductRepository {
     /**
      * initialize dagger injection
      *
-     * @param application application to inject dao
+     * @param application for dao injection
      */
     private void initDagger(Application application) {
         RepositoryComponent component = DaggerRepositoryComponent.builder()

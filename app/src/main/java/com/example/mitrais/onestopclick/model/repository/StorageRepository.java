@@ -75,6 +75,8 @@ public class StorageRepository {
 
     /**
      * initialize dagger injection
+     *
+     * @param application for dao injection
      */
     private void initDagger(Application application) {
         RepositoryComponent component = DaggerRepositoryComponent.builder()

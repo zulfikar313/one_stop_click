@@ -13,7 +13,6 @@ public class Profile {
     @NonNull
     private String email = "";
     private String imageUri;
-    private String imageFilename;
     private String address;
 
     @Ignore
@@ -21,15 +20,13 @@ public class Profile {
     }
 
     /**
-     * @param email         profile email address
-     * @param imageUri      profile image uri
-     * @param imageFilename profile image filename
-     * @param address       profile address
+     * @param email    profile email address
+     * @param imageUri profile image uri
+     * @param address  profile address
      */
-    public Profile(@NonNull String email, String imageUri, String imageFilename, String address) {
+    public Profile(@NonNull String email, String imageUri, String address) {
         this.email = email;
         this.imageUri = imageUri == null ? "" : imageUri;
-        this.imageFilename = imageFilename == null ? "" : imageFilename;
         this.address = address == null ? "" : address;
     }
 
@@ -41,10 +38,6 @@ public class Profile {
 
     public String getImageUri() {
         return imageUri;
-    }
-
-    public String getImageFilename() {
-        return imageFilename;
     }
 
     public String getAddress() {
@@ -63,9 +56,5 @@ public class Profile {
 
     public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
-    }
-
-    public void setImageFilename(String imageFilename) {
-        this.imageFilename = imageFilename;
     }
 }

@@ -48,29 +48,7 @@ public class ProfileRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Insert profile completed");
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                });
-    }
-
-    public void updateProfile(Profile profile) {
-        Completable.fromAction(() -> profileDao.updateProfile(profile))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "Update profile completed");
                     }
 
                     @Override
@@ -92,7 +70,7 @@ public class ProfileRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "Delete profile complete");
+
                     }
 
                     @Override
@@ -159,6 +137,11 @@ public class ProfileRepository {
     }
     // endregion
 
+    /**
+     * initialize dagger injection
+     *
+     * @param application for dao injection
+     */
     private void initDagger(Application application) {
         RepositoryComponent component = DaggerRepositoryComponent.builder()
                 .application(application)
