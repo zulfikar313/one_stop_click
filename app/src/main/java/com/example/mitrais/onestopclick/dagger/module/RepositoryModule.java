@@ -13,13 +13,13 @@ import dagger.Provides;
 @Module
 public class RepositoryModule {
     @Provides
-    AuthRepository provideAuthRepository() {
-        return new AuthRepository();
+    AuthRepository provideAuthRepository(Application application) {
+        return new AuthRepository(application);
     }
 
     @Provides
-    StorageRepository provideStorageRepository() {
-        return new StorageRepository();
+    StorageRepository provideStorageRepository(Application application) {
+        return new StorageRepository(application);
     }
 
     @Provides

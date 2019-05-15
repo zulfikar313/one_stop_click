@@ -1,9 +1,10 @@
 package com.example.mitrais.onestopclick.model.repository;
 
+import android.app.Application;
 import android.net.Uri;
 
-import com.example.mitrais.onestopclick.dagger.component.DaggerServiceRepositoryComponent;
-import com.example.mitrais.onestopclick.dagger.component.ServiceRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.DaggerRepositoryComponent;
+import com.example.mitrais.onestopclick.dagger.component.RepositoryComponent;
 import com.example.mitrais.onestopclick.model.firestore.StorageService;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FileDownloadTask;
@@ -14,8 +15,8 @@ public class StorageRepository {
     @Inject
     StorageService storageService;
 
-    public StorageRepository() {
-        initDagger();
+    public StorageRepository(Application application) {
+        initDagger(application);
     }
 
     /**
@@ -75,8 +76,9 @@ public class StorageRepository {
     /**
      * initialize dagger injection
      */
-    private void initDagger() {
-        ServiceRepositoryComponent component = DaggerServiceRepositoryComponent.builder()
+    private void initDagger(Application application) {
+        RepositoryComponent component = DaggerRepositoryComponent.builder()
+                .application(application)
                 .build();
         component.inject(this);
     }
