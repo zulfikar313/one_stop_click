@@ -117,7 +117,7 @@ public class ProductService {
      * @param uri music uri
      * @return task
      */
-    public Task<Void> saveProductMusicUri(String id, Uri uri) {
+    public Task<Void> saveMusicUri(String id, Uri uri) {
         DocumentReference docRef = productRef.document(id);
 
         Map<String, Object> map = new HashMap<>();

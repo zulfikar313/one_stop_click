@@ -93,4 +93,5 @@
     <string name="add">Add</string>
     <string name="failed_to_download_book">Failed to download book</string>
     <string name="failed_to_upload_book">Failed to upload book</string>
+    <string name="failed_to_upload_music">Failed to upload music</string>
 </resources>

@@ -18,6 +18,7 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
+import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
 import com.example.mitrais.onestopclick.view.product_detail.ProductDetailActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 import com.google.android.gms.tasks.Task;
@@ -98,6 +99,9 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         switch (type) {
             case Constant.PRODUCT_TYPE_BOOK:
                 goToEditBookPage(id);
+                break;
+            case Constant.PRODUCT_TYPE_MUSIC:
+                goToEditMusicPage(id);
                 break;
             default:
                 goToEditProductPage(id);
@@ -185,6 +189,13 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     private void goToEditBookPage(String id) {
         Intent intent = new Intent(context, EditBookActivity.class);
+        intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        startActivity(intent);
+        CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
+    private void goToEditMusicPage(String id) {
+        Intent intent = new Intent(context, EditMusicActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);

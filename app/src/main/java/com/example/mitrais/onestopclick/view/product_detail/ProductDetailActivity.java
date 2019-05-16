@@ -625,7 +625,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         String filename = productId + "msc." + getFileExtension(musicUri);
         UploadTask = viewModel.uploadMusic(musicUri, filename)
                 .addOnSuccessListener(uri ->
-                        saveProductTask = viewModel.saveProductMusic(productId, uri)
+                        saveProductTask = viewModel.saveMusicUri(productId, uri)
                                 .addOnCompleteListener(task -> musicProgressBar.setVisibility(View.INVISIBLE))
                                 .addOnSuccessListener(aVoid ->
                                 {

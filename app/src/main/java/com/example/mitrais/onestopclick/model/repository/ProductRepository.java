@@ -184,8 +184,8 @@ public class ProductRepository {
      * @param uri music uri
      * @return task
      */
-    public Task<Void> saveProductMusicUri(String id, Uri uri) {
-        return productService.saveProductMusicUri(id, uri);
+    public Task<Void> saveMusicUri(String id, Uri uri) {
+        return productService.saveMusicUri(id, uri);
     }
 
     /**

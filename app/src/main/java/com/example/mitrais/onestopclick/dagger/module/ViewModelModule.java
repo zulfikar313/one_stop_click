@@ -1,8 +1,11 @@
 package com.example.mitrais.onestopclick.dagger.module;
 
 import android.arch.lifecycle.ViewModelProviders;
+
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookViewModel;
+import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
+import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordActivity;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.MainActivity;
@@ -65,6 +68,11 @@ public class ViewModelModule {
     @Provides
     EditBookViewModel provideEditBookViewModel(EditBookActivity activity) {
         return ViewModelProviders.of(activity).get(EditBookViewModel.class);
+    }
+
+    @Provides
+    EditMusicViewModel provideEditMusicViewModel(EditMusicActivity activity) {
+        return ViewModelProviders.of(activity).get(EditMusicViewModel.class);
     }
 
     @Provides

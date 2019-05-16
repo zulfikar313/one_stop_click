@@ -1,4 +1,4 @@
-package com.example.mitrais.onestopclick.view.product_detail;
+package com.example.mitrais.onestopclick.view.edit_music;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -12,19 +12,18 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.storage.FileDownloadTask;
 
 import javax.inject.Inject;
 
-public class ProductDetailViewModel extends AndroidViewModel {
-    @Inject
-    ProductRepository productRepository;
+public class EditMusicViewModel extends AndroidViewModel {
 
     @Inject
     StorageRepository storageRepository;
 
-    public ProductDetailViewModel(@NonNull Application application) {
+    @Inject
+    ProductRepository productRepository;
+
+    public EditMusicViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
@@ -38,30 +37,11 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * @param uri      book uri
-     * @param filename book filename
+     * @param product product object
      * @return task
      */
-    public Task<Uri> uploadBook(Uri uri, String filename) {
-        return storageRepository.uploadBook(uri, filename);
-    }
-
-    /**
-     * @param localUri book local uri
-     * @param filename book filename
-     * @return task
-     */
-    public FileDownloadTask downloadBook(Uri localUri, String filename) {
-        return storageRepository.downloadBook(localUri, filename);
-    }
-
-    /**
-     * @param uri      music uri
-     * @param filename music filename
-     * @return task
-     */
-    public Task<Uri> uploadMusic(Uri uri, String filename) {
-        return storageRepository.uploadMusic(uri, filename);
+    public Task<Void> saveProduct(Product product) {
+        return productRepository.saveProduct(product);
     }
 
     /**
@@ -74,31 +54,6 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * @param uri      trailer uri
-     * @param filename trailer filename
-     * @return task
-     */
-    public Task<Uri> uploadTrailer(Uri uri, String filename) {
-        return storageRepository.uploadTrailer(uri, filename);
-    }
-
-    /**
-     * @param product product object
-     * @return task
-     */
-    public Task<Void> saveProduct(Product product) {
-        return productRepository.saveProduct(product);
-    }
-
-    /**
-     * @param product product object
-     * @return task
-     */
-    public Task<DocumentReference> addProduct(Product product) {
-        return productRepository.addProduct(product);
-    }
-
-    /**
      * @param id  product id
      * @param uri thumbnail uri
      * @return save product task
@@ -108,12 +63,12 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * @param id  product id
-     * @param uri book uri
+     * @param uri      music uri
+     * @param filename music filename
      * @return task
      */
-    public Task<Void> saveBookUri(String id, Uri uri) {
-        return productRepository.saveBookUri(id, uri);
+    public Task<Uri> uploadMusic(Uri uri, String filename) {
+        return storageRepository.uploadMusic(uri, filename);
     }
 
     /**
@@ -123,15 +78,6 @@ public class ProductDetailViewModel extends AndroidViewModel {
      */
     public Task<Void> saveMusicUri(String id, Uri uri) {
         return productRepository.saveMusicUri(id, uri);
-    }
-
-    /**
-     * @param id  product id
-     * @param uri trailer uri
-     * @return task
-     */
-    public Task<Void> saveProductTrailer(String id, Uri uri) {
-        return productRepository.saveProductTrailerUri(id, uri);
     }
 
     /**

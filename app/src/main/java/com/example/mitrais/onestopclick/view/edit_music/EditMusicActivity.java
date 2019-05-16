@@ -1,27 +1,34 @@
-package com.example.mitrais.onestopclick.view.edit_book;
+package com.example.mitrais.onestopclick.view.edit_music;
 
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.model.Product;
-import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -35,18 +42,19 @@ import es.dmoral.toasty.Toasty;
 import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
-public class EditBookActivity extends AppCompatActivity {
-    private static final String TAG = "EditBookActivity";
+public class EditMusicActivity extends AppCompatActivity {
+    private static final String TAG = "EditMusicActivity";
     private static final int REQUEST_CHOOSE_THUMBNAIL = 1;
-    private static final int REQUEST_CHOOSE_BOOK = 2;
+    private static final int REQUEST_CHOOSE_MUSIC = 2;
     private Task<Uri> UploadTask;
     private Task<Void> saveProductTask;
     private Uri thumbnailUri = Uri.parse("");
-    private Uri bookUri = Uri.parse("");
+    private Uri musicUri = Uri.parse("");
+    private ExoPlayer musicPlayer;
     private String productId;
 
     @Inject
-    EditBookViewModel viewModel;
+    EditMusicViewModel viewModel;
 
     @BindView(R.id.shimmer_layout)
     ShimmerLayout shimmerLayout;
@@ -57,20 +65,14 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.txt_title)
     TextInputLayout txtTitle;
 
-    @BindView(R.id.txt_author)
-    TextInputLayout txtAuthor;
+    @BindView(R.id.txt_artist)
+    TextInputLayout txtArtist;
 
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
-    @BindView(R.id.empty_file_card)
-    CardView emptyFileCard;
-
-    @BindView(R.id.book_file_card)
-    CardView bookFileCard;
-
-    @BindView(R.id.txt_book_filename)
-    TextView txtBookFilename;
+    @BindView(R.id.music_view)
+    PlayerView musicView;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -78,7 +80,7 @@ public class EditBookActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_book);
+        setContentView(R.layout.activity_edit_music);
         ButterKnife.bind(this);
         initDagger();
 
@@ -104,7 +106,7 @@ public class EditBookActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    @OnClick({R.id.btn_save, R.id.btn_read_book, R.id.btn_upload_book, R.id.btn_edit_book, R.id.img_thumbnail})
+    @OnClick({R.id.btn_save, R.id.btn_upload_music, R.id.img_thumbnail})
     void onButtonClicked(View view) {
         if (isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
@@ -113,22 +115,32 @@ public class EditBookActivity extends AppCompatActivity {
         else {
             switch (view.getId()) {
                 case R.id.btn_save:
-                    if (isAuthorValid() & isTitleValid() & isDescriptionValid())
+                    if (isArtistValid() & isTitleValid() & isDescriptionValid())
                         saveProduct(productId);
                     break;
-                case R.id.btn_read_book:
-                    readBook(productId);
-                    break;
-                case R.id.btn_upload_book:
-                    openBookFileChooser();
-                    break;
-                case R.id.btn_edit_book:
-                    openBookFileChooser();
+                case R.id.btn_upload_music:
+                    openMusicFileChooser();
                     break;
                 default: // img_thumbnail clicked
                     openThumbnailFileChooser();
                     break;
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CHOOSE_THUMBNAIL && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            thumbnailUri = data.getData();
+            uploadThumbnail(productId, thumbnailUri);
+        }
+
+        if (requestCode == REQUEST_CHOOSE_MUSIC && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            musicUri = data.getData();
+            uploadMusic(productId, musicUri);
         }
     }
 
@@ -141,21 +153,6 @@ public class EditBookActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CHOOSE_THUMBNAIL && data != null && data.getData() != null) {
-            thumbnailUri = data.getData();
-            uploadThumbnail(productId, thumbnailUri);
-        }
-
-        if (requestCode == REQUEST_CHOOSE_BOOK && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            bookUri = data.getData();
-            uploadBook(productId, bookUri);
-        }
-    }
-
-    // region private methods
     private void bindProduct(Product product) {
         if (!product.getThumbnailUri().isEmpty()) {
             thumbnailUri = Uri.parse(product.getThumbnailUri());
@@ -175,13 +172,11 @@ public class EditBookActivity extends AppCompatActivity {
         }
 
         txtTitle.getEditText().setText(product.getTitle());
-        txtAuthor.getEditText().setText(product.getAuthor());
+        txtArtist.getEditText().setText(product.getArtist());
 
-        if (product.getBookUri() != null && !product.getBookUri().isEmpty()) {
-            bookUri = Uri.parse(product.getBookUri());
-            txtBookFilename.setText(product.getTitle());
-            emptyFileCard.setVisibility(View.GONE);
-            bookFileCard.setVisibility(View.VISIBLE);
+        if (product.getMusicUri() != null && !product.getMusicUri().isEmpty()) {
+            musicUri = Uri.parse(product.getMusicUri());
+            prepareMusicPlayer(musicUri);
         }
 
         txtDescription.getEditText().setText(product.getDescription());
@@ -194,17 +189,17 @@ public class EditBookActivity extends AppCompatActivity {
         showProgressBar();
         hideSoftKeyboard();
         String title = txtTitle.getEditText().getText().toString().trim();
-        String author = txtAuthor.getEditText().getText().toString().trim();
+        String artist = txtArtist.getEditText().getText().toString().trim();
         String description = txtDescription.getEditText().getText().toString().trim();
 
         Product product = new Product();
         product.setId(id);
         product.setTitle(title);
-        product.setAuthor(author);
-        product.setType(Constant.PRODUCT_TYPE_BOOK);
+        product.setArtist(artist);
+        product.setType(Constant.PRODUCT_TYPE_MUSIC);
         product.setDescription(description);
         product.setThumbnailUri(thumbnailUri.toString());
-        product.setBookUri(bookUri.toString());
+        product.setMusicUri(musicUri.toString());
 
         saveProductTask = viewModel.saveProduct(product)
                 .addOnCompleteListener(task -> hideProgressBar())
@@ -238,66 +233,61 @@ public class EditBookActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     hideProgressBar();
                     Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
-                    Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                     Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
+
     /**
-     * upload book file then save book uri
-     *
      * @param id  product id
-     * @param uri book uri
+     * @param uri music uri
      */
-    private void uploadBook(String id, Uri uri) {
+    private void uploadMusic(String id, Uri uri) {
         showProgressBar();
-        String filename = id + Constant.NAME_EXT_BOOK_PDF;
-        UploadTask = viewModel.uploadBook(uri, filename)
+        String filename = id + Constant.NAME_EXT_MUSIC + getFileExtension(uri);
+        UploadTask = viewModel.uploadMusic(uri, filename)
                 .addOnSuccessListener(uri1 ->
-                        saveProductTask = viewModel.saveBookUri(id, uri1)
+                        saveProductTask = viewModel.saveMusicUri(id, uri1)
                                 .addOnCompleteListener(task -> hideProgressBar())
-                                .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.book_has_been_uploaded), Toast.LENGTH_SHORT).show())
+                                .addOnSuccessListener(aVoid ->
+                                        Toasty.success(this, getString(R.string.music_uploaded), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> {
-                                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
                                     Log.e(TAG, e.getMessage());
+                                    Toasty.error(this, getString(R.string.failed_to_upload_music), Toast.LENGTH_LONG).show();
                                 }))
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Toasty.error(this, getString(R.string.failed_to_upload_book), Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.getMessage());
+                    Toasty.error(this, getString(R.string.failed_to_upload_music), Toast.LENGTH_LONG).show();
                 });
     }
 
     /**
-     * download book file then read the book
-     *
-     * @param id product id
+     * @param uri music uri
      */
-    private void readBook(String id) {
+    private void prepareMusicPlayer(Uri uri) {
         showProgressBar();
-        Uri storageUri = Uri.parse(getFilesDir() + id + Constant.NAME_EXT_BOOK_PDF);
-        String filename = id + Constant.NAME_EXT_BOOK_PDF;
-        viewModel.downloadBook(storageUri, filename)
-                .addOnCompleteListener(task -> hideProgressBar())
-                .addOnSuccessListener(taskSnapshot -> {
-                    Intent intent = new Intent(this, ReadBookActivity.class);
-                    intent.putExtra(Constant.EXTRA_BOOK_URI, storageUri.toString());
-                    startActivity(intent);
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, getString(R.string.failed_to_download_book), Toast.LENGTH_LONG).show();
-                    Log.e(TAG, e.getMessage());
-                });
-    }
 
-    /**
-     * initialize dagger injection
-     */
-    private void initDagger() {
-        EditBookActivityComponent component = DaggerEditBookActivityComponent.builder()
-                .editBookActivity(this)
-                .build();
-        component.inject(this);
+        // prepare music player
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        musicPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        musicPlayer.addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                super.onPlayerStateChanged(playWhenReady, playbackState);
+                if (playbackState == Player.STATE_READY) {
+                    hideProgressBar();
+                }
+            }
+        });
+
+        // prepare music data source
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
+        MediaSource musicSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+
+        // configure music player
+        musicPlayer.prepare(musicSource);
+        musicView.setPlayer(musicPlayer);
     }
 
     private void openThumbnailFileChooser() {
@@ -307,17 +297,27 @@ public class EditBookActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CHOOSE_THUMBNAIL);
     }
 
-    private void openBookFileChooser() {
+    private void openMusicFileChooser() {
         Intent intent = new Intent();
-        intent.setType("application/pdf");
+        intent.setType("audio/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, REQUEST_CHOOSE_BOOK);
+        startActivityForResult(intent, REQUEST_CHOOSE_MUSIC);
     }
 
     private String getFileExtension(Uri uri) {
         ContentResolver resolver = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(resolver.getType(uri));
+    }
+
+    /**
+     * initialize dagger injection
+     */
+    private void initDagger() {
+        EditMusicActivityComponent component = DaggerEditMusicActivityComponent.builder()
+                .editMusicActivity(this)
+                .build();
+        component.inject(this);
     }
 
     private boolean isTitleValid() {
@@ -330,13 +330,13 @@ public class EditBookActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean isAuthorValid() {
-        String author = txtAuthor.getEditText().getText().toString().trim();
-        if (author.isEmpty()) {
-            txtAuthor.setError(getString(R.string.error_empty_author));
+    private boolean isArtistValid() {
+        String artist = txtArtist.getEditText().getText().toString().trim();
+        if (artist.isEmpty()) {
+            txtArtist.setError(getString(R.string.error_empty_artist));
             return false;
         }
-        txtAuthor.setError("");
+        txtArtist.setError("");
         return true;
     }
 
@@ -370,5 +370,5 @@ public class EditBookActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(txtTitle.getWindowToken(), 0);
     }
-    // endregion
+
 }

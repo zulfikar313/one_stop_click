@@ -26,6 +26,10 @@
             android:parentActivityName=".view.product_detail.ProductDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".view.edit_music.EditMusicActivity"
+            android:parentActivityName=".view.main.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.search_product.SearchProductActivity"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
@@ -72,4 +76,5 @@
             android:name="io.fabric.ApiKey"
             android:value="9ff704fc5cf7f800c4c135a7994497585a0a576e" />
     </application>
+
 </manifest>
