@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
+import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.product_detail.ProductDetailActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 import com.google.android.gms.tasks.Task;
@@ -93,8 +94,15 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onItemClicked(String productId) {
-        goToProductPage(productId);
+    public void onItemClicked(String id, String type) {
+        switch (type) {
+            case Constant.PRODUCT_TYPE_BOOK:
+                goToEditBookPage(id);
+                break;
+            default:
+                goToEditProductPage(id);
+                break;
+        }
     }
 
     @Override
@@ -113,13 +121,13 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onDislikeClicked(String productId) {
+    public void onDislikeClicked(String id) {
         if (isAddDislikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
         } else {
             dislikeTask = viewModel
-                    .addDislike(productId)
+                    .addDislike(id)
                     .addOnFailureListener(e -> {
                         if (context != null)
                             Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -128,7 +136,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onShareClicked(String productId) {
+    public void onShareClicked(String id) {
 
     }
 
@@ -175,7 +183,14 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    private void goToProductPage(String id) {
+    private void goToEditBookPage(String id) {
+        Intent intent = new Intent(context, EditBookActivity.class);
+        intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        startActivity(intent);
+        CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
+    private void goToEditProductPage(String id) {
         Intent intent = new Intent(context, ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);

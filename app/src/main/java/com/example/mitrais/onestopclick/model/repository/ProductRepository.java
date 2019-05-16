@@ -175,8 +175,8 @@ public class ProductRepository {
      * @param uri book uri
      * @return task
      */
-    public Task<Void> saveProductBookUri(String id, Uri uri) {
-        return productService.saveProductBookUri(id, uri);
+    public Task<Void> saveBookUri(String id, Uri uri) {
+        return productService.saveBookUri(id, uri);
     }
 
     /**

@@ -172,7 +172,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else {
@@ -194,7 +194,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.img_thumbnail)
     void onThumbnailImageClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
@@ -204,7 +204,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.btn_save)
     void onSaveButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else {
@@ -245,7 +245,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.btn_read_book)
     void onReadBookButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
@@ -255,7 +255,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.btn_upload_book)
     void onUploadBookButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
@@ -265,7 +265,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.btn_edit_book)
     void onEditBookButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
@@ -275,7 +275,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.btn_upload_music)
     void onUploadMusicButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
@@ -286,7 +286,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     @OnClick(R.id.btn_upload_trailer)
     void onUploadTrailerButtonClicked() {
         if (isSaveProductInProgress() || isAddProductInProgress())
-            Toasty.info(this, getString(R.string.save_product_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
         else if (isUploadInProgress())
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else
@@ -366,7 +366,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             if (product != null) {
                 bindProduct(product);
             } else
-                Toasty.error(this, getString(R.string.error_product_not_found), Toast.LENGTH_SHORT).show();
+                Toasty.error(this, getString(R.string.product_not_found), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -463,7 +463,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                        Log.e(TAG, getString(R.string.failed_to_save_product));
                     });
         } else { /* add new product*/
             addProductTask = viewModel.addProduct(product)
@@ -474,7 +474,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                        Log.e(TAG, getString(R.string.failed_to_save_product));
                     });
         }
     }
@@ -506,7 +506,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                        Log.e(TAG, getString(R.string.failed_to_save_product));
                     });
         } else {
             addProductTask = viewModel.addProduct(product)
@@ -517,7 +517,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                        Log.e(TAG, getString(R.string.failed_to_save_product));
                     });
         }
     }
@@ -550,7 +550,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                        Log.e(TAG, getString(R.string.failed_to_save_product));
                     });
         } else {
             addProductTask = viewModel.addProduct(product)
@@ -561,7 +561,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, getString(R.string.error_failed_to_save_product));
+                        Log.e(TAG, getString(R.string.failed_to_save_product));
                     });
         }
     }
@@ -578,13 +578,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                             .addOnCompleteListener(task -> hideProgressBar())
                             .addOnSuccessListener(aVoid -> Toasty.success(ProductDetailActivity.this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
                             .addOnFailureListener(e -> {
-                                Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                                Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                                 Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                    Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                     Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
@@ -598,11 +598,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         String filename = productId + "book." + getFileExtension(bookUri);
         UploadTask = viewModel.uploadBook(bookUri, filename)
                 .addOnSuccessListener(uri ->
-                        saveProductTask = viewModel.saveProductBook(productId, uri)
+                        saveProductTask = viewModel.saveBookUri(productId, uri)
                                 .addOnCompleteListener(task -> bookProgressBar.setVisibility(View.INVISIBLE))
                                 .addOnSuccessListener(aVoid ->
                                 {
-                                    Toasty.success(ProductDetailActivity.this, getString(R.string.book_uploaded), Toast.LENGTH_SHORT).show();
+                                    Toasty.success(ProductDetailActivity.this, getString(R.string.book_has_been_uploaded), Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, "Update product book uri failed");

@@ -29,13 +29,13 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     private Context context;
 
     public interface Listener {
-        void onItemClicked(String productId);
+        void onItemClicked(String id, String type);
 
-        void onLikeClicked(String productId);
+        void onLikeClicked(String id);
 
-        void onDislikeClicked(String productId);
+        void onDislikeClicked(String id);
 
-        void onShareClicked(String productId);
+        void onShareClicked(String id);
     }
 
     public void setListener(Listener listener) {
@@ -78,9 +78,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             productViewHolder.bind(getItem(position));
     }
 
-    /**
-     * ProductViewHolder to bind product data to view
-     */
     class ProductViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.txt_title)
         TextView txtTitle;
@@ -106,11 +103,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_dislike_counter)
         TextView txtDislikeCounter;
 
-        /**
-         * ProductViewHolder constructor
-         *
-         * @param itemView recycler item view
-         */
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -118,14 +110,12 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
                     Product product = getItem(position);
-                    listener.onItemClicked(product.getId());
+                    listener.onItemClicked(product.getId(), product.getType());
                 }
             });
         }
 
         /**
-         * bind product to item view
-         *
          * @param product product object
          */
         public void bind(Product product) {
@@ -188,7 +178,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 listener.onDislikeClicked(product.getId());
             }
         }
-
 
         @OnClick(R.id.img_share)
         void onShareImageClicked() {

@@ -54,7 +54,7 @@
     <string name="add_like_in_progress">Add like in progress</string>
     <string name="add_dislike_in_progress">Add dislike in progress</string>
     <string name="save">Save</string>
-    <string name="error_product_not_found">Product not found</string>
+    <string name="product_not_found">Product not found</string>
     <string name="artist">Artist</string>
     <string name="director">Director</string>
     <string name="error_empty_title">Title can\'t be empty</string>
@@ -63,14 +63,14 @@
     <string name="error_empty_director">Director can\'t be empty</string>
     <string name="error_empty_description">Description can\'t be empty</string>
     <string name="image_has_been_saved">Image has been saved</string>
-    <string name="save_product_is_in_progress">Save product is in progress</string>
+    <string name="save_product_in_progress">Save product in progress</string>
     <string name="product_has_been_saved">Product has been saved</string>
     <string name="remember_me">Remember me</string>
     <string name="internet_required">internet is required to proceed</string>
     <string name="search">Search</string>
     <string name="profile_has_been_saved">Profile has been saved</string>
-    <string name="error_failed_to_upload_product_image">Failed to upload product image</string>
-    <string name="error_failed_to_save_product">Failed to save product</string>
+    <string name="failed_to_upload_thumbnail">Failed to upload thumbnail</string>
+    <string name="failed_to_save_product">Failed to save product</string>
     <string name="upload_trailer">Upload trailer</string>
     <string name="error_failed_to_upload_trailer">Failed to upload trailer</string>
     <string name="trailer_uploaded">Trailer uploaded</string>
@@ -85,11 +85,12 @@
     <string name="book_file_name">Book filename</string>
     <string name="read_book">Read book</string>
     <string name="upload_in_progress">Upload in progress</string>
-    <string name="book_uploaded">Book uploaded</string>
+    <string name="book_has_been_uploaded">Book has been uploaded</string>
     <string name="title_add_product">Add Product</string>
     <string name="product_has_been_added">Product has been added</string>
     <string name="failed_to_add_product">Failed to add product</string>
     <string name="add_product_in_progress">Add product in progress</string>
     <string name="add">Add</string>
     <string name="failed_to_download_book">Failed to download book</string>
+    <string name="failed_to_upload_book">Failed to upload book</string>
 </resources>

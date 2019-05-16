@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.product_detail.ProductDetailActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 import com.google.android.gms.tasks.Task;
@@ -81,8 +82,15 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     }
 
     @Override
-    public void onItemClicked(String productId) {
-        goToProductPage(productId);
+    public void onItemClicked(String id, String type) {
+        switch (type) {
+            case Constant.PRODUCT_TYPE_BOOK:
+                goToEditBookPage(id);
+                break;
+            default:
+                goToEditProductPage(id);
+                break;
+        }
     }
 
     @Override
@@ -97,22 +105,29 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     }
 
     @Override
-    public void onDislikeClicked(String productId) {
+    public void onDislikeClicked(String id) {
         if (isAddDislikeInProgress())
             Toasty.info(this, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
         else {
             dislikeTask = viewModel
-                    .addDislike(productId)
+                    .addDislike(id)
                     .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
         }
     }
 
     @Override
-    public void onShareClicked(String productId) {
+    public void onShareClicked(String id) {
 
     }
 
-    private void goToProductPage(String id) {
+    private void goToEditBookPage(String id) {
+        Intent intent = new Intent(this, EditBookActivity.class);
+        intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        startActivity(intent);
+        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
+    private void goToEditProductPage(String id) {
         Intent intent = new Intent(this, ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);

@@ -103,7 +103,7 @@ public class ProductService {
      * @param uri book uri
      * @return task
      */
-    public Task<Void> saveProductBookUri(String id, Uri uri) {
+    public Task<Void> saveBookUri(String id, Uri uri) {
         DocumentReference docRef = productRef.document(id);
 
         Map<String, Object> map = new HashMap<>();

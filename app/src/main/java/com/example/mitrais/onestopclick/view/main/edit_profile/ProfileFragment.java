@@ -186,14 +186,14 @@ public class ProfileFragment extends Fragment {
                                     Toasty.success(context, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                                Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                                 if (context != null)
                                     Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Log.e(TAG, getString(R.string.error_failed_to_upload_product_image));
+                    Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                     if (context != null)
                         Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
                 });

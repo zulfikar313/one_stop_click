@@ -3,6 +3,7 @@ package com.example.mitrais.onestopclick.dagger.component;
 import android.app.Application;
 
 import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
+import com.example.mitrais.onestopclick.view.edit_book.EditBookViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordViewModel;
 import com.example.mitrais.onestopclick.view.login.LoginViewModel;
 import com.example.mitrais.onestopclick.view.main.MainViewModel;
@@ -35,6 +36,8 @@ public interface ViewModelComponent {
     void inject(SearchProductViewModel viewModel);
 
     void inject(ProductDetailViewModel viewModel);
+
+    void inject(EditBookViewModel viewModel);
 
     @Component.Builder
     interface Builder {
