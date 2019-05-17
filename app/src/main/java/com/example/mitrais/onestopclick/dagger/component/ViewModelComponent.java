@@ -3,7 +3,9 @@ package com.example.mitrais.onestopclick.dagger.component;
 import android.app.Application;
 
 import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
+import com.example.mitrais.onestopclick.view.add_product.AddProductViewModel;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookViewModel;
+import com.example.mitrais.onestopclick.view.edit_movie.EditMovieViewModel;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordViewModel;
 import com.example.mitrais.onestopclick.view.login.LoginViewModel;
@@ -20,19 +22,21 @@ import dagger.Component;
 
 @Component(modules = RepositoryModule.class)
 public interface ViewModelComponent {
-    void inject(RegistrationViewModel registrationViewModel);
+    void inject(RegistrationViewModel viewModel);
 
-    void inject(ForgotPasswordViewModel forgotPasswordViewModel);
+    void inject(ForgotPasswordViewModel viewModel);
 
-    void inject(SplashViewModel splashViewModel);
+    void inject(SplashViewModel viewModel);
 
-    void inject(LoginViewModel loginViewModel);
+    void inject(LoginViewModel viewModel);
 
-    void inject(MainViewModel mainViewModel);
+    void inject(MainViewModel viewModel);
 
-    void inject(ProfileViewModel profileViewModel);
+    void inject(ProfileViewModel viewModel);
 
-    void inject(ProductListViewModel productListViewModel);
+    void inject(AddProductViewModel viewModel);
+
+    void inject(ProductListViewModel viewModel);
 
     void inject(SearchProductViewModel viewModel);
 
@@ -41,6 +45,8 @@ public interface ViewModelComponent {
     void inject(EditBookViewModel viewModel);
 
     void inject(EditMusicViewModel viewModel);
+
+    void inject(EditMovieViewModel viewModel);
 
     @Component.Builder
     interface Builder {

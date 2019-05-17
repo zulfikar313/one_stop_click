@@ -1,4 +1,4 @@
-package com.example.mitrais.onestopclick.view.edit_music;
+package com.example.mitrais.onestopclick.view.edit_movie;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -42,19 +42,19 @@ import es.dmoral.toasty.Toasty;
 import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
-public class EditMusicActivity extends AppCompatActivity {
-    private static final String TAG = "EditMusicActivity";
+public class EditMovieActivity extends AppCompatActivity {
+    private static final String TAG = "EditMovieActivity";
     private static final int REQUEST_CHOOSE_THUMBNAIL = 1;
-    private static final int REQUEST_CHOOSE_MUSIC = 2;
+    private static final int REQUEST_CHOOSE_TRAILER = 2;
     private Task<Uri> UploadTask;
     private Task<Void> saveProductTask;
     private Uri thumbnailUri = Uri.parse("");
-    private Uri musicUri = Uri.parse("");
-    private ExoPlayer musicPlayer;
+    private Uri trailerUri = Uri.parse("");
+    private ExoPlayer trailerPlayer;
     private String productId;
 
     @Inject
-    EditMusicViewModel viewModel;
+    EditMovieViewModel viewModel;
 
     @BindView(R.id.shimmer_layout)
     ShimmerLayout shimmerLayout;
@@ -65,14 +65,14 @@ public class EditMusicActivity extends AppCompatActivity {
     @BindView(R.id.txt_title)
     TextInputLayout txtTitle;
 
-    @BindView(R.id.txt_artist)
-    TextInputLayout txtArtist;
+    @BindView(R.id.txt_director)
+    TextInputLayout txtDirector;
 
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
-    @BindView(R.id.music_view)
-    PlayerView musicView;
+    @BindView(R.id.trailer_view)
+    PlayerView trailerView;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -80,7 +80,7 @@ public class EditMusicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_music);
+        setContentView(R.layout.activity_edit_movie);
         ButterKnife.bind(this);
         initDagger();
 
@@ -106,7 +106,7 @@ public class EditMusicActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    @OnClick({R.id.btn_save, R.id.btn_upload_music, R.id.img_thumbnail})
+    @OnClick({R.id.btn_save, R.id.btn_upload_trailer, R.id.img_thumbnail})
     void onButtonClicked(View view) {
         if (isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
@@ -115,11 +115,11 @@ public class EditMusicActivity extends AppCompatActivity {
         else {
             switch (view.getId()) {
                 case R.id.btn_save:
-                    if (isArtistValid() & isTitleValid() & isDescriptionValid())
+                    if (isDirectorValid() & isTitleValid() & isDescriptionValid())
                         saveProduct(productId);
                     break;
-                case R.id.btn_upload_music:
-                    openMusicFileChooser();
+                case R.id.btn_upload_trailer:
+                    openTrailerFileChooser();
                     break;
                 default: // img_thumbnail clicked
                     openThumbnailFileChooser();
@@ -137,18 +137,18 @@ public class EditMusicActivity extends AppCompatActivity {
             uploadThumbnail(productId, thumbnailUri);
         }
 
-        if (requestCode == REQUEST_CHOOSE_MUSIC && resultCode == RESULT_OK
+        if (requestCode == REQUEST_CHOOSE_TRAILER && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
-            musicUri = data.getData();
-            uploadMusic(productId, musicUri);
+            trailerUri = data.getData();
+            uploadTrailer(productId, trailerUri);
         }
     }
 
     private void observeProduct(String id) {
         viewModel.getProductById(id).observe(this, product -> {
-            if (product != null) {
+            if (product != null)
                 bindProduct(product);
-            } else
+            else
                 Toasty.error(this, getString(R.string.product_not_found), Toast.LENGTH_SHORT).show();
         });
     }
@@ -172,11 +172,11 @@ public class EditMusicActivity extends AppCompatActivity {
         }
 
         txtTitle.getEditText().setText(product.getTitle());
-        txtArtist.getEditText().setText(product.getArtist());
+        txtDirector.getEditText().setText(product.getDirector());
 
-        if (product.getMusicUri() != null && !product.getMusicUri().isEmpty()) {
-            musicUri = Uri.parse(product.getMusicUri());
-            prepareMusicPlayer(musicUri);
+        if (product.getTrailerUri() != null && !product.getTrailerUri().isEmpty()) {
+            trailerUri = Uri.parse(product.getTrailerUri());
+            prepareTrailerPlayer(trailerUri);
         }
 
         txtDescription.getEditText().setText(product.getDescription());
@@ -189,17 +189,17 @@ public class EditMusicActivity extends AppCompatActivity {
         showProgressBar();
         hideSoftKeyboard();
         String title = txtTitle.getEditText().getText().toString().trim();
-        String artist = txtArtist.getEditText().getText().toString().trim();
+        String director = txtDirector.getEditText().getText().toString().trim();
         String description = txtDescription.getEditText().getText().toString().trim();
 
         Product product = new Product();
         product.setId(id);
         product.setTitle(title);
-        product.setArtist(artist);
-        product.setType(Constant.PRODUCT_TYPE_MUSIC);
+        product.setDirector(director);
+        product.setType(Constant.PRODUCT_TYPE_MOVIE);
         product.setDescription(description);
         product.setThumbnailUri(thumbnailUri.toString());
-        product.setMusicUri(musicUri.toString());
+        product.setTrailerUri(trailerUri.toString());
 
         saveProductTask = viewModel.saveProduct(product)
                 .addOnCompleteListener(task -> hideProgressBar())
@@ -237,41 +237,40 @@ public class EditMusicActivity extends AppCompatActivity {
                 });
     }
 
-
     /**
      * @param id  product id
-     * @param uri music uri
+     * @param uri trailer uri
      */
-    private void uploadMusic(String id, Uri uri) {
+    private void uploadTrailer(String id, Uri uri) {
         showProgressBar();
-        String filename = id + Constant.NAME_EXT_MUSIC + getFileExtension(uri);
-        UploadTask = viewModel.uploadMusic(uri, filename)
+
+        String filename = id + Constant.NAME_EXT_TRAILER + getFileExtension(uri);
+        UploadTask = viewModel.uploadTrailer(uri, filename)
                 .addOnSuccessListener(uri1 ->
-                        saveProductTask = viewModel.saveMusicUri(id, uri1)
+                        saveProductTask = viewModel.saveProductTrailer(id, uri1)
                                 .addOnCompleteListener(task -> hideProgressBar())
-                                .addOnSuccessListener(aVoid ->
-                                        Toasty.success(this, getString(R.string.music_uploaded), Toast.LENGTH_SHORT).show())
+                                .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> {
+                                    Toasty.error(this, getString(R.string.failed_to_upload_trailer), Toast.LENGTH_LONG).show();
                                     Log.e(TAG, e.getMessage());
-                                    Toasty.error(this, getString(R.string.failed_to_upload_music), Toast.LENGTH_LONG).show();
                                 }))
                 .addOnFailureListener(e -> {
                     hideProgressBar();
+                    Toasty.error(this, getString(R.string.failed_to_upload_trailer), Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.getMessage());
-                    Toasty.error(this, getString(R.string.failed_to_upload_music), Toast.LENGTH_LONG).show();
                 });
     }
 
     /**
-     * @param uri music uri
+     * @param uri trailer uri
      */
-    private void prepareMusicPlayer(Uri uri) {
+    private void prepareTrailerPlayer(Uri uri) {
         showProgressBar();
 
-        // prepare music player
+        // prepare video player
         TrackSelector trackSelector = new DefaultTrackSelector();
-        musicPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
-        musicPlayer.addListener(new Player.DefaultEventListener() {
+        trailerPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        trailerPlayer.addListener(new Player.DefaultEventListener() {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 super.onPlayerStateChanged(playWhenReady, playbackState);
@@ -281,13 +280,13 @@ public class EditMusicActivity extends AppCompatActivity {
             }
         });
 
-        // prepare music data source
+        // prepare video source
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
-        MediaSource musicSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
 
-        // configure music player
-        musicPlayer.prepare(musicSource);
-        musicView.setPlayer(musicPlayer);
+        // configure video player
+        trailerPlayer.prepare(videoSource);
+        trailerView.setPlayer(trailerPlayer);
     }
 
     private void openThumbnailFileChooser() {
@@ -297,11 +296,11 @@ public class EditMusicActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CHOOSE_THUMBNAIL);
     }
 
-    private void openMusicFileChooser() {
+    private void openTrailerFileChooser() {
         Intent intent = new Intent();
-        intent.setType("audio/*");
+        intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, REQUEST_CHOOSE_MUSIC);
+        startActivityForResult(intent, REQUEST_CHOOSE_TRAILER);
     }
 
     private String getFileExtension(Uri uri) {
@@ -314,8 +313,8 @@ public class EditMusicActivity extends AppCompatActivity {
      * initialize dagger injection
      */
     private void initDagger() {
-        EditMusicActivityComponent component = DaggerEditMusicActivityComponent.builder()
-                .editMusicActivity(this)
+        EditMovieActivityComponent component = DaggerEditMovieActivityComponent.builder()
+                .editMovieActivity(this)
                 .build();
         component.inject(this);
     }
@@ -330,13 +329,13 @@ public class EditMusicActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean isArtistValid() {
-        String artist = txtArtist.getEditText().getText().toString().trim();
-        if (artist.isEmpty()) {
-            txtArtist.setError(getString(R.string.error_empty_artist));
+    private boolean isDirectorValid() {
+        String director = txtDirector.getEditText().getText().toString().trim();
+        if (director.isEmpty()) {
+            txtDirector.setError(getString(R.string.error_empty_director));
             return false;
         }
-        txtArtist.setError("");
+        txtDirector.setError("");
         return true;
     }
 

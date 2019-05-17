@@ -1,4 +1,4 @@
-package com.example.mitrais.onestopclick.view.edit_music;
+package com.example.mitrais.onestopclick.view.edit_movie;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -15,14 +15,14 @@ import com.google.android.gms.tasks.Task;
 
 import javax.inject.Inject;
 
-public class EditMusicViewModel extends AndroidViewModel {
+public class EditMovieViewModel extends AndroidViewModel {
     @Inject
     StorageRepository storageRepository;
 
     @Inject
     ProductRepository productRepository;
 
-    public EditMusicViewModel(@NonNull Application application) {
+    public EditMovieViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
@@ -62,21 +62,21 @@ public class EditMusicViewModel extends AndroidViewModel {
     }
 
     /**
-     * @param uri      music uri
-     * @param filename music filename
+     * @param uri      trailer uri
+     * @param filename trailer filename
      * @return task
      */
-    public Task<Uri> uploadMusic(Uri uri, String filename) {
-        return storageRepository.uploadMusic(uri, filename);
+    public Task<Uri> uploadTrailer(Uri uri, String filename) {
+        return storageRepository.uploadTrailer(uri, filename);
     }
 
     /**
      * @param id  product id
-     * @param uri music uri
+     * @param uri trailer uri
      * @return task
      */
-    public Task<Void> saveMusicUri(String id, Uri uri) {
-        return productRepository.saveMusicUri(id, uri);
+    public Task<Void> saveProductTrailer(String id, Uri uri) {
+        return productRepository.saveProductTrailerUri(id, uri);
     }
 
     /**

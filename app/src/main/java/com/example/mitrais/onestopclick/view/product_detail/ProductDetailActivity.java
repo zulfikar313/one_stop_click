@@ -658,12 +658,12 @@ public class ProductDetailActivity extends AppCompatActivity {
                                     Toasty.success(ProductDetailActivity.this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
+                                    Log.e(TAG, getString(R.string.failed_to_upload_trailer));
                                     Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 }))
                 .addOnFailureListener(e -> {
                     hideProgressBar();
-                    Log.e(TAG, getString(R.string.error_failed_to_upload_trailer));
+                    Log.e(TAG, getString(R.string.failed_to_upload_trailer));
                     Toasty.error(ProductDetailActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }

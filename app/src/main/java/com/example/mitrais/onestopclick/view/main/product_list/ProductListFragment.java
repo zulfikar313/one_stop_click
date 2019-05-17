@@ -18,6 +18,7 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
+import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
 import com.example.mitrais.onestopclick.view.product_detail.ProductDetailActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
@@ -103,8 +104,8 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
             case Constant.PRODUCT_TYPE_MUSIC:
                 goToEditMusicPage(id);
                 break;
-            default:
-                goToEditProductPage(id);
+            default: // movie
+                goToEditMoviePage(id);
                 break;
         }
     }
@@ -201,6 +202,13 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
+    private void goToEditMoviePage(String id) {
+        Intent intent = new Intent(context, EditMovieActivity.class);
+        intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        startActivity(intent);
+        CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
     private void goToEditProductPage(String id) {
         Intent intent = new Intent(context, ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
@@ -208,19 +216,12 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    /**
-     * @return true if add like in progress
-     */
     private boolean isAddLikeInProgress() {
         return likeTask != null && !likeTask.isComplete();
     }
 
-    /**
-     * @return true if add dislike in progress
-     */
     private boolean isAddDislikeInProgress() {
         return dislikeTask != null && !dislikeTask.isComplete();
     }
-
     // endregion
 }

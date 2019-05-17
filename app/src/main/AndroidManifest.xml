@@ -30,6 +30,10 @@
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".view.edit_movie.EditMovieActivity"
+            android:parentActivityName=".view.main.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.search_product.SearchProductActivity"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />

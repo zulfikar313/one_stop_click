@@ -72,7 +72,7 @@
     <string name="failed_to_upload_thumbnail">Failed to upload thumbnail</string>
     <string name="failed_to_save_product">Failed to save product</string>
     <string name="upload_trailer">Upload trailer</string>
-    <string name="error_failed_to_upload_trailer">Failed to upload trailer</string>
+    <string name="failed_to_upload_trailer">Failed to upload trailer</string>
     <string name="trailer_uploaded">Trailer uploaded</string>
     <string name="edit_product">Edit product</string>
     <string name="upload_music">Upload music</string>

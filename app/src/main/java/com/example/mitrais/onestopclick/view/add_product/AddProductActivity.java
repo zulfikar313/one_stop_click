@@ -50,7 +50,7 @@ public class AddProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_product);
         setTitle(getString(R.string.title_add_product));
         ButterKnife.bind(this);
-        ViewModelProviders.of(this).get(AddProductViewModel.class);
+        initDagger();
     }
 
     @OnClick(R.id.btn_add)
@@ -86,6 +86,16 @@ public class AddProductActivity extends AppCompatActivity {
                     Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, getString(R.string.failed_to_add_product) + ": " + e.getMessage());
                 });
+    }
+
+    /**
+     * initialize dagger injection
+     */
+    private void initDagger() {
+        AddProductActivityComponent component = DaggerAddProductActivityComponent.builder()
+                .addProductActivity(this)
+                .build();
+        component.inject(this);
     }
 
     private boolean isTitleValid() {

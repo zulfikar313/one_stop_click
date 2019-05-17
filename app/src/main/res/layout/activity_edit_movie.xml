@@ -40,7 +40,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="@string/music"
+                        android:text="@string/movie"
                         android:textColor="#000"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -76,16 +76,16 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
-                        android:id="@+id/txt_artist"
+                        android:id="@+id/txt_director"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp">
 
                         <android.support.design.widget.TextInputEditText
-                            android:id="@+id/txt_edit_artist"
+                            android:id="@+id/txt_edit_director"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/artist"
+                            android:hint="@string/director"
                             android:inputType="text" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -136,7 +136,7 @@
                     android:padding="16dp">
 
                     <com.google.android.exoplayer2.ui.PlayerView
-                        android:id="@+id/music_view"
+                        android:id="@+id/trailer_view"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -144,12 +144,12 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btn_upload_music"
+                        android:id="@+id/btn_upload_trailer"
                         style="@style/OrangeButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@string/upload_music"
+                        android:text="@string/upload_trailer"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/trailer_view" />
