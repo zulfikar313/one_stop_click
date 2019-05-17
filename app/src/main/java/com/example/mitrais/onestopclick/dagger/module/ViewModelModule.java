@@ -13,7 +13,6 @@ import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordActivity;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.MainActivity;
-import com.example.mitrais.onestopclick.view.product_detail.ProductDetailActivity;
 import com.example.mitrais.onestopclick.view.main.product_list.ProductListFragment;
 import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileFragment;
 import com.example.mitrais.onestopclick.view.registration.RegistrationActivity;
@@ -22,7 +21,6 @@ import com.example.mitrais.onestopclick.view.splash.SplashActivity;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordViewModel;
 import com.example.mitrais.onestopclick.view.login.LoginViewModel;
 import com.example.mitrais.onestopclick.view.main.MainViewModel;
-import com.example.mitrais.onestopclick.view.product_detail.ProductDetailViewModel;
 import com.example.mitrais.onestopclick.view.main.product_list.ProductListViewModel;
 import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileViewModel;
 import com.example.mitrais.onestopclick.view.registration.RegistrationViewModel;
@@ -62,11 +60,6 @@ public class ViewModelModule {
     @Provides
     AddProductViewModel provideAddProductViewModel(AddProductActivity activity) {
         return ViewModelProviders.of(activity).get(AddProductViewModel.class);
-    }
-
-    @Provides
-    ProductDetailViewModel provideProductDetailViewModel(ProductDetailActivity activity) {
-        return ViewModelProviders.of(activity).get(ProductDetailViewModel.class);
     }
 
     @Provides

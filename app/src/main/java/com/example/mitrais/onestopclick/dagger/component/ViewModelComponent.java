@@ -10,7 +10,6 @@ import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordViewModel;
 import com.example.mitrais.onestopclick.view.login.LoginViewModel;
 import com.example.mitrais.onestopclick.view.main.MainViewModel;
-import com.example.mitrais.onestopclick.view.product_detail.ProductDetailViewModel;
 import com.example.mitrais.onestopclick.view.main.product_list.ProductListViewModel;
 import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileViewModel;
 import com.example.mitrais.onestopclick.view.registration.RegistrationViewModel;
@@ -39,8 +38,6 @@ public interface ViewModelComponent {
     void inject(ProductListViewModel viewModel);
 
     void inject(SearchProductViewModel viewModel);
-
-    void inject(ProductDetailViewModel viewModel);
 
     void inject(EditBookViewModel viewModel);
 

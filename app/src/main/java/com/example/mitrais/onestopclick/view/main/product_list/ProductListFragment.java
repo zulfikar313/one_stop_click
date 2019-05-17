@@ -20,7 +20,6 @@ import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
-import com.example.mitrais.onestopclick.view.product_detail.ProductDetailActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 import com.google.android.gms.tasks.Task;
 
@@ -204,13 +203,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     private void goToEditMoviePage(String id) {
         Intent intent = new Intent(context, EditMovieActivity.class);
-        intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
-        startActivity(intent);
-        CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
-    }
-
-    private void goToEditProductPage(String id) {
-        Intent intent = new Intent(context, ProductDetailActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
