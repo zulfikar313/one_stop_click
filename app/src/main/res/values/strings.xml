@@ -110,4 +110,25 @@
     <string name="reggae">Reggae</string>
     <string name="rap">Rap</string>
     <string name="metal">Metal</string>
+    <string name="genre">Genre</string>
+    <string-array name="movie_or_book_genre">
+        <item></item>
+        <item>Fantasy</item>
+        <item>Horror</item>
+        <item>Mistery</item>
+        <item>Science Fiction</item>
+        <item>Biography</item>
+        <item>Children</item>
+        <item>Action</item>
+    </string-array>
+    <string-array name="music_genre">
+        <item></item>
+        <item>Rock</item>
+        <item>Pop</item>
+        <item>Jazz</item>
+        <item>Country</item>
+        <item>Reggae</item>
+        <item>Rap</item>
+        <item>Metal</item>
+    </string-array>
 </resources>

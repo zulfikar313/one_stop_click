@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
@@ -52,6 +54,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private Uri trailerUri = Uri.parse("");
     private ExoPlayer trailerPlayer;
     private String productId;
+    private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
     EditMovieViewModel viewModel;
@@ -71,6 +74,9 @@ public class EditMovieActivity extends AppCompatActivity {
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
+    @BindView(R.id.sp_genre)
+    Spinner spGenre;
+
     @BindView(R.id.trailer_view)
     PlayerView trailerView;
 
@@ -83,6 +89,7 @@ public class EditMovieActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_movie);
         ButterKnife.bind(this);
         initDagger();
+        initSpinner();
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
@@ -180,6 +187,10 @@ public class EditMovieActivity extends AppCompatActivity {
         }
 
         txtDescription.getEditText().setText(product.getDescription());
+        if (product.getGenre() != null && !product.getGenre().isEmpty()) {
+            int position = genreAdapter.getPosition(product.getGenre());
+            spGenre.setSelection(position);
+        }
     }
 
     /**
@@ -198,6 +209,7 @@ public class EditMovieActivity extends AppCompatActivity {
         product.setDirector(director);
         product.setType(Constant.PRODUCT_TYPE_MOVIE);
         product.setDescription(description);
+        product.setGenre(spGenre.getSelectedItem().toString());
         product.setThumbnailUri(thumbnailUri.toString());
         product.setTrailerUri(trailerUri.toString());
 
@@ -317,6 +329,15 @@ public class EditMovieActivity extends AppCompatActivity {
                 .editMovieActivity(this)
                 .build();
         component.inject(this);
+    }
+
+    /**
+     * initialize genre spinner
+     */
+    private void initSpinner() {
+        genreAdapter = ArrayAdapter.createFromResource(this, R.array.movie_or_book_genre, R.layout.genre_spinner_item);
+        genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spGenre.setAdapter(genreAdapter);
     }
 
     private boolean isTitleValid() {

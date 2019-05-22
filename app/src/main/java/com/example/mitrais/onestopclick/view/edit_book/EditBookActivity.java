@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ public class EditBookActivity extends AppCompatActivity {
     private Uri thumbnailUri = Uri.parse("");
     private Uri bookUri = Uri.parse("");
     private String productId;
+    private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
     EditBookViewModel viewModel;
@@ -59,6 +62,9 @@ public class EditBookActivity extends AppCompatActivity {
 
     @BindView(R.id.txt_author)
     TextInputLayout txtAuthor;
+
+    @BindView(R.id.sp_genre)
+    Spinner spGenre;
 
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
@@ -81,6 +87,7 @@ public class EditBookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_book);
         ButterKnife.bind(this);
         initDagger();
+        initSpinner();
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
@@ -185,6 +192,10 @@ public class EditBookActivity extends AppCompatActivity {
         }
 
         txtDescription.getEditText().setText(product.getDescription());
+        if (product.getGenre() != null && !product.getGenre().isEmpty()) {
+            int position = genreAdapter.getPosition(product.getGenre());
+            spGenre.setSelection(position);
+        }
     }
 
     /**
@@ -203,6 +214,7 @@ public class EditBookActivity extends AppCompatActivity {
         product.setAuthor(author);
         product.setType(Constant.PRODUCT_TYPE_BOOK);
         product.setDescription(description);
+        product.setGenre(spGenre.getSelectedItem().toString());
         product.setThumbnailUri(thumbnailUri.toString());
         product.setBookUri(bookUri.toString());
 
@@ -298,6 +310,15 @@ public class EditBookActivity extends AppCompatActivity {
                 .editBookActivity(this)
                 .build();
         component.inject(this);
+    }
+
+    /**
+     * initialize genre spinner
+     */
+    private void initSpinner() {
+        genreAdapter = ArrayAdapter.createFromResource(this, R.array.movie_or_book_genre, R.layout.genre_spinner_item);
+        genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spGenre.setAdapter(genreAdapter);
     }
 
     private void openThumbnailFileChooser() {

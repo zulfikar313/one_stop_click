@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
@@ -52,6 +54,7 @@ public class EditMusicActivity extends AppCompatActivity {
     private Uri musicUri = Uri.parse("");
     private ExoPlayer musicPlayer;
     private String productId;
+    private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
     EditMusicViewModel viewModel;
@@ -71,6 +74,9 @@ public class EditMusicActivity extends AppCompatActivity {
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
+    @BindView(R.id.sp_genre)
+    Spinner spGenre;
+
     @BindView(R.id.music_view)
     PlayerView musicView;
 
@@ -83,6 +89,7 @@ public class EditMusicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_music);
         ButterKnife.bind(this);
         initDagger();
+        initSpinner();
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
@@ -180,6 +187,10 @@ public class EditMusicActivity extends AppCompatActivity {
         }
 
         txtDescription.getEditText().setText(product.getDescription());
+        if (product.getGenre() != null && !product.getGenre().isEmpty()) {
+            int position = genreAdapter.getPosition(product.getGenre());
+            spGenre.setSelection(position);
+        }
     }
 
     /**
@@ -198,6 +209,7 @@ public class EditMusicActivity extends AppCompatActivity {
         product.setArtist(artist);
         product.setType(Constant.PRODUCT_TYPE_MUSIC);
         product.setDescription(description);
+        product.setGenre(spGenre.getSelectedItem().toString());
         product.setThumbnailUri(thumbnailUri.toString());
         product.setMusicUri(musicUri.toString());
 
@@ -318,6 +330,15 @@ public class EditMusicActivity extends AppCompatActivity {
                 .editMusicActivity(this)
                 .build();
         component.inject(this);
+    }
+
+    /**
+     * initialize genre spinner
+     */
+    private void initSpinner() {
+        genreAdapter = ArrayAdapter.createFromResource(this, R.array.music_genre, R.layout.genre_spinner_item);
+        genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spGenre.setAdapter(genreAdapter);
     }
 
     private boolean isTitleValid() {
