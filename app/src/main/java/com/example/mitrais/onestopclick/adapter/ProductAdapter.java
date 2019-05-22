@@ -54,6 +54,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 return product.getTitle().equals(t1.getTitle()) &&
                         product.getDescription().equals(t1.getDescription()) &&
                         product.getType().equals(t1.getType()) &&
+                        product.getGenre().equals(t1.getGenre()) &&
                         product.getArtist().equals(t1.getArtist()) &&
                         product.getAuthor().equals(t1.getAuthor()) &&
                         product.getDirector().equals(t1.getDirector()) &&

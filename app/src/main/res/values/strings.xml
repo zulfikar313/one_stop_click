@@ -94,4 +94,20 @@
     <string name="failed_to_download_book">Failed to download book</string>
     <string name="failed_to_upload_book">Failed to upload book</string>
     <string name="failed_to_upload_music">Failed to upload music</string>
+    <string name="movie_or_book_genre">Movie/Book Genre</string>
+    <string name="fantasy">Fantasy</string>
+    <string name="horror">Horror</string>
+    <string name="mistery">Mistery</string>
+    <string name="science_fiction">Science Fiction</string>
+    <string name="biography">Biography</string>
+    <string name="children">Children</string>
+    <string name="action">Action</string>
+    <string name="music_genre">Music Genre</string>
+    <string name="rock">Rock</string>
+    <string name="pop">Pop</string>
+    <string name="jazz">Jazz</string>
+    <string name="country">Country</string>
+    <string name="reggae">Reggae</string>
+    <string name="rap">Rap</string>
+    <string name="metal">Metal</string>
 </resources>

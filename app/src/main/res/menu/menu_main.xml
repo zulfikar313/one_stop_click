@@ -11,5 +11,55 @@
             android:id="@+id/profile"
             android:icon="@drawable/ic_person"
             android:title="@string/profile" />
+        <item android:title="@string/movie_or_book_genre">
+            <menu>
+                <item
+                    android:id="@+id/fantasy"
+                    android:title="@string/fantasy" />
+                <item
+                    android:id="@+id/horror"
+                    android:title="@string/horror" />
+                <item
+                    android:id="@+id/mistery"
+                    android:title="@string/mistery" />
+                <item
+                    android:id="@+id/science_fiction"
+                    android:title="@string/science_fiction" />
+                <item
+                    android:id="@+id/biography"
+                    android:title="@string/biography" />
+                <item
+                    android:id="@+id/children"
+                    android:title="@string/children" />
+                <item
+                    android:id="@+id/action"
+                    android:title="@string/action" />
+            </menu>
+        </item>
+        <item android:title="@string/music_genre">
+            <menu>
+                <item
+                    android:id="@+id/rock"
+                    android:title="@string/rock" />
+                <item
+                    android:id="@+id/pop"
+                    android:title="@string/pop" />
+                <item
+                    android:id="@+id/jazz"
+                    android:title="@string/jazz" />
+                <item
+                    android:id="@+id/country"
+                    android:title="@string/country" />
+                <item
+                    android:id="@+id/reggae"
+                    android:title="@string/reggae" />
+                <item
+                    android:id="@+id/rap"
+                    android:title="@string/rap" />
+                <item
+                    android:id="@+id/metal"
+                    android:title="@string/metal" />
+            </menu>
+        </item>
     </group>
 </menu>

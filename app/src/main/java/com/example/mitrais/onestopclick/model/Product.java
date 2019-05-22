@@ -15,6 +15,7 @@ public class Product {
     private String title;
     private String description;
     private String type;
+    private String genre;
     private String artist;
     private String author;
     private String director;
@@ -29,11 +30,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(@NonNull String id, String title, String description, String type, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, int like, int dislike) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
         this.type = type != null ? type : "";
+        this.genre = genre != null ? genre : "";
         this.artist = artist != null ? artist : "";
         this.author = author != null ? author : "";
         this.director = director != null ? director : "";
@@ -66,6 +68,10 @@ public class Product {
 
     public String getType() {
         return type;
+    }
+
+    public String getGenre() {
+        return genre;
     }
 
     public String getArtist() {
@@ -130,6 +136,10 @@ public class Product {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public void setArtist(String artist) {

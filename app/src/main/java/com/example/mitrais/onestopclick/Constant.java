@@ -29,5 +29,24 @@ public class Constant {
     public static final String NAME_EXT_MUSIC = "_music.";
     public static final String NAME_EXT_TRAILER = "_trailer.";
 
+    // book & movie genre
+    public static final String GENRE_FANTASY = "Fantasy";
+    public static final String GENRE_HORROR = "Horror";
+    public static final String GENRE_MISTERY = "Mistery";
+    public static final String GENRE_SCIENCE_FICTION = "Science fiction";
+    public static final String GENRE_BIOGRAPHY = "Biography";
+    public static final String GENRE_CHILDREN = "Children";
+    public static final String GENRE_ACTION = "Action";
+
+    // music genre
+    public static final String GENRE_ROCK = "Rock";
+    public static final String GENRE_POP = "Pop";
+    public static final String GENRE_JAZZ = "Jazz";
+    public static final String GENRE_COUNTRY = "Country";
+    public static final String GENRE_REGGAE = "Reggae";
+    public static final String GENRE_CLASSIC = "Classic";
+    public static final String GENRE_RAP = "Rap";
+    public static final String GENRE_METAL = "Metal";
+
     public static final String WEB_CLIENT_ID = "665475513149-6tbkh6j6u5jeg0g2e6kc3g4fvdfdsic7.apps.googleusercontent.com";
 }

@@ -8,7 +8,7 @@ import android.content.Context;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
 
-@Database(entities = {Profile.class, Product.class}, version = 14)
+@Database(entities = {Profile.class, Product.class}, version = 15)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;
 
