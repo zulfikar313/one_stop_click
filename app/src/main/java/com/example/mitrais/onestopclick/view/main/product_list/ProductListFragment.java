@@ -33,10 +33,12 @@ import maes.tech.intentanim.CustomIntent;
 
 public class ProductListFragment extends Fragment implements ProductAdapter.Listener {
     private static final String ARG_PRODUCT_TYPE = "ARG_PRODUCT_TYPE";
+    private static final String ARG_GENRE = "ARG_GENRE";
     private Context context;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
     private String productType;
+    private String genre = "";
 
     @Inject
     ProductAdapter productAdapter;
@@ -57,10 +59,11 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
      * @param productType product type filter
      * @return ProductListFragment new instance
      */
-    public static ProductListFragment newInstance(String productType) {
+    public static ProductListFragment newInstance(String productType, String genre) {
         ProductListFragment fragment = new ProductListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PRODUCT_TYPE, productType);
+        args.putString(ARG_GENRE, genre);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,7 +76,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         initDagger();
         initArguments();
         initRecyclerView();
-        observeProducts(productType);
+        observeProducts(productType, genre);
         return view;
     }
 
@@ -152,8 +155,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void initArguments() {
-        if (getArguments() != null)
+        if (getArguments() != null) {
             productType = getArguments().getString(ARG_PRODUCT_TYPE);
+            genre = getArguments().getString(ARG_GENRE);
+        }
     }
 
     private void initRecyclerView() {
@@ -164,21 +169,36 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         recProduct.setLayoutManager(new LinearLayoutManager(context));
     }
 
-    private void observeProducts(String type) {
-        if (type.equals(Constant.PRODUCT_TYPE_ALL)) {
+    private void observeProducts(String type, String genre) {
+        if (type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
                     productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
-        } else
+        } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getProductsByType(type).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
                     productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
+        } else if (type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
+            viewModel.getProductsByGenre(genre).observe(getViewLifecycleOwner(), products -> {
+                if (products != null) {
+                    productAdapter.submitList(products);
+                    txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+                }
+            });
+        } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
+            viewModel.getProductsByTypeAndGenre(type, genre).observe(getViewLifecycleOwner(), products -> {
+                if (products != null) {
+                    productAdapter.submitList(products);
+                    txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+                }
+            });
+        }
     }
 
     private void goToAddProductPage() {

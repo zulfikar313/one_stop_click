@@ -32,6 +32,14 @@ public class ProductListViewModel extends AndroidViewModel {
         return productRepository.getProductsByType(type);
     }
 
+    public LiveData<List<Product>> getProductsByGenre(String genre) {
+        return productRepository.getProductsByGenre(genre);
+    }
+
+    public LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
+        return productRepository.getProductsByTypeAndGenre(type, genre);
+    }
+
     public Task<Void> addLike(String id) {
         return productRepository.addLike(id);
     }

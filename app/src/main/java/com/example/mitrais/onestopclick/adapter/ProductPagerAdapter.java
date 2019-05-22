@@ -9,8 +9,11 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.view.main.product_list.ProductListFragment;
 
 public class ProductPagerAdapter extends FragmentPagerAdapter {
-    public ProductPagerAdapter(FragmentManager fm) {
+    private String genre = "";
+
+    public ProductPagerAdapter(FragmentManager fm, String genre) {
         super(fm);
+        this.genre = genre;
     }
 
     @Nullable
@@ -34,15 +37,15 @@ public class ProductPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch (i) {
             case 0:
-                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL);
+                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL, genre);
             case 1:
-                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_BOOK);
+                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_BOOK, genre);
             case 2:
-                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MUSIC);
+                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MUSIC, genre);
             case 3:
-                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MOVIE);
+                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_MOVIE, genre);
             default:
-                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL);
+                return ProductListFragment.newInstance(Constant.PRODUCT_TYPE_ALL, genre);
         }
     }
 

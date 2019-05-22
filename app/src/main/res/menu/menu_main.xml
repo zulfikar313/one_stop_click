@@ -11,8 +11,10 @@
             android:id="@+id/profile"
             android:icon="@drawable/ic_person"
             android:title="@string/profile" />
-        <item android:title="@string/movie_or_book_genre">
-            <menu>
+    </group>
+    <item android:title="@string/movie_or_book_genre">
+        <menu>
+            <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/fantasy"
                     android:title="@string/fantasy" />
@@ -34,10 +36,12 @@
                 <item
                     android:id="@+id/action"
                     android:title="@string/action" />
-            </menu>
-        </item>
-        <item android:title="@string/music_genre">
-            <menu>
+            </group>
+        </menu>
+    </item>
+    <item android:title="@string/music_genre">
+        <menu>
+            <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/rock"
                     android:title="@string/rock" />
@@ -59,7 +63,7 @@
                 <item
                     android:id="@+id/metal"
                     android:title="@string/metal" />
-            </menu>
-        </item>
-    </group>
+            </group>
+        </menu>
+    </item>
 </menu>

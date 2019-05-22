@@ -28,6 +28,12 @@ public interface ProductDao {
     @Query("SELECT * FROM product WHERE type = :type ORDER BY title")
     LiveData<List<Product>> getProductsByType(String type);
 
+    @Query("SELECT * FROM product WHERE genre = :genre ORDER BY title")
+    LiveData<List<Product>> getProductsByGenre(String genre);
+
+    @Query("SELECT * FROM product WHERE type = :type AND genre = :genre ORDER BY title")
+    LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre);
+
     @Query("SELECT * FROM product WHERE id = :id")
     LiveData<Product> getProductById(String id);
 }

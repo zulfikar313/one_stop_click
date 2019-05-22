@@ -96,6 +96,20 @@ public class ProductRepository {
     }
 
     /**
+     * @return product list live data
+     */
+    public LiveData<List<Product>> getProductsByGenre(String genre) {
+        return productDao.getProductsByGenre(genre);
+    }
+
+    /**
+     * @return product list live data
+     */
+    public LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
+        return productDao.getProductsByTypeAndGenre(type, genre);
+    }
+
+    /**
      * @param search search query
      * @return product list live data
      */

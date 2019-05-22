@@ -16,6 +16,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProductListParentFragment extends Fragment {
+    public static final String ARG_GENRE = "ARG_GENRE";
+    private String genre = "";
 
     @BindView(R.id.tabs)
     TabLayout tabs;
@@ -27,9 +29,12 @@ public class ProductListParentFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ProductListParentFragment newInstance() {
-        return new ProductListParentFragment();
-
+    public static ProductListParentFragment newInstance(String genre) {
+        ProductListParentFragment fragment = new ProductListParentFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_GENRE, genre);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -37,6 +42,11 @@ public class ProductListParentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_list_parent, container, false);
         ButterKnife.bind(this, view);
+
+        if (getArguments() != null) {
+            genre = getArguments().getString(ARG_GENRE);
+        }
+
         initViewPager();
         return view;
     }
@@ -45,7 +55,7 @@ public class ProductListParentFragment extends Fragment {
      * initialize view pager
      */
     private void initViewPager() {
-        ProductPagerAdapter adapter = new ProductPagerAdapter(getChildFragmentManager());
+        ProductPagerAdapter adapter = new ProductPagerAdapter(getChildFragmentManager(), genre);
         viewPager.setAdapter(adapter);
         tabs.setupWithViewPager(viewPager);
     }

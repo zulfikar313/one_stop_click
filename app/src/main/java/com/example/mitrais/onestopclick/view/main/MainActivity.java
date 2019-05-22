@@ -109,12 +109,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (menuItem.getItemId()) {
             case R.id.home: {
                 setTitle(getString(R.string.home));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance("")).commit();
                 break;
             }
             case R.id.profile: {
                 setTitle(getString(R.string.profile));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProfileFragment.newInstance()).commit();
+                break;
+            }
+            default: { // genre is chosen
+                setTitle(getString(R.string.home));
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance(menuItem.getTitle().toString())).commit();
                 break;
             }
         }
@@ -154,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance("")).commit();
         navView.setCheckedItem(R.id.home);
     }
 
