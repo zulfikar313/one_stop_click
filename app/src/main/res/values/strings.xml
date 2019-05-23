@@ -111,6 +111,7 @@
     <string name="rap">Rap</string>
     <string name="metal">Metal</string>
     <string name="genre">Genre</string>
+    <string name="no_video_found">No video found</string>
     <string-array name="movie_or_book_genre">
         <item></item>
         <item>Fantasy</item>
