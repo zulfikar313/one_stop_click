@@ -247,12 +247,12 @@ public class EditMusicActivity extends AppCompatActivity {
      * @param uri music uri
      */
     private void uploadMusic(String id, Uri uri) {
-        showProgressBar();
+        musicView.showProgressBar();
         String filename = id + Constant.NAME_EXT_MUSIC + getFileExtension(uri);
         UploadTask = viewModel.uploadMusic(uri, filename)
                 .addOnSuccessListener(uri1 ->
                         saveProductTask = viewModel.saveMusicUri(id, uri1)
-                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnCompleteListener(task -> musicView.hideProgressBar())
                                 .addOnSuccessListener(aVoid ->
                                         Toasty.success(this, getString(R.string.music_uploaded), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> {
@@ -260,7 +260,7 @@ public class EditMusicActivity extends AppCompatActivity {
                                     Toasty.error(this, getString(R.string.failed_to_upload_music), Toast.LENGTH_LONG).show();
                                 }))
                 .addOnFailureListener(e -> {
-                    hideProgressBar();
+                    musicView.hideProgressBar();
                     Log.e(TAG, e.getMessage());
                     Toasty.error(this, getString(R.string.failed_to_upload_music), Toast.LENGTH_LONG).show();
                 });

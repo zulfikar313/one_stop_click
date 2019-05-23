@@ -248,20 +248,20 @@ public class EditMovieActivity extends AppCompatActivity {
      * @param uri trailer uri
      */
     private void uploadTrailer(String id, Uri uri) {
-        showProgressBar();
+        trailerView.showProgressBar();
 
         String filename = id + Constant.NAME_EXT_TRAILER + getFileExtension(uri);
         UploadTask = viewModel.uploadTrailer(uri, filename)
                 .addOnSuccessListener(uri1 ->
                         saveProductTask = viewModel.saveProductTrailer(id, uri1)
-                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnCompleteListener(task -> trailerView.hideProgressBar())
                                 .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> {
                                     Toasty.error(this, getString(R.string.failed_to_upload_trailer), Toast.LENGTH_LONG).show();
                                     Log.e(TAG, e.getMessage());
                                 }))
                 .addOnFailureListener(e -> {
-                    hideProgressBar();
+                    trailerView.hideProgressBar();
                     Toasty.error(this, getString(R.string.failed_to_upload_trailer), Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.getMessage());
                 });
