@@ -14,17 +14,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.google.android.gms.tasks.Task;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
@@ -32,7 +30,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
-import io.supercharge.shimmerlayout.ShimmerLayout;
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
@@ -46,11 +43,8 @@ public class ProfileFragment extends Fragment {
     @Inject
     ProfileViewModel viewModel;
 
-    @BindView(R.id.shimmer_layout)
-    ShimmerLayout shimmerLayout;
-
     @BindView(R.id.img_profile)
-    ImageView imgProfile;
+    CustomImageView imgProfile;
 
     @BindView(R.id.txt_email)
     TextView txtEmail;
@@ -212,22 +206,7 @@ public class ProfileFragment extends Fragment {
         txtEmail.setText(profile.getEmail());
         txtAddress.getEditText().setText(profile.getAddress());
         if (profile.getImageUri() != null && !profile.getImageUri().isEmpty()) {
-            profileImgUri = Uri.parse(profile.getImageUri());
-            shimmerLayout.startShimmerAnimation();
-            Picasso.get().load(profileImgUri).placeholder(R.drawable.skeleton).into(imgProfile, new Callback() {
-                @Override
-                public void onSuccess() {
-                    shimmerLayout.stopShimmerAnimation();
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    shimmerLayout.stopShimmerAnimation();
-                    if (context != null)
-                        Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, e.getMessage());
-                }
-            });
+            imgProfile.loadImageUri(Uri.parse(profile.getImageUri()));
         }
     }
 

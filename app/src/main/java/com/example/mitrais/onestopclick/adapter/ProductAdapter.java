@@ -1,27 +1,24 @@
 package com.example.mitrais.onestopclick.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Product;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.supercharge.shimmerlayout.ShimmerLayout;
 
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
     private static final String TAG = "ProductAdapter";
@@ -83,11 +80,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_title)
         TextView txtTitle;
 
-        @BindView(R.id.shimmer_layout)
-        ShimmerLayout shimmerLayout;
-
         @BindView(R.id.img_thumbnail)
-        ImageView imgThumbnail;
+        CustomImageView imgThumbnail;
 
         @BindView(R.id.txt_author)
         TextView txtAuthor;
@@ -143,23 +137,10 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
-                shimmerLayout.startShimmerAnimation();
-                Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        shimmerLayout.stopShimmerAnimation();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        shimmerLayout.stopShimmerAnimation();
-                        Log.e(TAG, getAdapterPosition() + " " + e.toString());
-                    }
-                });
+                imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
             } else {
                 imgThumbnail.setImageDrawable(context.getDrawable(R.drawable.skeleton));
             }
-
         }
 
         @OnClick(R.id.img_like)
