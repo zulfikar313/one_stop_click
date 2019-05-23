@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.custom_view.CustomMusicView;
 import com.example.mitrais.onestopclick.model.Product;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -28,7 +29,6 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -79,7 +79,7 @@ public class EditMusicActivity extends AppCompatActivity {
     Spinner spGenre;
 
     @BindView(R.id.music_view)
-    PlayerView musicView;
+    CustomMusicView musicView;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -290,7 +290,7 @@ public class EditMusicActivity extends AppCompatActivity {
      * @param uri music uri
      */
     private void prepareMusicPlayer(Uri uri) {
-        showProgressBar();
+        musicView.showProgressBar();
 
         // prepare music player
         TrackSelector trackSelector = new DefaultTrackSelector();
@@ -300,7 +300,7 @@ public class EditMusicActivity extends AppCompatActivity {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 super.onPlayerStateChanged(playWhenReady, playbackState);
                 if (playbackState == Player.STATE_READY) {
-                    hideProgressBar();
+                    musicView.hideProgressBar();
                 }
             }
         });
