@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.mitrais.onestopclick.R;
 import com.squareup.picasso.Callback;
@@ -22,6 +23,9 @@ public class CustomImageView extends ShimmerLayout {
 
     @BindView(R.id.img_view)
     ImageView imgView;
+
+    @BindView(R.id.image_progress_bar)
+    ProgressBar imgProgressBar;
 
     public CustomImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,5 +59,13 @@ public class CustomImageView extends ShimmerLayout {
 
     public void stopShimmerAnimation() {
         shimmerLayout.stopShimmerAnimation();
+    }
+
+    public void showProgressBar() {
+        imgProgressBar.setVisibility(VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        imgProgressBar.setVisibility(INVISIBLE);
     }
 }

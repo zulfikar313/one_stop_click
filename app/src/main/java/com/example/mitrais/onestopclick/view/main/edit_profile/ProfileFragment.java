@@ -165,7 +165,7 @@ public class ProfileFragment extends Fragment {
      * upload profile image
      */
     private void uploadProfileImage() {
-        showProgressBar();
+        imgProfile.showProgressBar();
         String filename = email + "." + getFileExtension(profileImgUri);
         uploadTask = viewModel.uploadProfileImage(profileImgUri, filename)
                 .addOnSuccessListener(uri -> {
@@ -174,7 +174,7 @@ public class ProfileFragment extends Fragment {
                     profile.setImageUri(uri.toString());
 
                     saveProfileTask = viewModel.saveProfileImageUri(profile)
-                            .addOnCompleteListener(task -> hideProgressBar())
+                            .addOnCompleteListener(task -> imgProfile.hideProgressBar())
                             .addOnSuccessListener(aVoid -> {
                                 if (context != null)
                                     Toasty.success(context, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
@@ -186,7 +186,7 @@ public class ProfileFragment extends Fragment {
                             });
                 })
                 .addOnFailureListener(e -> {
-                    hideProgressBar();
+                    imgProfile.hideProgressBar();
                     Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                     if (context != null)
                         Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();

@@ -230,19 +230,18 @@ public class EditBookActivity extends AppCompatActivity {
      * @param uri thumbnail uri
      */
     private void uploadThumbnail(String id, Uri uri) {
-        showProgressBar();
+        imgThumbnail.showProgressBar();
         String filename = id + Constant.NAME_EXT_THUMBNAIL + getFileExtension(uri);
         UploadTask = viewModel.uploadThumbnail(uri, filename)
                 .addOnSuccessListener(uri1 -> saveProductTask = viewModel.saveThumbnailUri(id, uri1)
-                        .addOnCompleteListener(task -> hideProgressBar())
+                        .addOnCompleteListener(task -> imgThumbnail.hideProgressBar())
                         .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> {
                             Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                             Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }))
                 .addOnFailureListener(e -> {
-                    hideProgressBar();
-                    Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
+                    imgThumbnail.hideProgressBar();
                     Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                     Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 });
