@@ -5,6 +5,7 @@ import android.app.Application;
 import com.example.mitrais.onestopclick.model.room.MainDatabase;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.example.mitrais.onestopclick.model.room.ProfileDao;
+import com.example.mitrais.onestopclick.model.room.ProfileProductDao;
 
 import dagger.Module;
 import dagger.Provides;
@@ -21,5 +22,11 @@ public class DaoModule {
     ProfileDao provideProfileDao(Application application) {
         MainDatabase db = MainDatabase.getInstance(application);
         return db.profileDao();
+    }
+
+    @Provides
+    ProfileProductDao provideProfileProductDao(Application application) {
+        MainDatabase db = MainDatabase.getInstance(application);
+        return db.profileProductDao();
     }
 }

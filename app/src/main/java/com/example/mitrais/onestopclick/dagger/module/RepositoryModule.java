@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
+import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 
@@ -30,5 +31,10 @@ public class RepositoryModule {
     @Provides
     ProductRepository provideProductRepository(Application application) {
         return new ProductRepository(application);
+    }
+
+    @Provides
+    ProfileProductRepository provideProfileProductRepository(Application application) {
+        return new ProfileProductRepository(application);
     }
 }

@@ -7,14 +7,17 @@ import android.content.Context;
 
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
+import com.example.mitrais.onestopclick.model.ProfileProduct;
 
-@Database(entities = {Profile.class, Product.class}, version = 15)
+@Database(entities = {Profile.class, Product.class, ProfileProduct.class}, version = 16)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;
 
     public abstract ProfileDao profileDao();
 
     public abstract ProductDao productDao();
+
+    public abstract ProfileProductDao profileProductDao();
 
     public static synchronized MainDatabase getInstance(Context context) {
         if (instance == null) {
