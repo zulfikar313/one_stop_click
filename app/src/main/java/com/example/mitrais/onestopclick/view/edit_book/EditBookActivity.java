@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,11 +22,10 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
 import com.google.android.gms.tasks.Task;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
@@ -35,7 +33,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
-import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
 public class EditBookActivity extends AppCompatActivity {
@@ -52,11 +49,8 @@ public class EditBookActivity extends AppCompatActivity {
     @Inject
     EditBookViewModel viewModel;
 
-    @BindView(R.id.shimmer_layout)
-    ShimmerLayout shimmerLayout;
-
     @BindView(R.id.img_thumbnail)
-    ImageView imgThumbnail;
+    CustomImageView imgThumbnail;
 
     @BindView(R.id.txt_title)
     TextInputLayout txtTitle;
@@ -176,22 +170,9 @@ public class EditBookActivity extends AppCompatActivity {
 
     // region private methods
     private void bindProduct(Product product) {
-        if (!product.getThumbnailUri().isEmpty()) {
-            thumbnailUri = Uri.parse(product.getThumbnailUri());
-            shimmerLayout.startShimmerAnimation();
-            Picasso.get().load(product.getThumbnailUri()).placeholder(R.drawable.skeleton).into(imgThumbnail, new Callback() {
-                @Override
-                public void onSuccess() {
-                    shimmerLayout.stopShimmerAnimation();
-                }
+        if (!product.getThumbnailUri().isEmpty())
+            imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
 
-                @Override
-                public void onError(Exception e) {
-                    shimmerLayout.stopShimmerAnimation();
-                    Log.e(TAG, e.toString());
-                }
-            });
-        }
 
         txtTitle.getEditText().setText(product.getTitle());
         txtAuthor.getEditText().setText(product.getAuthor());

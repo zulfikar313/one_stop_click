@@ -20,7 +20,7 @@ public class CustomVideoView extends RelativeLayout {
     @BindView(R.id.txt_no_video_found)
     TextView txtNoVideoFound;
 
-    @BindView(R.id.progress_bar)
+    @BindView(R.id.video_progress_bar)
     ProgressBar progressBar;
 
     public CustomVideoView(Context context, AttributeSet attrs) {

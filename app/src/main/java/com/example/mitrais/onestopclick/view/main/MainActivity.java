@@ -2,6 +2,7 @@ package com.example.mitrais.onestopclick.view.main;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,19 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.product_list_parent.ProductListParentFragment;
 import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileFragment;
 import com.example.mitrais.onestopclick.view.search_product.SearchProductActivity;
 import com.google.android.gms.tasks.Task;
-import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
@@ -39,7 +39,7 @@ import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private ImageView imgProfile;
+    private CustomImageView imgProfile;
     private TextView txtEmail;
     private Task productSyncTask;
 
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imgProfile.setVisibility(View.VISIBLE);
                 txtEmail.setText(profile.getEmail());
                 if (profile.getImageUri() != null && !profile.getImageUri().isEmpty())
-                    Picasso.get().load(profile.getImageUri()).placeholder(R.drawable.skeleton).into(imgProfile);
+                    imgProfile.loadImageUri(Uri.parse(profile.getImageUri()));
             }
         });
     }

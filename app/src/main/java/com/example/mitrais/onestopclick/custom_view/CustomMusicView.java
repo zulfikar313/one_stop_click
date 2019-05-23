@@ -20,7 +20,7 @@ public class CustomMusicView extends RelativeLayout {
     @BindView(R.id.txt_no_music_found)
     TextView txtNoMusicFound;
 
-    @BindView(R.id.progress_bar)
+    @BindView(R.id.music_progress_bar)
     ProgressBar progressBar;
 
     public CustomMusicView(Context context, AttributeSet attrs) {

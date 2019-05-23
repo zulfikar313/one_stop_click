@@ -17,7 +17,7 @@
         android:text="@string/no_music_found" />
 
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@+id/music_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
