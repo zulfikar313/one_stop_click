@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mitrais.onestopclick.Constant;
@@ -28,9 +29,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     public interface Listener {
         void onItemClicked(String id, String type);
 
-        void onLikeClicked(String id);
+        void onLikeClicked(String id, boolean isLiked, boolean isDisliked);
 
-        void onDislikeClicked(String id);
+        void onDislikeClicked(String id, boolean isLiked, boolean isDisliked);
 
         void onShareClicked(String id);
     }
@@ -57,7 +58,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                         product.getDirector().equals(t1.getDirector()) &&
                         product.getThumbnailUri().equals(t1.getThumbnailUri()) &&
                         product.getLike() == t1.getLike() &&
-                        product.getDislike() == t1.getDislike();
+                        product.getDislike() == t1.getDislike() &&
+                        (product.isLiked() && t1.isLiked()) &&
+                        (product.isDisliked() && t1.isDisliked());
             }
         });
     }
@@ -91,6 +94,12 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
         @BindView(R.id.txt_type)
         TextView txtType;
+
+        @BindView(R.id.img_like)
+        ImageView imgLike;
+
+        @BindView(R.id.img_dislike)
+        ImageView imgDislike;
 
         @BindView(R.id.txt_like_counter)
         TextView txtLikeCounter;
@@ -134,6 +143,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 }
             }
             txtDescription.setText(product.getDescription());
+            imgLike.setImageDrawable(context.getDrawable(product.isLiked() ? R.drawable.ic_like_active : R.drawable.ic_like));
+            imgDislike.setImageDrawable(context.getDrawable(product.isDisliked() ? R.drawable.ic_dislike_active : R.drawable.ic_dislike));
+
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
@@ -148,7 +160,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             int position = getAdapterPosition();
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
-                listener.onLikeClicked(product.getId());
+                listener.onLikeClicked(product.getId(), product.isLiked(), product.isDisliked());
             }
         }
 
@@ -157,7 +169,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             int position = getAdapterPosition();
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
-                listener.onDislikeClicked(product.getId());
+                listener.onDislikeClicked(product.getId(), product.isLiked(), product.isDisliked());
             }
         }
 

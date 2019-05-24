@@ -1,12 +1,15 @@
 package com.example.mitrais.onestopclick.view.main.product_list;
 
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +19,17 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.ProfileProduct;
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,8 +40,11 @@ import es.dmoral.toasty.Toasty;
 import maes.tech.intentanim.CustomIntent;
 
 public class ProductListFragment extends Fragment implements ProductAdapter.Listener {
+    private static final String TAG = "ProductListFragment";
     private static final String ARG_PRODUCT_TYPE = "ARG_PRODUCT_TYPE";
     private static final String ARG_GENRE = "ARG_GENRE";
+    private List<Product> products;
+    private List<ProfileProduct> profileProducts;
     private Context context;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
@@ -77,6 +88,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         initArguments();
         initRecyclerView();
         observeProducts(productType, genre);
+        observeProfileProducts();
         return view;
     }
 
@@ -113,32 +125,33 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onLikeClicked(String id) {
+    public void onLikeClicked(String id, boolean isLiked, boolean isDisliked) {
         if (isAddLikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
         } else {
-            likeTask = viewModel
-                    .addLike(id)
-                    .addOnFailureListener(e -> {
-                        if (context != null)
-                            Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+            if (!isLiked) {
+                likeTask = viewModel.addLike(id)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            }
         }
     }
 
     @Override
-    public void onDislikeClicked(String id) {
+    public void onDislikeClicked(String id, boolean isLiked, boolean isDisliked) {
         if (isAddDislikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
         } else {
-            dislikeTask = viewModel
-                    .addDislike(id)
-                    .addOnFailureListener(e -> {
-                        if (context != null)
-                            Toasty.error(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+            if (!isDisliked) {
+                dislikeTask = viewModel
+                        .addDislike(id)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            }
         }
     }
 
@@ -173,31 +186,72 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         if (type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    productAdapter.submitList(products);
+
+                    // update local products data with profile products data
+                    ProductListFragment.this.products = products;
+                    syncProductWithProfile();
+
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getProductsByType(type).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    productAdapter.submitList(products);
+                    // update local products data with profile products data
+                    ProductListFragment.this.products = products;
+                    syncProductWithProfile();
+
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else if (type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
             viewModel.getProductsByGenre(genre).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    productAdapter.submitList(products);
+                    // update local products data with profile products data
+                    ProductListFragment.this.products = products;
+                    syncProductWithProfile();
+
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
             viewModel.getProductsByTypeAndGenre(type, genre).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    productAdapter.submitList(products);
+                    // update local products data with profile products data
+                    ProductListFragment.this.products = products;
+                    syncProductWithProfile();
+
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
+        }
+    }
+
+    private void observeProfileProducts() {
+        viewModel.getAllProfileProducts().observe(getViewLifecycleOwner(), new Observer<List<ProfileProduct>>() {
+            @Override
+            public void onChanged(@Nullable List<ProfileProduct> profileProducts) {
+                if (profileProducts != null) {
+                    ProductListFragment.this.profileProducts = profileProducts;
+                    syncProductWithProfile();
+                }
+            }
+        });
+    }
+
+    private void syncProductWithProfile() {
+        List<Product> newProducts = new ArrayList<>();
+        if (products != null && profileProducts != null) {
+            for (Product product : products) {
+                for (ProfileProduct profileProduct : profileProducts) {
+                    if (product.getId().equals(profileProduct.getProductId())) {
+                        product.setLiked(profileProduct.isLiked());
+                        product.setDisliked(profileProduct.isDisliked());
+                    }
+                }
+                newProducts.add(product);
+            }
+            productAdapter.submitList(newProducts);
         }
     }
 

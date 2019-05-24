@@ -27,6 +27,12 @@ public class Product {
     private int dislike;
 
     @Ignore
+    private boolean isLiked;
+
+    @Ignore
+    private boolean isDisliked;
+
+    @Ignore
     public Product() {
     }
 
@@ -96,6 +102,34 @@ public class Product {
 
     public int getDislike() {
         return dislike;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
+    public void setDislike(int dislike) {
+        this.dislike = dislike;
+    }
+
+    @Exclude
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    @Exclude
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
+    @Exclude
+    public boolean isDisliked() {
+        return isDisliked;
+    }
+
+    @Exclude
+    public void setDisliked(boolean disliked) {
+        isDisliked = disliked;
     }
 
     public String getBookUri() {

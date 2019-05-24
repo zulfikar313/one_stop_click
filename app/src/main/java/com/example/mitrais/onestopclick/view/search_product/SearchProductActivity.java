@@ -98,7 +98,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     }
 
     @Override
-    public void onLikeClicked(String id) {
+    public void onLikeClicked(String id, boolean isLiked, boolean isDisliked) {
         if (isAddLikeInProgress())
             Toasty.info(this, getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
         else {
@@ -109,7 +109,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     }
 
     @Override
-    public void onDislikeClicked(String id) {
+    public void onDislikeClicked(String id, boolean isLiked, boolean isDisliked) {
         if (isAddDislikeInProgress())
             Toasty.info(this, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
         else {
