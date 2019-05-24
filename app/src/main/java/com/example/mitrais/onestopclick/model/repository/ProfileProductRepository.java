@@ -90,6 +90,28 @@ public class ProfileProductRepository {
                 });
     }
 
+    public void deleteAllProfileProducts() {
+        Completable.fromAction(() -> profileProductDao.deleteAllProfileProduct())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
+    }
+
     public Task<Void> saveProfileProduct(ProfileProduct profileProduct) {
         addProfileProductListener(profileProduct.getEmail());
         return profileProductService.saveProfileProduct(profileProduct);
@@ -107,9 +129,8 @@ public class ProfileProductRepository {
      */
     private void addProfileProductListener(String email) {
         if (profileProductListenerRegistration == null) {
-            profileProductListenerRegistration = profileProductService.getProfileProductRef(email).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+            profileProductListenerRegistration = profileProductService.getProfileProductRef(email).addSnapshotListener((queryDocumentSnapshots, e) -> {
+                if (queryDocumentSnapshots != null) {
                     for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                         DocumentSnapshot documentSnapshot = dc.getDocument();
                         ProfileProduct profileProduct = documentSnapshot.toObject(ProfileProduct.class);

@@ -19,6 +19,9 @@ public interface ProfileProductDao {
     @Delete
     void deleteProfileProduct(ProfileProduct profileProduct);
 
+    @Query("DELETE from profile_product")
+    void deleteAllProfileProduct();
+
     @Query("SELECT * FROM profile_product")
     LiveData<List<ProfileProduct>> getAllProfileProducts();
 }

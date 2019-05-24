@@ -3,10 +3,12 @@ package com.example.mitrais.onestopclick.view.login;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
+import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
@@ -17,11 +19,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import javax.inject.Inject;
 
 public class LoginViewModel extends AndroidViewModel {
+    private static final String TAG = "LoginViewModel";
+
     @Inject
     AuthRepository authRepository;
 
     @Inject
     ProfileRepository profileRepository;
+
+    @Inject
+    ProfileProductRepository profileProductRepository;
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
@@ -64,13 +71,21 @@ public class LoginViewModel extends AndroidViewModel {
         return authRepository.sendVerificationEmail(user);
     }
 
+    /**
+     * @param user logged in user
+     * @return sync data task
+     */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.syncProfile(user.getEmail());
+            return profileRepository.syncProfile(user.getEmail())
+                    .addOnSuccessListener(documentSnapshot -> {
+                        profileProductRepository.syncProfileProduct(user.getEmail())
+                                .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
+                    });
         else
-
             return null;
     }
+
     /**
      * initialize dagger injection
      *

@@ -217,10 +217,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void syncUserData() {
         showProgressBar();
-        productSyncTask = viewModel.syncUserData()
-                .addOnCompleteListener(task -> hideProgressBar())
-                .addOnSuccessListener(queryDocumentSnapshots -> Toasty.success(this, getString(R.string.product_sync_success), Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
+        productSyncTask = viewModel.syncProducts()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    productSyncTask = viewModel.syncProfileProducts()
+                            .addOnCompleteListener(task -> hideProgressBar())
+                            .addOnSuccessListener(queryDocumentSnapshots1 -> Toasty.success(this, getString(R.string.product_sync_success), Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     /**

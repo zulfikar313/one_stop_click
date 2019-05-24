@@ -10,6 +10,7 @@ import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
+import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +28,9 @@ public class MainViewModel extends AndroidViewModel {
     @Inject
     ProductRepository productRepository;
 
+    @Inject
+    ProfileProductRepository profileProductRepository;
+
     public MainViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
@@ -43,8 +47,15 @@ public class MainViewModel extends AndroidViewModel {
     /**
      * @return sync user data task
      */
-    public Task<QuerySnapshot> syncUserData() {
+    public Task<QuerySnapshot> syncProducts() {
         return productRepository.syncProducts();
+    }
+
+    /**
+     * @return sync profile data task
+     */
+    public Task<QuerySnapshot> syncProfileProducts() {
+        return profileProductRepository.syncProfileProduct(authRepository.getUser().getEmail());
     }
 
     /**
@@ -55,8 +66,9 @@ public class MainViewModel extends AndroidViewModel {
         return profileRepository.getProfile(email);
     }
 
-    public void deleteUserData(){
+    public void deleteUserData() {
         profileRepository.deleteProfile();
+        profileProductRepository.deleteAllProfileProducts();
     }
 
     /**

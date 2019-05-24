@@ -3,10 +3,12 @@ package com.example.mitrais.onestopclick.view.splash;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
+import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,11 +17,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import javax.inject.Inject;
 
 public class SplashViewModel extends AndroidViewModel {
+    private static final String TAG = "SplashViewModel";
+
     @Inject
     AuthRepository authRepository;
 
     @Inject
     ProfileRepository profileRepository;
+
+    @Inject
+    ProfileProductRepository profileProductRepository;
 
     public SplashViewModel(@NonNull Application application) {
         super(application);
@@ -36,7 +43,11 @@ public class SplashViewModel extends AndroidViewModel {
      */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.syncProfile(user.getEmail());
+            return profileRepository.syncProfile(user.getEmail())
+                    .addOnSuccessListener(documentSnapshot -> {
+                        profileProductRepository.syncProfileProduct(user.getEmail())
+                                .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
+                    });
         else
             return null;
     }
