@@ -37,10 +37,6 @@ public class ProductListViewModel extends AndroidViewModel {
         return productRepository.getAllProducts();
     }
 
-    public LiveData<List<ProfileProduct>> getAllProfileProducts() {
-        return profileProductRepository.getAllProfileProducts();
-    }
-
     public LiveData<List<Product>> getProductsByType(String type) {
         return productRepository.getProductsByType(type);
     }
@@ -51,6 +47,10 @@ public class ProductListViewModel extends AndroidViewModel {
 
     public LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
         return productRepository.getProductsByTypeAndGenre(type, genre);
+    }
+
+    public LiveData<List<ProfileProduct>> getAllProfileProducts() {
+        return profileProductRepository.getAllProfileProducts();
     }
 
     public Task<Void> addLike(String id) {
