@@ -113,10 +113,18 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
         List<Product> newProducts = new ArrayList<>();
         if (products != null && profileProducts != null) {
             for (Product product : products) {
+                product.setLike(0);
+                product.setDislike(0);
                 for (ProfileProduct profileProduct : profileProducts) {
                     if (product.getId().equals(profileProduct.getProductId())) {
-                        product.setLiked(profileProduct.isLiked());
-                        product.setDisliked(profileProduct.isDisliked());
+                        if (viewModel.getUser().getEmail().equals(profileProduct.getEmail())) {
+                            product.setLiked(profileProduct.isLiked());
+                            product.setDisliked(profileProduct.isDisliked());
+                        }
+                        if (profileProduct.isLiked())
+                            product.setLike(product.getLike() + 1);
+                        if (profileProduct.isDisliked())
+                            product.setDislike(product.getDislike() + 1);
                     }
                 }
                 newProducts.add(product);
@@ -150,6 +158,11 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
+            } else {
+                likeTask = viewModel.removeLike(id)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
             }
         }
     }
@@ -162,6 +175,12 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
             if (!isDisliked) {
                 dislikeTask = viewModel
                         .addDislike(id)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            } else {
+                dislikeTask = viewModel
+                        .removeDislike(id)
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });

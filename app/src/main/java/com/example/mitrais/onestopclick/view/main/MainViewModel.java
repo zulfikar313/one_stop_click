@@ -55,7 +55,7 @@ public class MainViewModel extends AndroidViewModel {
      * @return sync profile data task
      */
     public Task<QuerySnapshot> syncProfileProducts() {
-        return profileProductRepository.syncProfileProduct(authRepository.getUser().getEmail());
+        return profileProductRepository.syncProfileProduct();
     }
 
     /**

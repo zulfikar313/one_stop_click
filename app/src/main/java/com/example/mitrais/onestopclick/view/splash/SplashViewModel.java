@@ -45,7 +45,7 @@ public class SplashViewModel extends AndroidViewModel {
         if (user != null)
             return profileRepository.syncProfile(user.getEmail())
                     .addOnSuccessListener(documentSnapshot -> {
-                        profileProductRepository.syncProfileProduct(user.getEmail())
+                        profileProductRepository.syncProfileProduct()
                                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
                     });
         else

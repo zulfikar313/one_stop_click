@@ -1,11 +1,9 @@
 package com.example.mitrais.onestopclick.view.main.product_list;
 
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -135,6 +133,11 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
+            } else {
+                likeTask = viewModel.removeLike(id)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
             }
         }
     }
@@ -148,6 +151,12 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
             if (!isDisliked) {
                 dislikeTask = viewModel
                         .addDislike(id)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            } else {
+                dislikeTask = viewModel
+                        .removeDislike(id)
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
@@ -228,13 +237,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void observeProfileProducts() {
-        viewModel.getAllProfileProducts().observe(getViewLifecycleOwner(), new Observer<List<ProfileProduct>>() {
-            @Override
-            public void onChanged(@Nullable List<ProfileProduct> profileProducts) {
-                if (profileProducts != null) {
-                    ProductListFragment.this.profileProducts = profileProducts;
-                    syncProductWithProfile();
-                }
+        viewModel.getAllProfileProducts().observe(getViewLifecycleOwner(), profileProducts -> {
+            if (profileProducts != null) {
+                ProductListFragment.this.profileProducts = profileProducts;
+                syncProductWithProfile();
             }
         });
     }
@@ -243,10 +249,18 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         List<Product> newProducts = new ArrayList<>();
         if (products != null && profileProducts != null) {
             for (Product product : products) {
+                product.setLike(0);
+                product.setDislike(0);
                 for (ProfileProduct profileProduct : profileProducts) {
                     if (product.getId().equals(profileProduct.getProductId())) {
-                        product.setLiked(profileProduct.isLiked());
-                        product.setDisliked(profileProduct.isDisliked());
+                        if (viewModel.getUser().getEmail().equals(profileProduct.getEmail())) {
+                            product.setLiked(profileProduct.isLiked());
+                            product.setDisliked(profileProduct.isDisliked());
+                        }
+                        if (profileProduct.isLiked())
+                            product.setLike(product.getLike() + 1);
+                        if (profileProduct.isDisliked())
+                            product.setDislike(product.getDislike() + 1);
                     }
                 }
                 newProducts.add(product);

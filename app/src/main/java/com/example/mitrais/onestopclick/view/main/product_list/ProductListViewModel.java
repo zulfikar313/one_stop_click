@@ -13,6 +13,7 @@ import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -31,6 +32,10 @@ public class ProductListViewModel extends AndroidViewModel {
     public ProductListViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
+    }
+
+    public FirebaseUser getUser() {
+        return authRepository.getUser();
     }
 
     public LiveData<List<Product>> getAllProducts() {
@@ -63,12 +68,32 @@ public class ProductListViewModel extends AndroidViewModel {
         return profileProductRepository.saveProfileProduct(profileProduct);
     }
 
+    public Task<Void> removeLike(String id) {
+        ProfileProduct profileProduct = new ProfileProduct();
+        profileProduct.setEmail(authRepository.getUser().getEmail());
+        profileProduct.setProductId(id);
+        profileProduct.setLiked(false);
+        profileProduct.setDisliked(false);
+
+        return profileProductRepository.saveProfileProduct(profileProduct);
+    }
+
     public Task<Void> addDislike(String id) {
         ProfileProduct profileProduct = new ProfileProduct();
         profileProduct.setEmail(authRepository.getUser().getEmail());
         profileProduct.setProductId(id);
         profileProduct.setLiked(false);
         profileProduct.setDisliked(true);
+
+        return profileProductRepository.saveProfileProduct(profileProduct);
+    }
+
+    public Task<Void> removeDislike(String id) {
+        ProfileProduct profileProduct = new ProfileProduct();
+        profileProduct.setEmail(authRepository.getUser().getEmail());
+        profileProduct.setProductId(id);
+        profileProduct.setLiked(false);
+        profileProduct.setDisliked(false);
 
         return profileProductRepository.saveProfileProduct(profileProduct);
     }

@@ -11,7 +11,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class ProfileProductService {
     private static ProfileProductService instance;
     private static final String REF_PROFILE_PRODUCT = "profile_product";
-    private static final String KEY_EMAIL = "email";
     private static CollectionReference profileProductRef;
 
     public static ProfileProductService getInstance() {
@@ -34,19 +33,17 @@ public class ProfileProductService {
     }
 
     /**
-     * @param email email address
      * @return task
      */
-    public Task<QuerySnapshot> syncProfileProduct(String email) {
-        return profileProductRef.whereEqualTo(KEY_EMAIL, email).get();
+    public Task<QuerySnapshot> syncProfileProduct() {
+        return profileProductRef.get();
     }
 
     /**
-     * @param email email address
      * @return profile product collection reference
      */
-    public Query getProfileProductRef(String email) {
-        return profileProductRef.whereEqualTo(KEY_EMAIL, email);
+    public Query getProfileProductRef() {
+        return profileProductRef;
     }
 
     private String generateFirestoreId(ProfileProduct profileProduct) {
