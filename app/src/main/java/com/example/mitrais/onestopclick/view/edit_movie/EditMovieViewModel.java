@@ -71,12 +71,30 @@ public class EditMovieViewModel extends AndroidViewModel {
     }
 
     /**
+     * @param uri      trailer uri
+     * @param filename trailer filename
+     * @return task
+     */
+    public Task<Uri> uploadMovie(Uri uri, String filename) {
+        return storageRepository.uploadMovie(uri, filename);
+    }
+
+    /**
      * @param id  product id
      * @param uri trailer uri
      * @return task
      */
-    public Task<Void> saveProductTrailer(String id, Uri uri) {
-        return productRepository.saveProductTrailerUri(id, uri);
+    public Task<Void> saveTrailerUri(String id, Uri uri) {
+        return productRepository.saveTrailerUri(id, uri);
+    }
+
+    /**
+     * @param id  product id
+     * @param uri movie uri
+     * @return task
+     */
+    public Task<Void> saveMovieUri(String id, Uri uri) {
+        return productRepository.saveMovieUri(id, uri);
     }
 
     /**

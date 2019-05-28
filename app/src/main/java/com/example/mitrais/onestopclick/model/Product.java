@@ -23,6 +23,7 @@ public class Product {
     private String bookUri;
     private String musicUri;
     private String trailerUri;
+    private String movieUri;
     private int like;
     private int dislike;
 
@@ -36,7 +37,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri, int like, int dislike) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -49,6 +50,7 @@ public class Product {
         this.bookUri = bookUri != null ? bookUri : "";
         this.musicUri = musicUri != null ? musicUri : "";
         this.trailerUri = trailerUri != null ? trailerUri : "";
+        this.movieUri = movieUri != null ? movieUri : "";
         this.like = like;
         this.dislike = dislike;
     }
@@ -142,6 +144,14 @@ public class Product {
 
     public String getTrailerUri() {
         return trailerUri;
+    }
+
+    public String getMovieUri() {
+        return movieUri;
+    }
+
+    public void setMovieUri(String movieUri) {
+        this.movieUri = movieUri;
     }
 
     public void setBookUri(String bookUri) {

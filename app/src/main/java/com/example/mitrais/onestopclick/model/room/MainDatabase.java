@@ -9,7 +9,7 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.ProfileProduct;
 
-@Database(entities = {Profile.class, Product.class, ProfileProduct.class}, version = 16)
+@Database(entities = {Profile.class, Product.class, ProfileProduct.class}, version = 17)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;
 

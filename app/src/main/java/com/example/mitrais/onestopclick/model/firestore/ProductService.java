@@ -20,6 +20,7 @@ public class ProductService {
     private static final String KEY_BOOK_URI = "bookUri";
     private static final String KEY_MUSIC_URI = "musicUri";
     private static final String KEY_TRAILER_URI = "trailerUri";
+    private static final String KEY_MOVIE_URI = "movieUri";
     private static ProductService instance;
     private static FirebaseFirestore firestore;
     private static CollectionReference productRef;
@@ -131,11 +132,25 @@ public class ProductService {
      * @param uri trailer uri
      * @return task
      */
-    public Task<Void> saveProductTrailerUri(String id, Uri uri) {
+    public Task<Void> saveTrailerUri(String id, Uri uri) {
         DocumentReference docRef = productRef.document(id);
 
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_TRAILER_URI, uri.toString());
+
+        return docRef.update(map);
+    }
+
+    /**
+     * @param id  product id
+     * @param uri trailer uri
+     * @return task
+     */
+    public Task<Void> saveMovieUri(String id, Uri uri) {
+        DocumentReference docRef = productRef.document(id);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_MOVIE_URI, uri.toString());
 
         return docRef.update(map);
     }

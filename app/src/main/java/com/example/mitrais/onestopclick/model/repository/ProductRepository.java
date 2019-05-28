@@ -207,8 +207,17 @@ public class ProductRepository {
      * @param uri trailer uri
      * @return task
      */
-    public Task<Void> saveProductTrailerUri(String id, Uri uri) {
-        return productService.saveProductTrailerUri(id, uri);
+    public Task<Void> saveTrailerUri(String id, Uri uri) {
+        return productService.saveTrailerUri(id, uri);
+    }
+
+    /**
+     * @param id  product id
+     * @param uri trailer uri
+     * @return task
+     */
+    public Task<Void> saveMovieUri(String id, Uri uri) {
+        return productService.saveMovieUri(id, uri);
     }
 
     /**

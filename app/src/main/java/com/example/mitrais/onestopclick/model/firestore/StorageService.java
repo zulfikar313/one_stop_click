@@ -11,6 +11,7 @@ public class StorageService {
     private static final String REF_PROFILE_IMG = "profile_image";
     private static final String REF_PRODUCT_IMG = "product_image";
     private static final String REF_TRAILER = "trailer";
+    private static final String REF_MOVIE = "movie";
     private static final String REF_MUSIC = "music";
     private static final String REF_BOOK = "book";
     private static StorageService instance;
@@ -19,6 +20,7 @@ public class StorageService {
     private static StorageReference bookRef;
     private static StorageReference musicRef;
     private static StorageReference trailerRef;
+    private static StorageReference movieRef;
 
     public static StorageService getInstance() {
         if (instance == null) {
@@ -29,6 +31,7 @@ public class StorageService {
             bookRef = storage.getReference(REF_BOOK);
             musicRef = storage.getReference(REF_MUSIC);
             trailerRef = storage.getReference(REF_TRAILER);
+            movieRef = storage.getReference(REF_MOVIE);
         }
 
         return instance;
@@ -91,6 +94,16 @@ public class StorageService {
      */
     public Task<Uri> uploadTrailer(Uri uri, String filename) {
         StorageReference reference = trailerRef.child(filename);
+        return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
+    }
+
+    /**
+     * @param uri      movie uri
+     * @param filename movie filename
+     * @return task
+     */
+    public Task<Uri> uploadMovie(Uri uri, String filename) {
+        StorageReference reference = movieRef.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 }

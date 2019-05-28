@@ -113,6 +113,12 @@
     <string name="genre">Genre</string>
     <string name="no_video_found">No video found</string>
     <string name="no_music_found">No music found</string>
+    <string name="movie_file_not_found">Movie file not found</string>
+    <string name="upload_movie">Upload movie</string>
+    <string name="play_movie">Play movie</string>
+    <string name="failed_to_upload_movie">Failed to upload movie</string>
+    <string name="movie_uploaded">Movie uploaded</string>
+    <string name="reupload_movie">Reupload movie</string>
     <string-array name="movie_or_book_genre">
         <item></item>
         <item>Fantasy</item>

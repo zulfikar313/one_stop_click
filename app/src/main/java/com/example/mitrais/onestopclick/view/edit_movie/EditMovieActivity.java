@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
@@ -40,17 +42,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
-import io.supercharge.shimmerlayout.ShimmerLayout;
 import maes.tech.intentanim.CustomIntent;
 
 public class EditMovieActivity extends AppCompatActivity {
     private static final String TAG = "EditMovieActivity";
     private static final int REQUEST_CHOOSE_THUMBNAIL = 1;
     private static final int REQUEST_CHOOSE_TRAILER = 2;
+    private static final int REQUEST_CHOOSE_MOVIE = 3;
     private Task<Uri> UploadTask;
     private Task<Void> saveProductTask;
     private Uri thumbnailUri = Uri.parse("");
     private Uri trailerUri = Uri.parse("");
+    private Uri movieUri = Uri.parse("");
     private ExoPlayer trailerPlayer;
     private String productId;
     private ArrayAdapter<CharSequence> genreAdapter;
@@ -75,6 +78,15 @@ public class EditMovieActivity extends AppCompatActivity {
 
     @BindView(R.id.trailer_view)
     CustomVideoView trailerView;
+
+    @BindView(R.id.txt_movie_file_not_found)
+    TextView txtMovieFileNotFound;
+
+    @BindView(R.id.btn_upload_movie)
+    AppCompatButton btnUploadMovie;
+
+    @BindView(R.id.btn_play_movie)
+    AppCompatButton btnPlayMovie;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -120,7 +132,7 @@ public class EditMovieActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    @OnClick({R.id.btn_save, R.id.btn_upload_trailer, R.id.img_thumbnail})
+    @OnClick({R.id.btn_save, R.id.btn_upload_trailer, R.id.img_thumbnail, R.id.btn_upload_movie, R.id.btn_play_movie})
     void onButtonClicked(View view) {
         if (isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
@@ -134,6 +146,11 @@ public class EditMovieActivity extends AppCompatActivity {
                     break;
                 case R.id.btn_upload_trailer:
                     openTrailerFileChooser();
+                    break;
+                case R.id.btn_upload_movie:
+                    openMovieFileChooser();
+                    break;
+                case R.id.btn_play_movie:
                     break;
                 default: // img_thumbnail clicked
                     openThumbnailFileChooser();
@@ -155,6 +172,12 @@ public class EditMovieActivity extends AppCompatActivity {
                 && data != null && data.getData() != null) {
             trailerUri = data.getData();
             uploadTrailer(productId, trailerUri);
+        }
+
+        if (requestCode == REQUEST_CHOOSE_MOVIE && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            movieUri = data.getData();
+            uploadMovie(productId, movieUri);
         }
     }
 
@@ -178,6 +201,12 @@ public class EditMovieActivity extends AppCompatActivity {
         if (product.getTrailerUri() != null && !product.getTrailerUri().isEmpty()) {
             trailerUri = Uri.parse(product.getTrailerUri());
             prepareTrailerPlayer(trailerUri);
+        }
+
+        if (product.getMovieUri() != null && !product.getMovieUri().isEmpty()) {
+            txtMovieFileNotFound.setVisibility(View.GONE);
+            btnUploadMovie.setText(getString(R.string.reupload_movie));
+            btnPlayMovie.setVisibility(View.VISIBLE);
         }
 
         txtDescription.getEditText().setText(product.getDescription());
@@ -253,7 +282,7 @@ public class EditMovieActivity extends AppCompatActivity {
         String filename = id + Constant.NAME_EXT_TRAILER + getFileExtension(uri);
         UploadTask = viewModel.uploadTrailer(uri, filename)
                 .addOnSuccessListener(uri1 ->
-                        saveProductTask = viewModel.saveProductTrailer(id, uri1)
+                        saveProductTask = viewModel.saveTrailerUri(id, uri1)
                                 .addOnCompleteListener(task -> trailerView.hideProgressBar())
                                 .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.trailer_uploaded), Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e -> {
@@ -263,6 +292,30 @@ public class EditMovieActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     trailerView.hideProgressBar();
                     Toasty.error(this, getString(R.string.failed_to_upload_trailer), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, e.getMessage());
+                });
+    }
+
+    /**
+     * @param id  product id
+     * @param uri trailer uri
+     */
+    private void uploadMovie(String id, Uri uri) {
+        showProgressBar();
+
+        String filename = id + Constant.NAME_EXT_MOVIE + getFileExtension(uri);
+        UploadTask = viewModel.uploadMovie(uri, filename)
+                .addOnSuccessListener(uri1 ->
+                        saveProductTask = viewModel.saveMovieUri(id, uri1)
+                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.movie_uploaded), Toast.LENGTH_SHORT).show())
+                                .addOnFailureListener(e -> {
+                                    Toasty.error(this, getString(R.string.failed_to_upload_movie), Toast.LENGTH_LONG).show();
+                                    Log.e(TAG, e.getMessage());
+                                }))
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    Toasty.error(this, getString(R.string.failed_to_upload_movie), Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.getMessage());
                 });
     }
@@ -307,6 +360,13 @@ public class EditMovieActivity extends AppCompatActivity {
         intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, REQUEST_CHOOSE_TRAILER);
+    }
+
+    private void openMovieFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, REQUEST_CHOOSE_MOVIE);
     }
 
     private String getFileExtension(Uri uri) {

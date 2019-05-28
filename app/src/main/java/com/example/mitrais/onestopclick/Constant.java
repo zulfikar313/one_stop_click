@@ -28,6 +28,7 @@ public class Constant {
     public static final String NAME_EXT_BOOK_PDF = "_book_1.pdf"; // TODO: support multiple books
     public static final String NAME_EXT_MUSIC = "_music.";
     public static final String NAME_EXT_TRAILER = "_trailer.";
+    public static final String NAME_EXT_MOVIE = "_movie.";
 
     // book & movie genre
     public static final String GENRE_FANTASY = "Fantasy";
