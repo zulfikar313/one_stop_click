@@ -27,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ProfileProductRepository {
     private static final String TAG = "ProfileProductRepo";
-    private ListenerRegistration profileProductListenerRegistration;
+    private ListenerRegistration listenerRegistration;
 
     @Inject
     ProfileProductDao profileProductDao;
@@ -37,16 +37,17 @@ public class ProfileProductRepository {
 
     public ProfileProductRepository(Application application) {
         initDagger(application);
-        if (profileProductListenerRegistration == null)
-            addProfileProductListener();
+        if (listenerRegistration == null)
+            addListener();
     }
 
-    public LiveData<List<ProfileProduct>> getAllProfileProducts() {
-        return profileProductDao.getAllProfileProducts();
+    // region room
+    public LiveData<List<ProfileProduct>> getAll() {
+        return profileProductDao.getAll();
     }
 
-    public void insertProfileProduct(ProfileProduct profileProduct) {
-        Completable.fromAction(() -> profileProductDao.insertProfileProduct(profileProduct))
+    private void insert(ProfileProduct profileProduct) {
+        Completable.fromAction(() -> profileProductDao.insert(profileProduct))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -67,8 +68,8 @@ public class ProfileProductRepository {
                 });
     }
 
-    public void deleteProfileProduct(ProfileProduct profileProduct) {
-        Completable.fromAction(() -> profileProductDao.deleteProfileProduct(profileProduct))
+    private void delete(ProfileProduct profileProduct) {
+        Completable.fromAction(() -> profileProductDao.delete(profileProduct))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -89,8 +90,8 @@ public class ProfileProductRepository {
                 });
     }
 
-    public void deleteAllProfileProducts() {
-        Completable.fromAction(() -> profileProductDao.deleteAllProfileProduct())
+    public void deleteAll() {
+        Completable.fromAction(() -> profileProductDao.deleteAll())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -110,34 +111,35 @@ public class ProfileProductRepository {
                     }
                 });
     }
+    // endregion
 
-    public Task<Void> saveProfileProduct(ProfileProduct profileProduct) {
-        return profileProductService.saveProfileProduct(profileProduct);
+    // region firestore
+    public Task<Void> save(ProfileProduct profileProduct) {
+        return profileProductService.save(profileProduct);
     }
 
-    public Task<QuerySnapshot> syncProfileProduct() {
-        return profileProductService.syncProfileProduct();
+    public Task<QuerySnapshot> sync() {
+        return profileProductService.sync();
     }
 
-    /**
-     * listen to profile product change
-     */
-    private void addProfileProductListener() {
-        if (profileProductListenerRegistration == null) {
-            profileProductListenerRegistration = profileProductService.getProfileProductRef().addSnapshotListener((queryDocumentSnapshots, e) -> {
-                if (queryDocumentSnapshots != null) {
+    private void addListener() {
+        if (listenerRegistration == null) {
+            listenerRegistration = profileProductService.getReference().addSnapshotListener((queryDocumentSnapshots, e) -> {
+                if (e != null) {
+                    Log.e(TAG, e.getMessage());
+                } else if (queryDocumentSnapshots != null) {
                     for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                         DocumentSnapshot documentSnapshot = dc.getDocument();
                         ProfileProduct profileProduct = documentSnapshot.toObject(ProfileProduct.class);
                         switch (dc.getType()) {
                             case ADDED:
-                                insertProfileProduct(profileProduct);
+                                insert(profileProduct);
                                 break;
                             case MODIFIED:
-                                insertProfileProduct(profileProduct);
+                                insert(profileProduct);
                                 break;
                             case REMOVED:
-                                deleteProfileProduct(profileProduct);
+                                delete(profileProduct);
                                 break;
                         }
                     }
@@ -145,12 +147,8 @@ public class ProfileProductRepository {
             });
         }
     }
+    // endregion
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for dao injection
-     */
     private void initDagger(Application application) {
         RepositoryComponent component = DaggerRepositoryComponent.builder()
                 .application(application)

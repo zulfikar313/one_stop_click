@@ -18,6 +18,6 @@ public class AddProductViewModel extends AndroidViewModel {
     }
 
     public Task<DocumentReference> addProduct(Product product) {
-        return productRepository.addProduct(product);
+        return productRepository.add(product);
     }
 }

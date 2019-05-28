@@ -33,7 +33,7 @@ public class EditBookViewModel extends AndroidViewModel {
      * @return product live data
      */
     public LiveData<Product> getProductById(String id) {
-        return productRepository.getProductById(id);
+        return productRepository.getById(id);
     }
 
     /**
@@ -69,7 +69,7 @@ public class EditBookViewModel extends AndroidViewModel {
      * @return task
      */
     public Task<Void> saveProduct(Product product) {
-        return productRepository.saveProduct(product);
+        return productRepository.save(product);
     }
 
     /**

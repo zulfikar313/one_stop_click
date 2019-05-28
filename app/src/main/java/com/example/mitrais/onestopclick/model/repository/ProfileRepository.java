@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ProfileRepository {
     private static final String TAG = "ProfileRepository";
-    private ListenerRegistration profileListenerRegistration;
+    private ListenerRegistration listenerRegistration;
 
     @Inject
     ProfileDao profileDao;
@@ -36,8 +36,8 @@ public class ProfileRepository {
     }
 
     // region room
-    private void insertProfile(Profile profile) {
-        Completable.fromAction(() -> profileDao.insertProfile(profile))
+    private void insert(Profile profile) {
+        Completable.fromAction(() -> profileDao.insert(profile))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -58,8 +58,8 @@ public class ProfileRepository {
                 });
     }
 
-    public void deleteProfile() {
-        Completable.fromAction(() -> profileDao.deleteProfile())
+    public void delete() {
+        Completable.fromAction(() -> profileDao.delete())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -87,61 +87,52 @@ public class ProfileRepository {
 
     // region firestore
     public Task<Void> saveProfile(Profile profile) {
-        return profileService.saveProfile(profile)
+        return profileService.save(profile)
                 .addOnSuccessListener(aVoid -> {
-                    addProfileListener(profile.getEmail());
+                    if (listenerRegistration == null)
+                        addListener(profile.getEmail());
                 });
     }
 
-    public Task<Void> saveProfileImageUri(Profile profile) {
-        return profileService.saveProfileImageUri(profile)
+    public Task<Void> saveImageUri(Profile profile) {
+        return profileService.saveImageUri(profile)
                 .addOnSuccessListener(aVoid -> {
-                    addProfileListener(profile.getEmail());
+                    if (listenerRegistration == null)
+                        addListener(profile.getEmail());
                 });
     }
 
-    public Task<DocumentSnapshot> syncProfile(String email) {
-        return profileService.syncProfile(email)
+    public Task<DocumentSnapshot> sync(String email) {
+        return profileService.sync(email)
                 .addOnSuccessListener(documentSnapshot -> {
                     Profile profile = documentSnapshot.toObject(Profile.class);
                     if (profile != null) {
                         profile.setEmail(documentSnapshot.getId());
-                        insertProfile(profile);
-                        addProfileListener(email);
+                        insert(profile);
+                        if (listenerRegistration == null)
+                            addListener(email);
                     }
                 });
     }
 
-    /**
-     * listen to profile data changes in firestore
-     *
-     * @param email user email address
-     */
-    private void addProfileListener(String email) {
-        if (profileListenerRegistration != null)
-            profileListenerRegistration.remove();
-
-        profileListenerRegistration = profileService.getProfileRef(email)
+    private void addListener(String email) {
+        listenerRegistration = profileService.getProfileRef(email)
                 .addSnapshotListener((documentSnapshot, e) -> {
-                    Log.i(TAG, "addProfileListener:called");
                     if (e != null)
                         Log.e(TAG, e.getMessage());
                     else {
-                        Profile profile = documentSnapshot.toObject(Profile.class);
-                        if (profile != null) {
-                            profile.setEmail(documentSnapshot.getId());
-                            insertProfile(profile);
+                        if (documentSnapshot != null) {
+                            Profile profile = documentSnapshot.toObject(Profile.class);
+                            if (profile != null) {
+                                profile.setEmail(documentSnapshot.getId());
+                                insert(profile);
+                            }
                         }
                     }
                 });
     }
     // endregion
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for dao injection
-     */
     private void initDagger(Application application) {
         RepositoryComponent component = DaggerRepositoryComponent.builder()
                 .application(application)

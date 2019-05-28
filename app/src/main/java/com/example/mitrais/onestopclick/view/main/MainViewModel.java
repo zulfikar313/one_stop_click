@@ -48,14 +48,14 @@ public class MainViewModel extends AndroidViewModel {
      * @return sync user data task
      */
     public Task<QuerySnapshot> syncProducts() {
-        return productRepository.syncProducts();
+        return productRepository.sync();
     }
 
     /**
      * @return sync profile data task
      */
     public Task<QuerySnapshot> syncProfileProducts() {
-        return profileProductRepository.syncProfileProduct();
+        return profileProductRepository.sync();
     }
 
     /**
@@ -67,8 +67,8 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void deleteUserData() {
-        profileRepository.deleteProfile();
-        profileProductRepository.deleteAllProfileProducts();
+        profileRepository.delete();
+        profileProductRepository.deleteAll();
     }
 
     /**

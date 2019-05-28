@@ -23,30 +23,24 @@ public class ProfileProductService {
         return instance;
     }
 
-    /**
-     * @param profileProduct ProfileProduct object
-     * @return task
-     */
-    public Task<Void> saveProfileProduct(ProfileProduct profileProduct) {
-        DocumentReference reference = profileProductRef.document(generateFirestoreId(profileProduct));
+    public Task<Void> save(ProfileProduct profileProduct) {
+        DocumentReference reference = profileProductRef.document(generateId(profileProduct));
         return reference.set(profileProduct);
     }
 
-    /**
-     * @return task
-     */
-    public Task<QuerySnapshot> syncProfileProduct() {
+    public Task<QuerySnapshot> sync() {
         return profileProductRef.get();
     }
 
-    /**
-     * @return profile product collection reference
-     */
-    public Query getProfileProductRef() {
+    public Query getReference() {
         return profileProductRef;
     }
 
-    private String generateFirestoreId(ProfileProduct profileProduct) {
+    /**
+     * @param profileProduct object
+     * @return combination of email and product id with underscore inbetween
+     */
+    private String generateId(ProfileProduct profileProduct) {
         return profileProduct.getEmail() + "_" + profileProduct.getProductId();
     }
 }

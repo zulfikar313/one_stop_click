@@ -30,7 +30,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ProductRepository {
     private static final String TAG = "ProductRepository";
-    private static ListenerRegistration productListenerRegistration;
+    private static ListenerRegistration listenerRegistration;
 
     @Inject
     ProductDao productDao;
@@ -40,13 +40,13 @@ public class ProductRepository {
 
     public ProductRepository(Application application) {
         initDagger(application);
-        if (productListenerRegistration == null)
-            setProductListener();
+        if (listenerRegistration == null)
+            addListener();
     }
 
     // region room
-    private void insertProduct(Product product) {
-        Completable.fromAction(() -> productDao.insertProduct(product))
+    private void insert(Product product) {
+        Completable.fromAction(() -> productDao.insert(product))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -66,8 +66,8 @@ public class ProductRepository {
                 });
     }
 
-    private void deleteProduct(Product product) {
-        Completable.fromAction(() -> productDao.deleteProduct(product))
+    private void delete(Product product) {
+        Completable.fromAction(() -> productDao.delete(product))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -88,151 +88,72 @@ public class ProductRepository {
                 });
     }
 
-    /**
-     * @return product list live data
-     */
-    public LiveData<List<Product>> getAllProducts() {
-        return productDao.getAllProducts();
+    public LiveData<List<Product>> getAll() {
+        return productDao.getAll();
     }
 
-    /**
-     * @return product list live data
-     */
-    public LiveData<List<Product>> getProductsByGenre(String genre) {
-        return productDao.getProductsByGenre(genre);
+    public LiveData<Product> getById(String id) {
+        return productDao.getById(id);
     }
 
-    /**
-     * @return product list live data
-     */
-    public LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
-        return productDao.getProductsByTypeAndGenre(type, genre);
+    public LiveData<List<Product>> getByType(String type) {
+        return productDao.getByType(type);
     }
 
-    /**
-     * @param search search query
-     * @return product list live data
-     */
-    public LiveData<List<Product>> searchProducts(String search) {
-        return productDao.searchProducts("%" + search + "%");
+    public LiveData<List<Product>> getByGenre(String genre) {
+        return productDao.getByGenre(genre);
     }
 
-    /**
-     * @param type product type
-     * @return product list live data
-     */
-    public LiveData<List<Product>> getProductsByType(String type) {
-        return productDao.getProductsByType(type);
+    public LiveData<List<Product>> getByTypeAndGenre(String type, String genre) {
+        return productDao.getByTypeAndGenre(type, genre);
     }
 
-    /**
-     * @param id product id
-     * @return product live data
-     */
-    public LiveData<Product> getProductById(String id) {
-        return productDao.getProductById(id);
+    public LiveData<List<Product>> search(String search) {
+        return productDao.search("%" + search + "%");
     }
     //endregion
 
     // region firestore
-
-    /**
-     * sync local product data
-     *
-     * @return task
-     */
-    public Task<QuerySnapshot> syncProducts() {
-        return productService.syncProducts().addOnSuccessListener(queryDocumentSnapshots -> {
+    public Task<QuerySnapshot> sync() {
+        return productService.sync().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
-                insertProduct(product);
+                insert(product);
             }
         });
     }
 
-    /**
-     * @param id product id
-     * @return task
-     */
-    public Task<Void> addLike(String id) {
-        return productService.addLike(id);
+    public Task<DocumentReference> add(Product product) {
+        return productService.add(product);
     }
 
-    /**
-     * @param id product id
-     * @return task
-     */
-    public Task<Void> addDislike(String id) {
-        return productService.addDislike(id);
+    public Task<Void> save(Product product) {
+        return productService.save(product);
     }
 
-    /**
-     * @param product product object
-     * @return task
-     */
-    public Task<Void> saveProduct(Product product) {
-        return productService.saveProduct(product);
-    }
-
-    /**
-     * @param id  product id
-     * @param uri thumbnail uri
-     * @return task
-     */
     public Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productService.saveProductThumbnailUri(id, uri);
+        return productService.saveThumbnailUri(id, uri);
     }
 
-    /**
-     * @param id  product id
-     * @param uri book uri
-     * @return task
-     */
     public Task<Void> saveBookUri(String id, Uri uri) {
         return productService.saveBookUri(id, uri);
     }
 
-    /**
-     * @param id  product id
-     * @param uri music uri
-     * @return task
-     */
     public Task<Void> saveMusicUri(String id, Uri uri) {
         return productService.saveMusicUri(id, uri);
     }
 
-    /**
-     * @param id  product id
-     * @param uri trailer uri
-     * @return task
-     */
     public Task<Void> saveTrailerUri(String id, Uri uri) {
         return productService.saveTrailerUri(id, uri);
     }
 
-    /**
-     * @param id  product id
-     * @param uri trailer uri
-     * @return task
-     */
     public Task<Void> saveMovieUri(String id, Uri uri) {
         return productService.saveMovieUri(id, uri);
     }
 
-    /**
-     * @param product product object
-     * @return task
-     */
-    public Task<DocumentReference> addProduct(Product product) {
-        return productService.addProduct(product);
-    }
-
-    /**
-     * listen to product changes
-     */
-    private void setProductListener() {
-        productListenerRegistration = ProductService.getProductRef().addSnapshotListener((queryDocumentSnapshots, e) -> {
+    private void addListener() {
+        listenerRegistration = ProductService.getReference().addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null) {
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                     DocumentSnapshot documentSnapshot = dc.getDocument();
@@ -240,15 +161,15 @@ public class ProductRepository {
                     product.setId(documentSnapshot.getId());
                     switch (dc.getType()) {
                         case ADDED: {
-                            insertProduct(product);
+                            insert(product);
                             break;
                         }
                         case MODIFIED: {
-                            insertProduct(product);
+                            insert(product);
                             break;
                         }
                         case REMOVED: {
-                            deleteProduct(product);
+                            delete(product);
                             break;
                         }
                     }
@@ -258,11 +179,6 @@ public class ProductRepository {
     }
     // endregion
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for dao injection
-     */
     private void initDagger(Application application) {
         RepositoryComponent component = DaggerRepositoryComponent.builder()
                 .application(application)

@@ -13,15 +13,15 @@ import java.util.List;
 
 @Dao
 public interface ProfileProductDao {
+    @Query("SELECT * FROM profile_product")
+    LiveData<List<ProfileProduct>> getAll();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertProfileProduct(ProfileProduct profileProduct);
+    void insert(ProfileProduct profileProduct);
 
     @Delete
-    void deleteProfileProduct(ProfileProduct profileProduct);
+    void delete(ProfileProduct profileProduct);
 
     @Query("DELETE from profile_product")
-    void deleteAllProfileProduct();
-
-    @Query("SELECT * FROM profile_product")
-    LiveData<List<ProfileProduct>> getAllProfileProducts();
+    void deleteAll();
 }

@@ -21,29 +21,15 @@ public class AuthService {
         return instance;
     }
 
-    /**
-     * @param email    user email address
-     * @param password user password
-     * @return login task
-     */
     public Task<AuthResult> login(String email, String password) {
         return auth.signInWithEmailAndPassword(email, password);
     }
 
-    /**
-     * @param account google sign in account
-     * @return google sign in task
-     */
     public Task<AuthResult> googleSignIn(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         return auth.signInWithCredential(credential);
     }
 
-    /**
-     * @param email    user email address
-     * @param password user password
-     * @return register task
-     */
     public Task<AuthResult> register(String email, String password) {
         return auth.createUserWithEmailAndPassword(email, password);
     }
@@ -52,25 +38,14 @@ public class AuthService {
         auth.signOut();
     }
 
-    /**
-     * @param user logged in user
-     * @return send verification email task
-     */
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
         return user.sendEmailVerification();
     }
 
-    /**
-     * @param email user email address
-     * @return send password reset email task
-     */
     public Task<Void> sendPasswordResetEmail(String email) {
         return auth.sendPasswordResetEmail(email);
     }
 
-    /**
-     * @return logged in user
-     */
     public FirebaseUser getUser() {
         return auth.getCurrentUser();
     }

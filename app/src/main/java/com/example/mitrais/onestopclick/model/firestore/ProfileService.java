@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileService {
-    public static final String KEY_IMAGE_URI = "imageUri";
+    private static final String KEY_IMAGE_URI = "imageUri";
     private static final String REF_PROFILE = "profile";
     private static ProfileService instance;
     private static CollectionReference profileRef;
@@ -26,41 +26,23 @@ public class ProfileService {
         return instance;
     }
 
-    /**
-     * @param profile user profile
-     * @return save profile task
-     */
-    public Task<Void> saveProfile(Profile profile) {
+    public Task<Void> save(Profile profile) {
         DocumentReference reference = profileRef.document(profile.getEmail());
         return reference.set(profile);
     }
 
-    /**
-     * @param profile user profile
-     * @return save profile task
-     */
-    public Task<Void> saveProfileImageUri(Profile profile) {
+    public Task<Void> saveImageUri(Profile profile) {
         DocumentReference docRef = profileRef.document(profile.getEmail());
-
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_IMAGE_URI, profile.getImageUri());
-
         return docRef.update(map);
     }
 
-    /**
-     * @param email user email address
-     * @return sync profile task
-     */
-    public Task<DocumentSnapshot> syncProfile(String email) {
+    public Task<DocumentSnapshot> sync(String email) {
         DocumentReference reference = profileRef.document(email);
         return reference.get();
     }
 
-    /**
-     * @param email user email address
-     * @return profile document reference
-     */
     public DocumentReference getProfileRef(String email) {
         return profileRef.document(email);
     }

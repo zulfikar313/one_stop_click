@@ -68,7 +68,7 @@ public class ProfileViewModel extends AndroidViewModel {
      * @return save profile task
      */
     public Task<Void> saveProfileImageUri(Profile profile) {
-        return profileRepository.saveProfileImageUri(profile);
+        return profileRepository.saveImageUri(profile);
     }
 
     /**

@@ -13,27 +13,27 @@ import java.util.List;
 
 @Dao
 public interface ProductDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertProduct(Product product);
-
-    @Delete
-    void deleteProduct(Product product);
-
     @Query("SELECT * FROM product ORDER BY title")
-    LiveData<List<Product>> getAllProducts();
-
-    @Query("SELECT * FROM product WHERE title LIKE :search OR author LIKE :search OR artist LIKE :search or director LIKE :search ORDER BY title")
-    LiveData<List<Product>> searchProducts(String search);
-
-    @Query("SELECT * FROM product WHERE type = :type ORDER BY title")
-    LiveData<List<Product>> getProductsByType(String type);
-
-    @Query("SELECT * FROM product WHERE genre = :genre ORDER BY title")
-    LiveData<List<Product>> getProductsByGenre(String genre);
-
-    @Query("SELECT * FROM product WHERE type = :type AND genre = :genre ORDER BY title")
-    LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre);
+    LiveData<List<Product>> getAll();
 
     @Query("SELECT * FROM product WHERE id = :id")
-    LiveData<Product> getProductById(String id);
+    LiveData<Product> getById(String id);
+
+    @Query("SELECT * FROM product WHERE type = :type ORDER BY title")
+    LiveData<List<Product>> getByType(String type);
+
+    @Query("SELECT * FROM product WHERE genre = :genre ORDER BY title")
+    LiveData<List<Product>> getByGenre(String genre);
+
+    @Query("SELECT * FROM product WHERE type = :type AND genre = :genre ORDER BY title")
+    LiveData<List<Product>> getByTypeAndGenre(String type, String genre);
+
+    @Query("SELECT * FROM product WHERE title LIKE :search OR author LIKE :search OR artist LIKE :search or director LIKE :search ORDER BY title")
+    LiveData<List<Product>> search(String search);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(Product product);
+
+    @Delete
+    void delete(Product product);
 }

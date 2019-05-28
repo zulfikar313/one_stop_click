@@ -70,44 +70,108 @@ public class Product {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getGenre() {
         return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public String getArtist() {
         return artist;
     }
 
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
     public String getAuthor() {
         return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public String getDirector() {
         return director;
     }
 
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
     public String getThumbnailUri() {
         return thumbnailUri;
+    }
+
+    public void setThumbnailUri(String thumbnailUri) {
+        this.thumbnailUri = thumbnailUri;
+    }
+
+    public String getBookUri() {
+        return bookUri;
+    }
+
+    public void setBookUri(String bookUri) {
+        this.bookUri = bookUri;
+    }
+
+    public String getMusicUri() {
+        return musicUri;
+    }
+
+    public void setMusicUri(String musicUri) {
+        this.musicUri = musicUri;
+    }
+
+    public String getTrailerUri() {
+        return trailerUri;
+    }
+
+    public void setTrailerUri(String trailerUri) {
+        this.trailerUri = trailerUri;
+    }
+
+    public String getMovieUri() {
+        return movieUri;
+    }
+
+    public void setMovieUri(String movieUri) {
+        this.movieUri = movieUri;
     }
 
     public int getLike() {
         return like;
     }
 
-    public int getDislike() {
-        return dislike;
-    }
-
     public void setLike(int like) {
         this.like = like;
+    }
+
+    public int getDislike() {
+        return dislike;
     }
 
     public void setDislike(int dislike) {
@@ -133,68 +197,6 @@ public class Product {
     public void setDisliked(boolean disliked) {
         isDisliked = disliked;
     }
-
-    public String getBookUri() {
-        return bookUri;
-    }
-
-    public String getMusicUri() {
-        return musicUri;
-    }
-
-    public String getTrailerUri() {
-        return trailerUri;
-    }
-
-    public String getMovieUri() {
-        return movieUri;
-    }
-
-    public void setMovieUri(String movieUri) {
-        this.movieUri = movieUri;
-    }
-
-    public void setBookUri(String bookUri) {
-        this.bookUri = bookUri;
-    }
-
-    public void setMusicUri(String musicUri) {
-        this.musicUri = musicUri;
-    }
-
-    public void setTrailerUri(String trailerUri) {
-        this.trailerUri = trailerUri;
-    }
-
-    public void setThumbnailUri(String thumbnailUri) {
-        this.thumbnailUri = thumbnailUri;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setDirector(String director) {
-        this.director = director;
-    }
 }
+
+

@@ -17,34 +17,18 @@ public class Preferences {
         return instance;
     }
 
-    /**
-     * @param key   preference key
-     * @param value preference value
-     */
     public void putString(String key, String value) {
         prefs.edit().putString(key, value).apply();
     }
 
-    /**
-     * @param key preference key
-     * @return String preference
-     */
     public String getString(String key) {
         return prefs.getString(key, "");
     }
 
-    /**
-     * @param key   preference key
-     * @param value preferenvce value
-     */
     public void putBoolean(String key, boolean value) {
         prefs.edit().putBoolean(key, value).apply();
     }
 
-    /**
-     * @param key preference key
-     * @return boolean preference
-     */
     public boolean getBoolean(String key) {
         return prefs.getBoolean(key, false);
     }

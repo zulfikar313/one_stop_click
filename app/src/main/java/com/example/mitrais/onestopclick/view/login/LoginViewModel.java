@@ -77,9 +77,9 @@ public class LoginViewModel extends AndroidViewModel {
      */
     public Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.syncProfile(user.getEmail())
+            return profileRepository.sync(user.getEmail())
                     .addOnSuccessListener(documentSnapshot -> {
-                        profileProductRepository.syncProfileProduct()
+                        profileProductRepository.sync()
                                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
                     });
         else

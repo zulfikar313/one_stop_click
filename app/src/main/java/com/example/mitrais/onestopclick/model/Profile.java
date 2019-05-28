@@ -19,11 +19,6 @@ public class Profile {
     public Profile() {
     }
 
-    /**
-     * @param email    profile email address
-     * @param imageUri profile image uri
-     * @param address  profile address
-     */
     public Profile(@NonNull String email, String imageUri, String address) {
         this.email = email;
         this.imageUri = imageUri == null ? "" : imageUri;
@@ -36,25 +31,24 @@ public class Profile {
         return email;
     }
 
+    @Exclude
+    public void setEmail(@NonNull String email) {
+        this.email = email;
+    }
+
     public String getImageUri() {
         return imageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
     public String getAddress() {
         return address;
     }
 
-    @Exclude
-    public void setEmail(@NonNull String email) {
-        this.email = email;
-    }
-
-
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
     }
 }

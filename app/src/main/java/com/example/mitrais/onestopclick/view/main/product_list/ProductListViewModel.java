@@ -39,23 +39,23 @@ public class ProductListViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Product>> getAllProducts() {
-        return productRepository.getAllProducts();
+        return productRepository.getAll();
     }
 
     public LiveData<List<Product>> getProductsByType(String type) {
-        return productRepository.getProductsByType(type);
+        return productRepository.getByType(type);
     }
 
     public LiveData<List<Product>> getProductsByGenre(String genre) {
-        return productRepository.getProductsByGenre(genre);
+        return productRepository.getByGenre(genre);
     }
 
     public LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
-        return productRepository.getProductsByTypeAndGenre(type, genre);
+        return productRepository.getByTypeAndGenre(type, genre);
     }
 
     public LiveData<List<ProfileProduct>> getAllProfileProducts() {
-        return profileProductRepository.getAllProfileProducts();
+        return profileProductRepository.getAll();
     }
 
     public Task<Void> addLike(String id) {
@@ -65,7 +65,7 @@ public class ProductListViewModel extends AndroidViewModel {
         profileProduct.setLiked(true);
         profileProduct.setDisliked(false);
 
-        return profileProductRepository.saveProfileProduct(profileProduct);
+        return profileProductRepository.save(profileProduct);
     }
 
     public Task<Void> removeLike(String id) {
@@ -75,7 +75,7 @@ public class ProductListViewModel extends AndroidViewModel {
         profileProduct.setLiked(false);
         profileProduct.setDisliked(false);
 
-        return profileProductRepository.saveProfileProduct(profileProduct);
+        return profileProductRepository.save(profileProduct);
     }
 
     public Task<Void> addDislike(String id) {
@@ -85,7 +85,7 @@ public class ProductListViewModel extends AndroidViewModel {
         profileProduct.setLiked(false);
         profileProduct.setDisliked(true);
 
-        return profileProductRepository.saveProfileProduct(profileProduct);
+        return profileProductRepository.save(profileProduct);
     }
 
     public Task<Void> removeDislike(String id) {
@@ -95,7 +95,7 @@ public class ProductListViewModel extends AndroidViewModel {
         profileProduct.setLiked(false);
         profileProduct.setDisliked(false);
 
-        return profileProductRepository.saveProfileProduct(profileProduct);
+        return profileProductRepository.save(profileProduct);
     }
 
     /**
