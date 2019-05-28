@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class RegistrationViewModel extends AndroidViewModel {
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     public RegistrationViewModel(@NonNull Application application) {
         super(application);
@@ -23,31 +23,17 @@ public class RegistrationViewModel extends AndroidViewModel {
     }
 
     public FirebaseUser getUser() {
-        return authRepository.getUser();
+        return authRepo.getUser();
     }
 
-    /**
-     * @param email    user email address
-     * @param password user password
-     * @return register task
-     */
     public Task<AuthResult> register(String email, String password) {
-        return authRepository.register(email, password);
+        return authRepo.register(email, password);
     }
 
-    /**
-     * @param user logged in user
-     * @return send verification email task
-     */
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
-        return authRepository.sendVerificationEmail(user);
+        return authRepo.sendVerificationEmail(user);
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for repository injection
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

@@ -13,26 +13,17 @@ import javax.inject.Inject;
 
 public class ForgotPasswordViewModel extends AndroidViewModel {
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     public ForgotPasswordViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    /**
-     * @param email user email address
-     * @return send password reset email task
-     */
-    public Task<Void> sendPasswordResetEmail(String email) {
-        return authRepository.sendPasswordResetEmail(email);
+    Task<Void> sendPasswordResetEmail(String email) {
+        return authRepo.sendPasswordResetEmail(email);
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for repository injection
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

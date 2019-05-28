@@ -17,73 +17,40 @@ import javax.inject.Inject;
 
 public class EditMusicViewModel extends AndroidViewModel {
     @Inject
-    StorageRepository storageRepository;
+    StorageRepository storageRepo;
 
     @Inject
-    ProductRepository productRepository;
+    ProductRepository productRepo;
 
     public EditMusicViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    /**
-     * @param id product id
-     * @return product live data
-     */
-    public LiveData<Product> getProductById(String id) {
-        return productRepository.getById(id);
+    LiveData<Product> getProductById(String id) {
+        return productRepo.getById(id);
     }
 
-    /**
-     * @param product product object
-     * @return task
-     */
-    public Task<Void> saveProduct(Product product) {
-        return productRepository.save(product);
+    Task<Void> saveProduct(Product product) {
+        return productRepo.save(product);
     }
 
-    /**
-     * @param uri      thumbnail uri
-     * @param filename thumbnail filename
-     * @return task
-     */
-    public Task<Uri> uploadThumbnail(Uri uri, String filename) {
-        return storageRepository.uploadThumbnail(uri, filename);
+    Task<Void> saveThumbnailUri(String id, Uri uri) {
+        return productRepo.saveThumbnailUri(id, uri);
     }
 
-    /**
-     * @param id  product id
-     * @param uri thumbnail uri
-     * @return save product task
-     */
-    public Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productRepository.saveThumbnailUri(id, uri);
+    Task<Void> saveMusicUri(String id, Uri uri) {
+        return productRepo.saveMusicUri(id, uri);
     }
 
-    /**
-     * @param uri      music uri
-     * @param filename music filename
-     * @return task
-     */
-    public Task<Uri> uploadMusic(Uri uri, String filename) {
-        return storageRepository.uploadMusic(uri, filename);
+    Task<Uri> uploadThumbnail(Uri uri, String filename) {
+        return storageRepo.uploadThumbnail(uri, filename);
     }
 
-    /**
-     * @param id  product id
-     * @param uri music uri
-     * @return task
-     */
-    public Task<Void> saveMusicUri(String id, Uri uri) {
-        return productRepository.saveMusicUri(id, uri);
+    Task<Uri> uploadMusic(Uri uri, String filename) {
+        return storageRepo.uploadMusic(uri, filename);
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application application to inject repository class
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

@@ -21,88 +21,79 @@ import javax.inject.Inject;
 
 public class ProductListViewModel extends AndroidViewModel {
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     @Inject
-    ProductRepository productRepository;
+    ProductRepository productRepo;
 
     @Inject
-    ProfileProductRepository profileProductRepository;
+    ProfileProductRepository profileProductRepo;
 
     public ProductListViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    public FirebaseUser getUser() {
-        return authRepository.getUser();
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
-    public LiveData<List<Product>> getAllProducts() {
-        return productRepository.getAll();
+    LiveData<List<Product>> getAllProducts() {
+        return productRepo.getAll();
     }
 
-    public LiveData<List<Product>> getProductsByType(String type) {
-        return productRepository.getByType(type);
+    LiveData<List<Product>> getProductsByType(String type) {
+        return productRepo.getByType(type);
     }
 
-    public LiveData<List<Product>> getProductsByGenre(String genre) {
-        return productRepository.getByGenre(genre);
+    LiveData<List<Product>> getProductsByGenre(String genre) {
+        return productRepo.getByGenre(genre);
     }
 
-    public LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
-        return productRepository.getByTypeAndGenre(type, genre);
+    LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
+        return productRepo.getByTypeAndGenre(type, genre);
     }
 
-    public LiveData<List<ProfileProduct>> getAllProfileProducts() {
-        return profileProductRepository.getAll();
+    LiveData<List<ProfileProduct>> getAllProfileProducts() {
+        return profileProductRepo.getAll();
     }
 
-    public Task<Void> addLike(String id) {
+    Task<Void> addLike(String id) {
         ProfileProduct profileProduct = new ProfileProduct();
-        profileProduct.setEmail(authRepository.getUser().getEmail());
+        profileProduct.setEmail(authRepo.getUser().getEmail());
         profileProduct.setProductId(id);
         profileProduct.setLiked(true);
         profileProduct.setDisliked(false);
-
-        return profileProductRepository.save(profileProduct);
+        return profileProductRepo.save(profileProduct);
     }
 
-    public Task<Void> removeLike(String id) {
+    Task<Void> removeLike(String productId) {
         ProfileProduct profileProduct = new ProfileProduct();
-        profileProduct.setEmail(authRepository.getUser().getEmail());
-        profileProduct.setProductId(id);
+        profileProduct.setEmail(authRepo.getUser().getEmail());
+        profileProduct.setProductId(productId);
         profileProduct.setLiked(false);
         profileProduct.setDisliked(false);
-
-        return profileProductRepository.save(profileProduct);
+        return profileProductRepo.save(profileProduct);
     }
 
-    public Task<Void> addDislike(String id) {
+    Task<Void> addDislike(String productId) {
         ProfileProduct profileProduct = new ProfileProduct();
-        profileProduct.setEmail(authRepository.getUser().getEmail());
-        profileProduct.setProductId(id);
+        profileProduct.setEmail(authRepo.getUser().getEmail());
+        profileProduct.setProductId(productId);
         profileProduct.setLiked(false);
         profileProduct.setDisliked(true);
-
-        return profileProductRepository.save(profileProduct);
+        return profileProductRepo.save(profileProduct);
     }
 
-    public Task<Void> removeDislike(String id) {
+    Task<Void> removeDislike(String productId) {
         ProfileProduct profileProduct = new ProfileProduct();
-        profileProduct.setEmail(authRepository.getUser().getEmail());
-        profileProduct.setProductId(id);
+        profileProduct.setEmail(authRepo.getUser().getEmail());
+        profileProduct.setProductId(productId);
         profileProduct.setLiked(false);
         profileProduct.setDisliked(false);
-
-        return profileProductRepository.save(profileProduct);
+        return profileProductRepo.save(profileProduct);
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for repository injection
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

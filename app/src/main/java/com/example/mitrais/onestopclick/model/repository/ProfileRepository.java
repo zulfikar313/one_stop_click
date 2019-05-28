@@ -80,8 +80,8 @@ public class ProfileRepository {
                 });
     }
 
-    public LiveData<Profile> getProfile(String email) {
-        return profileDao.getProfile(email);
+    public LiveData<Profile> get(String email) {
+        return profileDao.get(email);
     }
     // endregion
 

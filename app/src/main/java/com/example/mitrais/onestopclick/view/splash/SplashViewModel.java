@@ -20,43 +20,34 @@ public class SplashViewModel extends AndroidViewModel {
     private static final String TAG = "SplashViewModel";
 
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     @Inject
-    ProfileRepository profileRepository;
+    ProfileRepository profileRepo;
 
     @Inject
-    ProfileProductRepository profileProductRepository;
+    ProfileProductRepository profileProductRepo;
 
     public SplashViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    public FirebaseUser getUser() {
-        return authRepository.getUser();
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
-    /**
-     * @param user logged in user
-     * @return sync data task
-     */
-    public Task<DocumentSnapshot> syncData(FirebaseUser user) {
+    Task<DocumentSnapshot> syncData(FirebaseUser user) {
         if (user != null)
-            return profileRepository.sync(user.getEmail())
+            return profileRepo.sync(user.getEmail())
                     .addOnSuccessListener(documentSnapshot -> {
-                        profileProductRepository.sync()
+                        profileProductRepo.sync()
                                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
                     });
         else
             return null;
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for repository injection
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

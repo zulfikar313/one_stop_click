@@ -20,62 +20,47 @@ import javax.inject.Inject;
 
 public class MainViewModel extends AndroidViewModel {
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     @Inject
-    ProfileRepository profileRepository;
+    ProfileRepository profileRepo;
 
     @Inject
-    ProductRepository productRepository;
+    ProductRepository productRepo;
 
     @Inject
-    ProfileProductRepository profileProductRepository;
+    ProfileProductRepository profileProductRepo;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    public void logout() {
-        authRepository.logout();
+    void logout() {
+        authRepo.logout();
     }
 
-    public FirebaseUser getUser() {
-        return authRepository.getUser();
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
-    /**
-     * @return sync user data task
-     */
-    public Task<QuerySnapshot> syncProducts() {
-        return productRepository.sync();
+    Task<QuerySnapshot> syncProducts() {
+        return productRepo.sync();
     }
 
-    /**
-     * @return sync profile data task
-     */
-    public Task<QuerySnapshot> syncProfileProducts() {
-        return profileProductRepository.sync();
+    Task<QuerySnapshot> syncProfileProducts() {
+        return profileProductRepo.sync();
     }
 
-    /**
-     * @param email user email address
-     * @return profile live data
-     */
-    public LiveData<Profile> getProfile(String email) {
-        return profileRepository.getProfile(email);
+    LiveData<Profile> getProfile(String email) {
+        return profileRepo.get(email);
     }
 
-    public void deleteUserData() {
-        profileRepository.delete();
-        profileProductRepository.deleteAll();
+    void deleteUserData() {
+        profileRepo.delete();
+        profileProductRepo.deleteAll();
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application application to inject repository class
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

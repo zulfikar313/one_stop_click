@@ -222,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void goToMainPage() {
         showProgressBar();
-        syncDataTask = viewModel.syncData(user)
+        syncDataTask = viewModel.syncAll(user)
                 .addOnCompleteListener(task -> {
                     hideProgressBar();
                     finish();

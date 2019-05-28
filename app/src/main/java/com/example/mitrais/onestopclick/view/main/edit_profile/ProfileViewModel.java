@@ -19,63 +19,39 @@ import javax.inject.Inject;
 
 public class ProfileViewModel extends AndroidViewModel {
     @Inject
-    StorageRepository storageRepository;
+    StorageRepository storageRepo;
 
     @Inject
-    ProfileRepository profileRepository;
+    ProfileRepository profileRepo;
 
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    // region public methods
-
-    /**
-     * @param email user email address
-     * @return user profile live data
-     */
-    public LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepository.getProfile(email);
+    LiveData<Profile> getProfileByEmail(String email) {
+        return profileRepo.get(email);
     }
 
-    public FirebaseUser getUser() {
-        return authRepository.getUser();
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
-    /**
-     * @param uri      profile image uri
-     * @param filename profile image filename
-     * @return upload profile image task
-     */
-    public Task<Uri> uploadProfileImage(Uri uri, String filename) {
-        return storageRepository.uploadProfileImage(uri, filename);
+    Task<Uri> uploadProfileImage(Uri uri, String filename) {
+        return storageRepo.uploadProfileImage(uri, filename);
     }
 
-    /**
-     * @param profile profile object
-     * @return save profile task
-     */
-    public Task<Void> saveProfile(Profile profile) {
-        return profileRepository.saveProfile(profile);
+    Task<Void> saveProfile(Profile profile) {
+        return profileRepo.saveProfile(profile);
     }
 
-    /**
-     * @param profile user profile
-     * @return save profile task
-     */
-    public Task<Void> saveProfileImageUri(Profile profile) {
-        return profileRepository.saveImageUri(profile);
+    Task<Void> saveProfileImageUri(Profile profile) {
+        return profileRepo.saveImageUri(profile);
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for repository injection
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

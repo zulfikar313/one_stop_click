@@ -18,83 +18,44 @@ import javax.inject.Inject;
 
 public class EditBookViewModel extends AndroidViewModel {
     @Inject
-    StorageRepository storageRepository;
+    StorageRepository storageRepo;
 
     @Inject
-    ProductRepository productRepository;
+    ProductRepository productRepo;
 
     public EditBookViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
     }
 
-    /**
-     * @param id product id
-     * @return product live data
-     */
-    public LiveData<Product> getProductById(String id) {
-        return productRepository.getById(id);
+    LiveData<Product> getProductById(String id) {
+        return productRepo.getById(id);
     }
 
-    /**
-     * @param uri      thumbnail uri
-     * @param filename thumbnail filename
-     * @return task
-     */
-    public Task<Uri> uploadThumbnail(Uri uri, String filename) {
-        return storageRepository.uploadThumbnail(uri, filename);
+    FileDownloadTask downloadBook(Uri localUri, String filename) {
+        return storageRepo.downloadBook(localUri, filename);
     }
 
-
-    /**
-     * @param uri      book uri
-     * @param filename book filename
-     * @return task
-     */
-    public Task<Uri> uploadBook(Uri uri, String filename) {
-        return storageRepository.uploadBook(uri, filename);
+    Task<Uri> uploadThumbnail(Uri uri, String filename) {
+        return storageRepo.uploadThumbnail(uri, filename);
     }
 
-    /**
-     * @param localUri book local uri
-     * @param filename book filename
-     * @return task
-     */
-    public FileDownloadTask downloadBook(Uri localUri, String filename) {
-        return storageRepository.downloadBook(localUri, filename);
+    Task<Uri> uploadBook(Uri uri, String filename) {
+        return storageRepo.uploadBook(uri, filename);
     }
 
-    /**
-     * @param product product object
-     * @return task
-     */
-    public Task<Void> saveProduct(Product product) {
-        return productRepository.save(product);
+    Task<Void> saveProduct(Product product) {
+        return productRepo.save(product);
     }
 
-    /**
-     * @param id  product id
-     * @param uri thumbnail uri
-     * @return save product task
-     */
-    public Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productRepository.saveThumbnailUri(id, uri);
+    Task<Void> saveThumbnailUri(String id, Uri uri) {
+        return productRepo.saveThumbnailUri(id, uri);
     }
 
-    /**
-     * @param id  product id
-     * @param uri book uri
-     * @return task
-     */
-    public Task<Void> saveBookUri(String id, Uri uri) {
-        return productRepository.saveBookUri(id, uri);
+    Task<Void> saveBookUri(String id, Uri uri) {
+        return productRepo.saveBookUri(id, uri);
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application application to inject repository class
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

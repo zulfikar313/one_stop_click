@@ -11,7 +11,7 @@ import com.example.mitrais.onestopclick.model.Profile;
 @Dao
 public interface ProfileDao {
     @Query("SELECT * FROM profile WHERE email = :email")
-    LiveData<Profile> getProfile(String email);
+    LiveData<Profile> get(String email);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Profile profile);

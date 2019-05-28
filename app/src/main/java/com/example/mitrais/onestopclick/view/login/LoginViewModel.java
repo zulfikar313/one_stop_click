@@ -22,10 +22,10 @@ public class LoginViewModel extends AndroidViewModel {
     private static final String TAG = "LoginViewModel";
 
     @Inject
-    AuthRepository authRepository;
+    AuthRepository authRepo;
 
     @Inject
-    ProfileRepository profileRepository;
+    ProfileRepository profileRepo;
 
     @Inject
     ProfileProductRepository profileProductRepository;
@@ -35,62 +35,30 @@ public class LoginViewModel extends AndroidViewModel {
         initDagger(application);
     }
 
-    /**
-     * @param email    user email address
-     * @param password user password
-     * @return login task
-     */
-    public Task<AuthResult> login(String email, String password) {
-        return authRepository.login(email, password);
+    Task<AuthResult> login(String email, String password) {
+        return authRepo.login(email, password);
     }
 
-    /**
-     * sign in using google account
-     *
-     * @param account google sign in account
-     * @return google sign in task
-     */
-    public Task<AuthResult> googleSignIn(GoogleSignInAccount account) {
-        return authRepository.googleSignIn(account);
+    Task<AuthResult> googleSignIn(GoogleSignInAccount account) {
+        return authRepo.googleSignIn(account);
     }
 
-    /**
-     * @return logged in user
-     */
-    public FirebaseUser getUser() {
-        return authRepository.getUser();
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
-    /**
-     * send verification email to user email address
-     *
-     * @param user logged in user
-     * @return send verification email task
-     */
-    public Task<Void> sendVerificationEmail(FirebaseUser user) {
-        return authRepository.sendVerificationEmail(user);
+    Task<Void> sendVerificationEmail(FirebaseUser user) {
+        return authRepo.sendVerificationEmail(user);
     }
 
-    /**
-     * @param user logged in user
-     * @return sync data task
-     */
-    public Task<DocumentSnapshot> syncData(FirebaseUser user) {
-        if (user != null)
-            return profileRepository.sync(user.getEmail())
-                    .addOnSuccessListener(documentSnapshot -> {
-                        profileProductRepository.sync()
-                                .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
-                    });
-        else
-            return null;
+    Task<DocumentSnapshot> syncAll(@NonNull FirebaseUser user) {
+        return profileRepo.sync(user.getEmail())
+                .addOnSuccessListener(documentSnapshot -> {
+                    profileProductRepository.sync()
+                            .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
+                });
     }
 
-    /**
-     * initialize dagger injection
-     *
-     * @param application for repository injection
-     */
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)
