@@ -22,6 +22,7 @@ public class Constant {
     // extras
     public static final String EXTRA_PRODUCT_ID = "EXTRA_PRODUCT_ID";
     public static final String EXTRA_BOOK_URI = "EXTRA_BOOK_URI";
+    public static final String EXTRA_MOVIE_URI = "EXTRA_MOVIE_URI";
 
     // filename name extension
     public static final String NAME_EXT_THUMBNAIL = "_thmb_1."; // TODO: support multiple thumbnails

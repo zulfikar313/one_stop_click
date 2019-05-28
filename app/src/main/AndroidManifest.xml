@@ -14,6 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".view.play_movie.PlayMovieActivity"
+            android:parentActivityName=".view.edit_movie.EditMovieActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".view.add_product.AddProductActivity"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
@@ -23,7 +28,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.read_book.ReadBookActivity"
-            android:parentActivityName=".view.product_detail.ProductDetailActivity"
+            android:parentActivityName=".view.edit_book.EditBookActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.edit_music.EditMusicActivity"
@@ -37,12 +42,6 @@
             android:name=".view.search_product.SearchProductActivity"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".view.product_detail.ProductDetailActivity"
-            android:parentActivityName=".view.main.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.forgot_password.ForgotPasswordActivity"
             android:parentActivityName=".view.login.LoginActivity"

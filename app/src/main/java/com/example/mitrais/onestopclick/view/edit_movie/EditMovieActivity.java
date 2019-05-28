@@ -24,6 +24,7 @@ import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.custom_view.CustomVideoView;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.view.play_movie.PlayMovieActivity;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -151,6 +152,7 @@ public class EditMovieActivity extends AppCompatActivity {
                     openMovieFileChooser();
                     break;
                 case R.id.btn_play_movie:
+                    goToPlayMoviePage(movieUri);
                     break;
                 default: // img_thumbnail clicked
                     openThumbnailFileChooser();
@@ -204,6 +206,7 @@ public class EditMovieActivity extends AppCompatActivity {
         }
 
         if (product.getMovieUri() != null && !product.getMovieUri().isEmpty()) {
+            movieUri = Uri.parse(product.getMovieUri());
             txtMovieFileNotFound.setVisibility(View.GONE);
             btnUploadMovie.setText(getString(R.string.reupload_movie));
             btnPlayMovie.setVisibility(View.VISIBLE);
@@ -346,6 +349,12 @@ public class EditMovieActivity extends AppCompatActivity {
         // configure video player
         trailerPlayer.prepare(videoSource);
         trailerView.setPlayer(trailerPlayer);
+    }
+
+    private void goToPlayMoviePage(Uri movieUri) {
+        Intent intent = new Intent(this, PlayMovieActivity.class);
+        intent.putExtra(Constant.EXTRA_MOVIE_URI, movieUri.toString());
+        startActivity(intent);
     }
 
     private void openThumbnailFileChooser() {
