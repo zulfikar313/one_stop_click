@@ -208,7 +208,7 @@ public class EditMusicActivity extends AppCompatActivity {
         saveProductTask = viewModel.saveProduct(product)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.product_saved), Toast.LENGTH_SHORT).show();
                     finish();
                 })
                 .addOnFailureListener(e -> {
@@ -229,7 +229,7 @@ public class EditMusicActivity extends AppCompatActivity {
         UploadTask = viewModel.uploadThumbnail(uri, filename)
                 .addOnSuccessListener(uri1 -> saveProductTask = viewModel.saveThumbnailUri(id, uri1)
                         .addOnCompleteListener(task -> imgThumbnail.hideProgressBar())
-                        .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
+                        .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.thumbnail_saved), Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> {
                             Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                             Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -336,7 +336,7 @@ public class EditMusicActivity extends AppCompatActivity {
     private boolean isTitleValid() {
         String title = txtTitle.getEditText().getText().toString().trim();
         if (title.isEmpty()) {
-            txtTitle.setError(getString(R.string.error_empty_title));
+            txtTitle.setError(getString(R.string.title_cant_be_empty));
             return false;
         }
         txtTitle.setError("");
@@ -346,7 +346,7 @@ public class EditMusicActivity extends AppCompatActivity {
     private boolean isArtistValid() {
         String artist = txtArtist.getEditText().getText().toString().trim();
         if (artist.isEmpty()) {
-            txtArtist.setError(getString(R.string.error_empty_artist));
+            txtArtist.setError(getString(R.string.artist_cant_be_empty));
             return false;
         }
         txtArtist.setError("");
@@ -356,7 +356,7 @@ public class EditMusicActivity extends AppCompatActivity {
     private boolean isDescriptionValid() {
         String description = txtDescription.getEditText().getText().toString().trim();
         if (description.isEmpty()) {
-            txtDescription.setError(getString(R.string.error_empty_description));
+            txtDescription.setError(getString(R.string.description_cant_be_empty));
             return false;
         }
         txtDescription.setError("");

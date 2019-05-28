@@ -101,7 +101,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             txtEmail.setError(getString(R.string.email_cant_be_empty));
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            txtEmail.setError(getString(R.string.email_is_not_valid));
+            txtEmail.setError(getString(R.string.email_not_valid));
             return false;
         }
         txtEmail.setError("");

@@ -26,7 +26,7 @@
                     android:title="@string/mistery" />
                 <item
                     android:id="@+id/science_fiction"
-                    android:title="@string/science_fiction" />
+                    android:title="@string/title_science_fiction" />
                 <item
                     android:id="@+id/biography"
                     android:title="@string/biography" />

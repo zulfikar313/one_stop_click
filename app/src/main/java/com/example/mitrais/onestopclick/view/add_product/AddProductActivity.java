@@ -1,7 +1,6 @@
 package com.example.mitrais.onestopclick.view.add_product;
 
 import android.app.Service;
-import android.arch.lifecycle.ViewModelProviders;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -79,7 +78,7 @@ public class AddProductActivity extends AppCompatActivity {
         addProductTask = viewModel.addProduct(product)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(documentReference -> {
-                    Toasty.success(this, getString(R.string.product_has_been_added), Toast.LENGTH_SHORT).show();
+                    Toasty.success(this, getString(R.string.product_added), Toast.LENGTH_SHORT).show();
                     finish();
                 })
                 .addOnFailureListener(e -> {
@@ -101,7 +100,7 @@ public class AddProductActivity extends AppCompatActivity {
     private boolean isTitleValid() {
         String title = txtTitle.getEditText().getText().toString().trim();
         if (title.isEmpty()) {
-            txtTitle.setError(getString(R.string.error_empty_title));
+            txtTitle.setError(getString(R.string.title_cant_be_empty));
             return false;
         }
         txtTitle.setError("");
@@ -111,7 +110,7 @@ public class AddProductActivity extends AppCompatActivity {
     private boolean isDescriptionValid() {
         String description = txtDescription.getEditText().getText().toString().trim();
         if (description.isEmpty()) {
-            txtDescription.setError(getString(R.string.error_empty_description));
+            txtDescription.setError(getString(R.string.description_cant_be_empty));
             return false;
         }
         txtDescription.setError("");

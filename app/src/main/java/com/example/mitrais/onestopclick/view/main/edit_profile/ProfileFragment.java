@@ -94,7 +94,7 @@ public class ProfileFragment extends Fragment {
         if (isAddressValid()) {
             if (isUploadInProgress() || isSaveProfileInProgress()) {
                 if (context != null)
-                    Toasty.info(context, getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+                    Toasty.info(context, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
             } else {
                 saveProfile();
             }
@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
     void onProfileImageClicked() {
         if (isUploadInProgress() || isSaveProfileInProgress()) {
             if (context != null)
-                Toasty.info(context, getString(R.string.save_profile_is_in_progress), Toast.LENGTH_SHORT).show();
+                Toasty.info(context, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
         } else if (!App.isOnline()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
@@ -151,7 +151,7 @@ public class ProfileFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> {
                     imgProfile.setVisibility(View.VISIBLE);
                     if (context != null)
-                        Toasty.success(context, getString(R.string.profile_has_been_saved), Toast.LENGTH_SHORT).show();
+                        Toasty.success(context, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
@@ -177,7 +177,7 @@ public class ProfileFragment extends Fragment {
                             .addOnCompleteListener(task -> imgProfile.hideProgressBar())
                             .addOnSuccessListener(aVoid -> {
                                 if (context != null)
-                                    Toasty.success(context, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show();
+                                    Toasty.success(context, getString(R.string.thumbnail_saved), Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
@@ -229,7 +229,7 @@ public class ProfileFragment extends Fragment {
     private boolean isAddressValid() {
         String address = txtAddress.getEditText().getText().toString().trim();
         if (address.isEmpty()) {
-            txtAddress.setError(getString(R.string.error_empty_address));
+            txtAddress.setError(getString(R.string.address_cant_be_empty));
             return false;
         }
         txtAddress.setError("");

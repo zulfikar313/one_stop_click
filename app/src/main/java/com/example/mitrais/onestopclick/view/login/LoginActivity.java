@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     void onLoginButtonClicked() {
         if (isEmailValid() & isPasswordValid()) {
             if (isLoginInProgress() || isSyncDataInProgress()) {
-                Toasty.info(this, getString(R.string.login_is_in_progress), Toast.LENGTH_SHORT).show();
+                Toasty.info(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
             } else {
                 login();
             }
@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.btn_google_sign_in)
     void onGoogleSignInButtonClicked() {
         if (isLoginInProgress() || isSyncDataInProgress()) {
-            Toasty.info(this, getString(R.string.login_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
         } else {
             openGoogleAccountChooser();
         }
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.txt_register)
     void onRegisterTextClicked() {
         if (isLoginInProgress() || isSyncDataInProgress()) {
-            Toasty.info(this, getString(R.string.login_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
         } else
             goToRegistrationPage();
     }
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.txt_forgot_password)
     void onForgotPasswordTextClicked() {
         if (isLoginInProgress() || isSyncDataInProgress()) {
-            Toasty.info(this, getString(R.string.login_is_in_progress), Toast.LENGTH_SHORT).show();
+            Toasty.info(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
         } else
             goToForgotPasswordPage();
     }
@@ -253,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
             txtEmail.setError(getString(R.string.email_cant_be_empty));
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            txtEmail.setError(getString(R.string.email_is_not_valid));
+            txtEmail.setError(getString(R.string.email_not_valid));
             return false;
         }
         txtEmail.setError("");
@@ -263,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
         if (password.isEmpty()) {
-            txtPassword.setError(getString(R.string.error_empty_password));
+            txtPassword.setError(getString(R.string.password_cant_be_empty));
             return false;
         }
         txtPassword.setError("");

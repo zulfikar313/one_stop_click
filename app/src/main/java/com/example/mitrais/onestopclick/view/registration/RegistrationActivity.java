@@ -63,7 +63,7 @@ public class RegistrationActivity extends AppCompatActivity {
     void onRegisterButtonClicked() {
         if (isEmailValid() & isPasswordValid() & isConfirmPasswordValid()) {
             if (isRegistrationInProgress() || isSendEmailInProgress())
-                Toasty.info(this, getString(R.string.registration_is_in_progress), Toast.LENGTH_SHORT).show();
+                Toasty.info(this, getString(R.string.registration_in_progress), Toast.LENGTH_SHORT).show();
             else {
                 String email = txtEmail.getEditText().getText().toString().trim();
                 String password = txtPassword.getEditText().getText().toString().trim();
@@ -110,7 +110,7 @@ public class RegistrationActivity extends AppCompatActivity {
             txtEmail.setError(getString(R.string.email_cant_be_empty));
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            txtEmail.setError(getString(R.string.email_is_not_valid));
+            txtEmail.setError(getString(R.string.email_not_valid));
             return false;
         }
         txtEmail.setError("");
@@ -123,7 +123,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private boolean isPasswordValid() {
         String password = txtPassword.getEditText().getText().toString().trim();
         if (password.isEmpty()) {
-            txtPassword.setError(getString(R.string.error_empty_password));
+            txtPassword.setError(getString(R.string.password_cant_be_empty));
             return false;
         }
         txtPassword.setError("");
@@ -137,10 +137,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String password = txtPassword.getEditText().getText().toString().trim();
         String confirmPassword = txtConfirmPassword.getEditText().getText().toString().trim();
         if (confirmPassword.isEmpty()) {
-            txtConfirmPassword.setError(getString(R.string.error_empty_confirm_password));
+            txtConfirmPassword.setError(getString(R.string.confirm_password_cant_be_empty));
             return false;
         } else if (!confirmPassword.equals(password)) {
-            txtConfirmPassword.setError(getString(R.string.error_passwords_not_matched));
+            txtConfirmPassword.setError(getString(R.string.passwords_not_matched));
             return false;
         }
         txtConfirmPassword.setError("");

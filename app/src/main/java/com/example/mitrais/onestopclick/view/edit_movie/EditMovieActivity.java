@@ -242,7 +242,7 @@ public class EditMovieActivity extends AppCompatActivity {
         saveProductTask = viewModel.saveProduct(product)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, getString(R.string.product_has_been_saved), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.product_saved), Toast.LENGTH_SHORT).show();
                     finish();
                 })
                 .addOnFailureListener(e -> {
@@ -263,7 +263,7 @@ public class EditMovieActivity extends AppCompatActivity {
         UploadTask = viewModel.uploadThumbnail(uri, filename)
                 .addOnSuccessListener(uri1 -> saveProductTask = viewModel.saveThumbnailUri(id, uri1)
                         .addOnCompleteListener(task -> imgThumbnail.hideProgressBar())
-                        .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.image_has_been_saved), Toast.LENGTH_SHORT).show())
+                        .addOnSuccessListener(aVoid -> Toasty.success(this, getString(R.string.thumbnail_saved), Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> {
                             Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
                             Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -406,7 +406,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private boolean isTitleValid() {
         String title = txtTitle.getEditText().getText().toString().trim();
         if (title.isEmpty()) {
-            txtTitle.setError(getString(R.string.error_empty_title));
+            txtTitle.setError(getString(R.string.title_cant_be_empty));
             return false;
         }
         txtTitle.setError("");
@@ -416,7 +416,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private boolean isDirectorValid() {
         String director = txtDirector.getEditText().getText().toString().trim();
         if (director.isEmpty()) {
-            txtDirector.setError(getString(R.string.error_empty_director));
+            txtDirector.setError(getString(R.string.director_cant_be_empty));
             return false;
         }
         txtDirector.setError("");
@@ -426,7 +426,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private boolean isDescriptionValid() {
         String description = txtDescription.getEditText().getText().toString().trim();
         if (description.isEmpty()) {
-            txtDescription.setError(getString(R.string.error_empty_description));
+            txtDescription.setError(getString(R.string.description_cant_be_empty));
             return false;
         }
         txtDescription.setError("");

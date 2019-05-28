@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     productSyncTask = viewModel.syncProfileProducts()
                             .addOnCompleteListener(task -> hideProgressBar())
-                            .addOnSuccessListener(queryDocumentSnapshots1 -> Toasty.success(this, getString(R.string.product_sync_success), Toast.LENGTH_SHORT).show())
+                            .addOnSuccessListener(queryDocumentSnapshots1 -> Toasty.success(this, getString(R.string.products_synchronized), Toast.LENGTH_SHORT).show())
                             .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
                 })
                 .addOnFailureListener(e -> {

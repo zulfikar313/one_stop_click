@@ -3,45 +3,28 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="email_cant_be_empty">Email can\'t be empty</string>
-    <string name="email_is_not_valid">Email is not valid</string>
-    <string name="error_empty_password">Password can\'t be empty</string>
     <string name="register">Register</string>
     <string name="confirm_password">Confirm password</string>
     <string name="registration">Registration</string>
-    <string name="error_empty_confirm_password">Confirm password can\'t be empty</string>
-    <string name="error_passwords_not_matched">Passwords not matched</string>
     <string name="error">Error</string>
-    <string name="message_not_verified_email">Email is not verified. Would you like to verify your email address?</string>
-    <string name="no">No</string>
-    <string name="verify">Verify</string>
-    <string name="message_verification_email_sent">Verification email has been sent to your email account</string>
-    <string name="attention">Attention</string>
-    <string name="message_check_email_for_verification">Verification email has been sent to your email account. Please check your email accont to verify your email address.</string>
+    <string name="genre">Genre</string>
+    <string name="upload_movie">Upload movie</string>
+    <string name="play_movie">Play movie</string>
+    <string name="reupload_movie">Reupload movie</string>
     <string name="ok">OK</string>
     <string name="logout">Logout</string>
     <string name="main_menu">Main menu</string>
     <string name="forgot_password">Forgot password</string>
     <string name="reset_password">Reset password</string>
-    <string name="message_check_email_to_reset_password">Please check your email to reset password</string>
-    <string name="login_is_in_progress">Login is in progress</string>
-    <string name="registration_is_in_progress">Registration is in progress</string>
-    <string name="send_verification_email_in_progress">Send verification email in progress</string>
-    <string name="send_reset_password_in_progress">Send reset password in progress</string>
+    <string name="no">No</string>
+    <string name="verify">Verify</string>
+    <string name="attention">Attention</string>
     <string name="movie">Movie</string>
     <string name="music">Music</string>
     <string name="book">Book</string>
     <string name="profile">Profile</string>
-    <string name="navigation_bar_open">Open navigation bar</string>
-    <string name="navigation_bar_close">Close navigation bar</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="save_profile">Save profile</string>
     <string name="address">Address</string>
-    <string name="error_empty_address">Address can\'t be empty</string>
-    <string name="save_profile_is_in_progress">Save profile is in progress</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="title">Title</string>
     <string name="author">Author</string>
     <string name="type">Type</string>
@@ -49,60 +32,97 @@
     <string name="zero">0</string>
     <string name="share">Share</string>
     <string name="sync">Sync</string>
-    <string name="product_sync_in_progress">Product sync in progress</string>
-    <string name="product_sync_success">Product sync success</string>
-    <string name="add_like_in_progress">Add like in progress</string>
-    <string name="add_dislike_in_progress">Add dislike in progress</string>
     <string name="save">Save</string>
-    <string name="product_not_found">Product not found</string>
     <string name="artist">Artist</string>
     <string name="director">Director</string>
-    <string name="error_empty_title">Title can\'t be empty</string>
-    <string name="error_empty_author">Author can\'t be empty</string>
-    <string name="error_empty_artist">Artist can\'t be empty</string>
-    <string name="error_empty_director">Director can\'t be empty</string>
-    <string name="error_empty_description">Description can\'t be empty</string>
-    <string name="image_has_been_saved">Image has been saved</string>
-    <string name="save_product_in_progress">Save product in progress</string>
-    <string name="product_has_been_saved">Product has been saved</string>
     <string name="remember_me">Remember me</string>
-    <string name="internet_required">internet is required to proceed</string>
     <string name="search">Search</string>
-    <string name="profile_has_been_saved">Profile has been saved</string>
-    <string name="failed_to_upload_thumbnail">Failed to upload thumbnail</string>
-    <string name="failed_to_save_product">Failed to save product</string>
     <string name="upload_trailer">Upload trailer</string>
-    <string name="failed_to_upload_trailer">Failed to upload trailer</string>
-    <string name="trailer_uploaded">Trailer uploaded</string>
     <string name="edit_product">Edit product</string>
     <string name="upload_music">Upload music</string>
     <string name="music_uploaded">Music uploaded</string>
-    <string name="error_failed_to_upload_music">Failed to upload music</string>
     <string name="home">Home</string>
-    <string name="book_file_not_found">Book file not found</string>
     <string name="upload_book">Upload book</string>
     <string name="edit_book">Edit book</string>
     <string name="book_file_name">Book filename</string>
     <string name="read_book">Read book</string>
-    <string name="upload_in_progress">Upload in progress</string>
-    <string name="book_has_been_uploaded">Book has been uploaded</string>
-    <string name="title_add_product">Add Product</string>
-    <string name="product_has_been_added">Product has been added</string>
-    <string name="failed_to_add_product">Failed to add product</string>
-    <string name="add_product_in_progress">Add product in progress</string>
     <string name="add">Add</string>
+    <string name="movie_or_book_genre">Movie/Book Genre</string>
+    <string name="music_genre">Music Genre</string>
+
+    <!--titles-->
+    <string name="title_science_fiction">Science Fiction</string>
+    <string name="title_add_product">Add Product</string>
+
+    <!--long messages-->
+    <string name="message_not_verified_email">Email is not verified. Would you like to verify your email address?</string>
+    <string name="message_verification_email_sent">Verification email has been sent to your email account</string>
+    <string name="message_check_email_for_verification">Verification email has been sent to your email account. Please check your email accont to verify your email address.</string>
+    <string name="message_check_email_to_reset_password">Please check your email to reset password</string>
+
+    <!--progress messages-->
+    <string name="registration_in_progress">Registration in progress</string>
+    <string name="send_verification_email_in_progress">Send verification email in progress</string>
+    <string name="send_reset_password_in_progress">Send reset password in progress</string>
+    <string name="login_in_progress">Login in progress</string>
+    <string name="save_profile_in_progress">Save profile in progress</string>
+    <string name="product_sync_in_progress">Product sync in progress</string>
+    <string name="add_product_in_progress">Add product in progress</string>
+    <string name="upload_in_progress">Upload in progress</string>
+    <string name="save_product_in_progress">Save product in progress</string>
+    <string name="add_like_in_progress">Add like in progress</string>
+    <string name="add_dislike_in_progress">Add dislike in progress</string>
+
+    <!--success messages-->
+    <string name="product_added">Product added</string>
+    <string name="book_uploaded">Book uploaded</string>
+    <string name="trailer_uploaded">Trailer uploaded</string>
+    <string name="profile_saved">Profile saved</string>
+    <string name="thumbnail_saved">Thumbnail saved</string>
+    <string name="products_synchronized">Products synchronized</string>
+    <string name="product_saved">Product saved</string>
+    <string name="movie_uploaded">Movie uploaded</string>
+
+    <!--validation error messages-->
+    <string name="email_cant_be_empty">Email can\'t be empty</string>
+    <string name="email_not_valid">Email not valid</string>
+    <string name="password_cant_be_empty">Password can\'t be empty</string>
+    <string name="confirm_password_cant_be_empty">Confirm password can\'t be empty</string>
+    <string name="passwords_not_matched">Passwords not matched</string>
+    <string name="address_cant_be_empty">Address can\'t be empty</string>
+    <string name="title_cant_be_empty">Title can\'t be empty</string>
+    <string name="author_cant_be_empty">Author can\'t be empty</string>
+    <string name="artist_cant_be_empty">Artist can\'t be empty</string>
+    <string name="director_cant_be_empty">Director can\'t be empty</string>
+    <string name="description_cant_be_empty">Description can\'t be empty</string>
+
+    <!--upload and download error messages-->
+    <string name="failed_to_upload_thumbnail">Failed to upload thumbnail</string>
+    <string name="failed_to_save_product">Failed to save product</string>
+    <string name="failed_to_upload_trailer">Failed to upload trailer</string>
+    <string name="failed_to_add_product">Failed to add product</string>
     <string name="failed_to_download_book">Failed to download book</string>
     <string name="failed_to_upload_book">Failed to upload book</string>
     <string name="failed_to_upload_music">Failed to upload music</string>
-    <string name="movie_or_book_genre">Movie/Book Genre</string>
+    <string name="failed_to_upload_movie">Failed to upload movie</string>
+
+    <!--other error messages-->
+    <string name="book_file_not_found">Book file not found</string>
+    <string name="movie_file_not_found">Movie file not found</string>
+    <string name="no_video_found">No video found</string>
+    <string name="no_music_found">No music found</string>
+    <string name="product_not_found">Product not found</string>
+    <string name="internet_required">internet required</string>
+
+    <!--book and movie genres-->
     <string name="fantasy">Fantasy</string>
     <string name="horror">Horror</string>
-    <string name="mistery">Mistery</string>
-    <string name="science_fiction">Science Fiction</string>
+    <string name="mistery">Mystery</string>
     <string name="biography">Biography</string>
     <string name="children">Children</string>
     <string name="action">Action</string>
-    <string name="music_genre">Music Genre</string>
+
+    <!--music genres-->
     <string name="rock">Rock</string>
     <string name="pop">Pop</string>
     <string name="jazz">Jazz</string>
@@ -110,20 +130,17 @@
     <string name="reggae">Reggae</string>
     <string name="rap">Rap</string>
     <string name="metal">Metal</string>
-    <string name="genre">Genre</string>
-    <string name="no_video_found">No video found</string>
-    <string name="no_music_found">No music found</string>
-    <string name="movie_file_not_found">Movie file not found</string>
-    <string name="upload_movie">Upload movie</string>
-    <string name="play_movie">Play movie</string>
-    <string name="failed_to_upload_movie">Failed to upload movie</string>
-    <string name="movie_uploaded">Movie uploaded</string>
-    <string name="reupload_movie">Reupload movie</string>
+
+    <!--mandatory string values-->
+    <string name="navigation_bar_open">Open navigation bar</string>
+    <string name="navigation_bar_close">Close navigation bar</string>
+
+    <!--string arrays-->
     <string-array name="movie_or_book_genre">
         <item></item>
         <item>Fantasy</item>
         <item>Horror</item>
-        <item>Mistery</item>
+        <item>Mystery</item>
         <item>Science Fiction</item>
         <item>Biography</item>
         <item>Children</item>
