@@ -3,12 +3,11 @@ package com.example.mitrais.onestopclick.view.login;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
-import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
+import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +27,7 @@ public class LoginViewModel extends AndroidViewModel {
     ProfileRepository profileRepo;
 
     @Inject
-    ProfileProductRepository profileProductRepository;
+    ProductRepository productRepo;
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
@@ -51,12 +50,8 @@ public class LoginViewModel extends AndroidViewModel {
         return authRepo.sendVerificationEmail(user);
     }
 
-    Task<DocumentSnapshot> syncAll(@NonNull FirebaseUser user) {
-        return profileRepo.sync(user.getEmail())
-                .addOnSuccessListener(documentSnapshot -> {
-                    profileProductRepository.sync()
-                            .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
-                });
+    Task<DocumentSnapshot> syncProfile(@NonNull FirebaseUser user) {
+        return profileRepo.sync(user.getEmail());
     }
 
     private void initDagger(Application application) {

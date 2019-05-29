@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 
+import java.util.ArrayList;
+
 @Entity(tableName = "product")
 public class Product {
     @PrimaryKey
@@ -24,20 +26,18 @@ public class Product {
     private String musicUri;
     private String trailerUri;
     private String movieUri;
+    private ArrayList<String> likedBy;
+    private ArrayList<String> dislikedBy;
     private int like;
     private int dislike;
-
-    @Ignore
     private boolean isLiked;
-
-    @Ignore
     private boolean isDisliked;
 
     @Ignore
     public Product() {
     }
 
-    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri, int like, int dislike) {
+    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri, ArrayList<String> likedBy, ArrayList<String> dislikedBy, int like, int dislike, boolean isLiked, boolean isDisliked) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -51,8 +51,12 @@ public class Product {
         this.musicUri = musicUri != null ? musicUri : "";
         this.trailerUri = trailerUri != null ? trailerUri : "";
         this.movieUri = movieUri != null ? movieUri : "";
+        this.likedBy = likedBy != null ? likedBy : new ArrayList<>();
+        this.dislikedBy = dislikedBy != null ? dislikedBy : new ArrayList<>();
         this.like = like;
         this.dislike = dislike;
+        this.isLiked = isLiked;
+        this.isDisliked = isDisliked;
     }
 
     @Exclude
@@ -160,6 +164,22 @@ public class Product {
 
     public void setMovieUri(String movieUri) {
         this.movieUri = movieUri;
+    }
+
+    public ArrayList<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(ArrayList<String> likedBy) {
+        this.likedBy = likedBy;
+    }
+
+    public ArrayList<String> getDislikedBy() {
+        return dislikedBy;
+    }
+
+    public void setDislikedBy(ArrayList<String> dislikedBy) {
+        this.dislikedBy = dislikedBy;
     }
 
     public int getLike() {

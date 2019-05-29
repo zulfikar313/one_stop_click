@@ -2,7 +2,6 @@ package com.example.mitrais.onestopclick.dagger.module;
 
 import com.example.mitrais.onestopclick.model.firestore.AuthService;
 import com.example.mitrais.onestopclick.model.firestore.ProductService;
-import com.example.mitrais.onestopclick.model.firestore.ProfileProductService;
 import com.example.mitrais.onestopclick.model.firestore.ProfileService;
 import com.example.mitrais.onestopclick.model.firestore.StorageService;
 
@@ -29,10 +28,5 @@ public class ServiceModule {
     @Provides
     ProductService provideProductService() {
         return ProductService.getInstance();
-    }
-
-    @Provides
-    ProfileProductService provideProfileProductService() {
-        return ProfileProductService.getInstance();
     }
 }

@@ -3,21 +3,20 @@ package com.example.mitrais.onestopclick.model.room;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
-import com.example.mitrais.onestopclick.model.ProfileProduct;
 
-@Database(entities = {Profile.class, Product.class, ProfileProduct.class}, version = 17)
+@Database(entities = {Profile.class, Product.class}, version = 19)
+@TypeConverters(Converter.class)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;
 
     public abstract ProfileDao profileDao();
 
     public abstract ProductDao productDao();
-
-    public abstract ProfileProductDao profileProductDao();
 
     public static synchronized MainDatabase getInstance(Context context) {
         if (instance == null) {

@@ -3,12 +3,10 @@ package com.example.mitrais.onestopclick.view.splash;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
-import com.example.mitrais.onestopclick.model.repository.ProfileProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,9 +23,6 @@ public class SplashViewModel extends AndroidViewModel {
     @Inject
     ProfileRepository profileRepo;
 
-    @Inject
-    ProfileProductRepository profileProductRepo;
-
     public SplashViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
@@ -37,15 +32,8 @@ public class SplashViewModel extends AndroidViewModel {
         return authRepo.getUser();
     }
 
-    Task<DocumentSnapshot> syncData(FirebaseUser user) {
-        if (user != null)
-            return profileRepo.sync(user.getEmail())
-                    .addOnSuccessListener(documentSnapshot -> {
-                        profileProductRepo.sync()
-                                .addOnFailureListener(e -> Log.e(TAG, e.getMessage()));
-                    });
-        else
-            return null;
+    Task<DocumentSnapshot> syncData(@NonNull FirebaseUser user) {
+        return profileRepo.sync(user.getEmail());
     }
 
     private void initDagger(Application application) {

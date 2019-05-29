@@ -36,4 +36,7 @@ public interface ProductDao {
 
     @Delete
     void delete(Product product);
+
+    @Query("UPDATE product SET isLiked = 0, isDisliked = 0")
+    void deleteBoundData();
 }

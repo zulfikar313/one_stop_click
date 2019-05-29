@@ -8,9 +8,11 @@ import android.util.Log;
 import com.example.mitrais.onestopclick.dagger.component.DaggerRepositoryComponent;
 import com.example.mitrais.onestopclick.dagger.component.RepositoryComponent;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.firestore.AuthService;
 import com.example.mitrais.onestopclick.model.firestore.ProductService;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,10 +40,12 @@ public class ProductRepository {
     @Inject
     ProductService productService;
 
+    @Inject
+    AuthService authService;
+
     public ProductRepository(Application application) {
         initDagger(application);
-        if (listenerRegistration == null)
-            addListener();
+        addListener();
     }
 
     // region room
@@ -68,6 +72,28 @@ public class ProductRepository {
 
     private void delete(Product product) {
         Completable.fromAction(() -> productDao.delete(product))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
+    }
+
+    public void deleteBoundData() {
+        Completable.fromAction(() -> productDao.deleteBoundData())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableObserver() {
@@ -117,8 +143,19 @@ public class ProductRepository {
     public Task<QuerySnapshot> sync() {
         return productService.sync().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                FirebaseUser user = authService.getUser();
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
+                if (product.getLikedBy() != null) {
+                    if (user != null)
+                        product.setLiked(product.getLikedBy().contains(user.getEmail()));
+                    product.setLike(product.getLikedBy().size());
+                }
+                if (product.getDislikedBy() != null) {
+                    if (user != null)
+                        product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
+                    product.setDislike(product.getDislikedBy().size());
+                }
                 insert(product);
             }
         });
@@ -155,10 +192,21 @@ public class ProductRepository {
     private void addListener() {
         listenerRegistration = ProductService.getReference().addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null) {
+                FirebaseUser user = authService.getUser();
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                     DocumentSnapshot documentSnapshot = dc.getDocument();
                     Product product = documentSnapshot.toObject(Product.class);
                     product.setId(documentSnapshot.getId());
+                    if (product.getLikedBy() != null) {
+                        if (user != null)
+                            product.setLiked(product.getLikedBy().contains(user.getEmail()));
+                        product.setLike(product.getLikedBy().size());
+                    }
+                    if (product.getDislikedBy() != null) {
+                        if (user != null)
+                            product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
+                        product.setDislike(product.getDislikedBy().size());
+                    }
                     switch (dc.getType()) {
                         case ADDED: {
                             insert(product);

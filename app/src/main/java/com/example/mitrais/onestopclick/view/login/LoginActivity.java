@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseUser user;
     private Task<AuthResult> loginTask;
     private Task<Void> sendEmailTask;
-    private Task<DocumentSnapshot> syncDataTask;
+    private Task<DocumentSnapshot> syncProfileTask;
 
     @Inject
     LoginViewModel viewModel;
@@ -222,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void goToMainPage() {
         showProgressBar();
-        syncDataTask = viewModel.syncAll(user)
+        syncProfileTask = viewModel.syncProfile(user)
                 .addOnCompleteListener(task -> {
                     hideProgressBar();
                     finish();
@@ -237,9 +238,6 @@ public class LoginActivity extends AppCompatActivity {
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    /**
-     * sign google account out then open google account chooser
-     */
     private void openGoogleAccountChooser() {
         googleSignInClient.signOut().addOnCompleteListener(task -> {
             Intent intent = googleSignInClient.getSignInIntent();
@@ -288,7 +286,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isSyncDataInProgress() {
-        return syncDataTask != null && !syncDataTask.isComplete();
+        return syncProfileTask != null && !syncProfileTask.isComplete();
     }
 
     private boolean isSendEmailInProgress() {

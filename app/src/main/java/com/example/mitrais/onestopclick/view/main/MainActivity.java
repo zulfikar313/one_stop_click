@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initDrawer();
         initFragment();
         observeProfile();
+        syncUserData();
     }
 
     @Override
@@ -218,21 +219,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void syncUserData() {
         showProgressBar();
         productSyncTask = viewModel.syncProducts()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    productSyncTask = viewModel.syncProfileProducts()
-                            .addOnCompleteListener(task -> hideProgressBar())
-                            .addOnSuccessListener(queryDocumentSnapshots1 -> Toasty.success(this, getString(R.string.products_synchronized), Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
-                })
-                .addOnFailureListener(e -> {
-                    hideProgressBar();
-                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                .addOnCompleteListener(task -> hideProgressBar())
+                .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    /**
-     * @return true if sync in progress
-     */
     private boolean isProductSyncInProgress() {
         return productSyncTask != null && !productSyncTask.isComplete();
     }

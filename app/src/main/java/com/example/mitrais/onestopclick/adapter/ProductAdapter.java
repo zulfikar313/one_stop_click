@@ -29,9 +29,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     public interface Listener {
         void onItemClicked(String id, String type);
 
-        void onLikeClicked(String id, boolean isLiked, boolean isDisliked);
+        void onLikeClicked(Product product);
 
-        void onDislikeClicked(String id, boolean isLiked, boolean isDisliked);
+        void onDislikeClicked(Product product);
 
         void onShareClicked(String id);
     }
@@ -160,7 +160,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             int position = getAdapterPosition();
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
-                listener.onLikeClicked(product.getId(), product.isLiked(), product.isDisliked());
+                listener.onLikeClicked(product);
             }
         }
 
@@ -169,7 +169,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             int position = getAdapterPosition();
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
-                listener.onDislikeClicked(product.getId(), product.isLiked(), product.isDisliked());
+                listener.onDislikeClicked(product);
             }
         }
 

@@ -18,16 +18,12 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.model.Product;
-import com.example.mitrais.onestopclick.model.ProfileProduct;
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
 import com.example.mitrais.onestopclick.adapter.ProductAdapter;
 import com.google.android.gms.tasks.Task;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -41,8 +37,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private static final String TAG = "ProductListFragment";
     private static final String ARG_PRODUCT_TYPE = "ARG_PRODUCT_TYPE";
     private static final String ARG_GENRE = "ARG_GENRE";
-    private List<Product> products;
-    private List<ProfileProduct> profileProducts;
     private Context context;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
@@ -64,10 +58,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
-    /**
-     * @param productType product type filter
-     * @return ProductListFragment new instance
-     */
     public static ProductListFragment newInstance(String productType, String genre) {
         ProductListFragment fragment = new ProductListFragment();
         Bundle args = new Bundle();
@@ -86,7 +76,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         initArguments();
         initRecyclerView();
         observeProducts(productType, genre);
-        observeProfileProducts();
         return view;
     }
 
@@ -123,18 +112,18 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onLikeClicked(String id, boolean isLiked, boolean isDisliked) {
+    public void onLikeClicked(Product product) {
         if (isAddLikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
         } else {
-            if (!isLiked) {
-                likeTask = viewModel.addLike(id)
+            if (!product.isLiked()) {
+                likeTask = viewModel.addLike(product)
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
             } else {
-                likeTask = viewModel.removeLike(id)
+                likeTask = viewModel.removeLike(product)
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
@@ -143,20 +132,20 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onDislikeClicked(String id, boolean isLiked, boolean isDisliked) {
+    public void onDislikeClicked(Product product) {
         if (isAddDislikeInProgress()) {
             if (context != null)
                 Toasty.info(context, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
         } else {
-            if (!isDisliked) {
+            if (!product.isDisliked()) {
                 dislikeTask = viewModel
-                        .addDislike(id)
+                        .addDislike(product)
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
             } else {
                 dislikeTask = viewModel
-                        .removeDislike(id)
+                        .removeDislike(product)
                         .addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());
                         });
@@ -195,77 +184,31 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         if (type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-
-                    // update local products data with profile products data
-                    ProductListFragment.this.products = products;
-                    syncProductWithProfile();
-
+                    productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getProductsByType(type).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    // update local products data with profile products data
-                    ProductListFragment.this.products = products;
-                    syncProductWithProfile();
-
+                    productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else if (type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
             viewModel.getProductsByGenre(genre).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    // update local products data with profile products data
-                    ProductListFragment.this.products = products;
-                    syncProductWithProfile();
-
+                    productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
         } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
             viewModel.getProductsByTypeAndGenre(type, genre).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
-                    // update local products data with profile products data
-                    ProductListFragment.this.products = products;
-                    syncProductWithProfile();
-
+                    productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
-        }
-    }
-
-    private void observeProfileProducts() {
-        viewModel.getAllProfileProducts().observe(getViewLifecycleOwner(), profileProducts -> {
-            if (profileProducts != null) {
-                ProductListFragment.this.profileProducts = profileProducts;
-                syncProductWithProfile();
-            }
-        });
-    }
-
-    private void syncProductWithProfile() {
-        List<Product> newProducts = new ArrayList<>();
-        if (products != null && profileProducts != null) {
-            for (Product product : products) {
-                product.setLike(0);
-                product.setDislike(0);
-                for (ProfileProduct profileProduct : profileProducts) {
-                    if (product.getId().equals(profileProduct.getProductId())) {
-                        if (viewModel.getUser().getEmail().equals(profileProduct.getEmail())) {
-                            product.setLiked(profileProduct.isLiked());
-                            product.setDisliked(profileProduct.isDisliked());
-                        }
-                        if (profileProduct.isLiked())
-                            product.setLike(product.getLike() + 1);
-                        if (profileProduct.isDisliked())
-                            product.setDislike(product.getDislike() + 1);
-                    }
-                }
-                newProducts.add(product);
-            }
-            productAdapter.submitList(newProducts);
         }
     }
 
