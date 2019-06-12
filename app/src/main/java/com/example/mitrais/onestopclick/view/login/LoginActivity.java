@@ -129,7 +129,10 @@ public class LoginActivity extends AppCompatActivity {
                 googleSignIn(account);
             } catch (ApiException e) {
                 Log.e(TAG, e.getMessage());
+                Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
+        } else {
+            Toasty.error(this, getString(R.string.unknown_error), Toast.LENGTH_LONG).show();
         }
     }
 

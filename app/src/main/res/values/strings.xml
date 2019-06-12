@@ -134,6 +134,7 @@
     <!--mandatory string values-->
     <string name="navigation_bar_open">Open navigation bar</string>
     <string name="navigation_bar_close">Close navigation bar</string>
+    <string name="unknown_error">Unknown error</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">
