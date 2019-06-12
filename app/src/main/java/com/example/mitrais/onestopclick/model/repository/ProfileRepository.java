@@ -102,6 +102,14 @@ public class ProfileRepository {
                 });
     }
 
+    public Task<Void> saveProfileAdminAccess(String email, boolean isAdmin) {
+        return profileService.saveProfileAdminAccess(email, isAdmin)
+                .addOnSuccessListener(aVoid -> {
+                    if (listenerRegistration == null)
+                        addListener(email);
+                });
+    }
+
     public Task<DocumentSnapshot> sync(String email) {
         return profileService.sync(email)
                 .addOnSuccessListener(documentSnapshot -> {

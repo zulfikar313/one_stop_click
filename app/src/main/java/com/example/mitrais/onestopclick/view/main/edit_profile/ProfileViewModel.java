@@ -52,6 +52,10 @@ public class ProfileViewModel extends AndroidViewModel {
         return profileRepo.saveImageUri(profile);
     }
 
+    Task<Void> saveProfileAdminAccess(String email, boolean isAdmin) {
+        return profileRepo.saveProfileAdminAccess(email, isAdmin);
+    }
+
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

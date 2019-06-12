@@ -14,15 +14,17 @@ public class Profile {
     private String email = "";
     private String imageUri;
     private String address;
+    private boolean isAdmin;
 
     @Ignore
     public Profile() {
     }
 
-    public Profile(@NonNull String email, String imageUri, String address) {
+    public Profile(@NonNull String email, String imageUri, String address, boolean isAdmin) {
         this.email = email;
         this.imageUri = imageUri == null ? "" : imageUri;
         this.address = address == null ? "" : address;
+        this.isAdmin = isAdmin;
     }
 
     @Exclude
@@ -50,5 +52,13 @@ public class Profile {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }

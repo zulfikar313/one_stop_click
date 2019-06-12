@@ -35,10 +35,12 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private Context context;
+    private Profile profile;
     private Uri profileImgUri = Uri.parse("");
     private Task<Uri> uploadTask;
     private Task<Void> saveProfileTask;
     private String email;
+    private int adminCounter = 0;
 
     @Inject
     ProfileViewModel viewModel;
@@ -55,9 +57,6 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
-    /**
-     * @return ProfileFragment new instance
-     */
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -87,6 +86,15 @@ public class ProfileFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         this.context = null;
+    }
+
+    @OnClick(R.id.img_admin_access)
+    void onAdminAccessClicked() {
+        adminCounter++;
+        if (adminCounter == 7) {
+            adminCounter = 0;
+            saveProfileAdminAccess(profile.getEmail(), !profile.isAdmin());
+        }
     }
 
     @OnClick(R.id.btn_save_profile)
@@ -125,10 +133,6 @@ public class ProfileFragment extends Fragment {
     }
 
     // region private methods
-
-    /**
-     * initialize dagger injection
-     */
     private void initDagger() {
         ProfileFragmentComponent component = DaggerProfileFragmentComponent.builder()
                 .profileFragment(this)
@@ -136,9 +140,6 @@ public class ProfileFragment extends Fragment {
         component.inject(this);
     }
 
-    /**
-     * save profile data
-     */
     private void saveProfile() {
         showProgressBar();
         String address = txtAddress.getEditText().getText().toString().trim();
@@ -152,6 +153,24 @@ public class ProfileFragment extends Fragment {
                     imgProfile.setVisibility(View.VISIBLE);
                     if (context != null)
                         Toasty.success(context, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressBar();
+                    if (context != null)
+                        Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.getMessage());
+                });
+    }
+
+    private void saveProfileAdminAccess(String email, boolean isAdmin) {
+        showProgressBar();
+        saveProfileTask = viewModel.saveProfileAdminAccess(email, isAdmin)
+                .addOnCompleteListener(task -> hideProgressBar())
+                .addOnSuccessListener(aVoid -> {
+                    if (isAdmin)
+                        Toast.makeText(context, getString(R.string.youre_now_an_admin), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(context, getString(R.string.youre_no_longer_an_admin), Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     hideProgressBar();
@@ -196,6 +215,7 @@ public class ProfileFragment extends Fragment {
     private void observeProfile() {
         viewModel.getProfileByEmail(viewModel.getUser().getEmail()).observe(this, profile -> {
             if (profile != null) {
+                this.profile = profile;
                 bindProfile(profile);
                 imgProfile.setVisibility(View.VISIBLE);
             }
