@@ -1,9 +1,11 @@
 package com.example.mitrais.onestopclick.view.main.product_list;
 
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
@@ -37,6 +40,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private static final String TAG = "ProductListFragment";
     private static final String ARG_PRODUCT_TYPE = "ARG_PRODUCT_TYPE";
     private static final String ARG_GENRE = "ARG_GENRE";
+    private Profile profile;
     private Context context;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
@@ -75,6 +79,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         initDagger();
         initArguments();
         initRecyclerView();
+        observeProfile(viewModel.getUser().getEmail());
         observeProducts(productType, genre);
         return view;
     }
@@ -180,6 +185,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         recProduct.setLayoutManager(new LinearLayoutManager(context));
     }
 
+    private void observeProfile(String email) {
+        viewModel.getProfileByEmail(email).observe(getViewLifecycleOwner(), profile -> this.profile = profile);
+    }
+
     private void observeProducts(String type, String genre) {
         if (type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
             viewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
@@ -221,6 +230,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private void goToEditBookPage(String id) {
         Intent intent = new Intent(context, EditBookActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }

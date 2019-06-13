@@ -19,6 +19,7 @@ public class Constant {
 
     // extras
     public static final String EXTRA_PRODUCT_ID = "EXTRA_PRODUCT_ID";
+    public static final String EXTRA_IS_ADMIN = "EXTRA_IS_ADMIN";
     public static final String EXTRA_BOOK_URI = "EXTRA_BOOK_URI";
     public static final String EXTRA_MOVIE_URI = "EXTRA_MOVIE_URI";
 

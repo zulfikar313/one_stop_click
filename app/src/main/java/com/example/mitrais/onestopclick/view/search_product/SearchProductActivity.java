@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
@@ -32,6 +33,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     private static final String TAG = "SearchProductActivity";
     public static final String EXTRA_SEARCH_QUERY = "EXTRA_SEARCH_QUERY";
     private String search;
+    private Profile profile;
     private SearchProductViewModel viewModel;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
@@ -56,6 +58,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
         initExtra();
         initViewModel();
         initRecyclerView();
+        observeProfile(viewModel.getUser().getEmail());
         observeProduct(search);
     }
 
@@ -74,6 +77,10 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
         recProduct.setHasFixedSize(true);
         recProduct.setAdapter(productAdapter);
         recProduct.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void observeProfile(String email) {
+        viewModel.getProfileByEmail(email).observe(this, profile -> this.profile = profile);
     }
 
     private void observeProduct(String search) {
@@ -148,6 +155,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     private void goToEditBookPage(String id) {
         Intent intent = new Intent(this, EditBookActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }

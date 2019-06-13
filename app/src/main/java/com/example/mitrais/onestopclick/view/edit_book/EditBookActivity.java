@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ public class EditBookActivity extends AppCompatActivity {
     private Uri thumbnailUri = Uri.parse("");
     private Uri bookUri = Uri.parse("");
     private String productId;
+    private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
@@ -64,6 +66,9 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
+    @BindView(R.id.btn_save)
+    AppCompatButton btnSave;
+
     @BindView(R.id.empty_file_card)
     CardView emptyFileCard;
 
@@ -72,6 +77,12 @@ public class EditBookActivity extends AppCompatActivity {
 
     @BindView(R.id.txt_book_filename)
     TextView txtBookFilename;
+
+    @BindView(R.id.btn_read_book)
+    AppCompatButton btnReadBook;
+
+    @BindView(R.id.btn_edit_book)
+    AppCompatButton btnEditBook;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -86,7 +97,19 @@ public class EditBookActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
+            isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             observeProduct(productId);
+
+            if (!isAdmin) {
+                txtTitle.getEditText().setEnabled(false);
+                txtAuthor.getEditText().setEnabled(false);
+                txtDescription.getEditText().setEnabled(false);
+                spGenre.setEnabled(false);
+                btnSave.setVisibility(View.GONE);
+                emptyFileCard.setVisibility(View.GONE);
+                bookFileCard.setVisibility(View.VISIBLE);
+                btnEditBook.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -139,7 +162,8 @@ public class EditBookActivity extends AppCompatActivity {
                     openBookFileChooser();
                     break;
                 default: // img_thumbnail clicked
-                    openThumbnailFileChooser();
+                    if (isAdmin)
+                        openThumbnailFileChooser();
                     break;
             }
         }
@@ -294,9 +318,6 @@ public class EditBookActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * initialize dagger injection
-     */
     private void initDagger() {
         EditBookActivityComponent component = DaggerEditBookActivityComponent.builder()
                 .editBookActivity(this)
@@ -304,9 +325,6 @@ public class EditBookActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    /**
-     * initialize genre spinner
-     */
     private void initSpinner() {
         genreAdapter = ArrayAdapter.createFromResource(this, R.array.movie_or_book_genre, R.layout.genre_spinner_item);
         genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
