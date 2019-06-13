@@ -163,6 +163,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     private void goToEditMusicPage(String id) {
         Intent intent = new Intent(this, EditMusicActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }

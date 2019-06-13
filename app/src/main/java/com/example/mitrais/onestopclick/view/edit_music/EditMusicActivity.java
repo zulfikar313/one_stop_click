@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,6 +53,7 @@ public class EditMusicActivity extends AppCompatActivity {
     private Uri musicUri = Uri.parse("");
     private ExoPlayer musicPlayer;
     private String productId;
+    private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
@@ -69,11 +71,17 @@ public class EditMusicActivity extends AppCompatActivity {
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
+    @BindView(R.id.btn_save)
+    AppCompatButton btnSave;
+
     @BindView(R.id.sp_genre)
     Spinner spGenre;
 
     @BindView(R.id.music_view)
     CustomMusicView musicView;
+
+    @BindView(R.id.btn_upload_music)
+    AppCompatButton btnUploadMusic;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -88,7 +96,17 @@ public class EditMusicActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
+            isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             observeProduct(productId);
+
+            if (!isAdmin) {
+                txtTitle.getEditText().setEnabled(false);
+                txtArtist.getEditText().setEnabled(false);
+                txtDescription.getEditText().setEnabled(false);
+                spGenre.setEnabled(false);
+                btnSave.setVisibility(View.GONE);
+                btnUploadMusic.setVisibility(View.GONE);
+            }
         }
     }
 

@@ -1,11 +1,9 @@
 package com.example.mitrais.onestopclick.view.main.product_list;
 
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -238,6 +236,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private void goToEditMusicPage(String id) {
         Intent intent = new Intent(context, EditMusicActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
