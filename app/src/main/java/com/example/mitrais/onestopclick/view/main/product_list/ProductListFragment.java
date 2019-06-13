@@ -244,6 +244,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private void goToEditMoviePage(String id) {
         Intent intent = new Intent(context, EditMovieActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }

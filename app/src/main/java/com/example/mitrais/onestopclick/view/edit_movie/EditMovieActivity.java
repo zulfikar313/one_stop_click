@@ -57,6 +57,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private Uri movieUri = Uri.parse("");
     private ExoPlayer trailerPlayer;
     private String productId;
+    private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
@@ -77,8 +78,14 @@ public class EditMovieActivity extends AppCompatActivity {
     @BindView(R.id.sp_genre)
     Spinner spGenre;
 
+    @BindView(R.id.btn_save)
+    AppCompatButton btnSave;
+
     @BindView(R.id.trailer_view)
     CustomVideoView trailerView;
+
+    @BindView(R.id.btn_upload_trailer)
+    AppCompatButton btnUploadTrailer;
 
     @BindView(R.id.txt_movie_file_not_found)
     TextView txtMovieFileNotFound;
@@ -102,7 +109,18 @@ public class EditMovieActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
+            isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             observeProduct(productId);
+        }
+
+        if (!isAdmin) {
+            txtTitle.getEditText().setEnabled(false);
+            txtDirector.getEditText().setEnabled(false);
+            txtDescription.getEditText().setEnabled(false);
+            spGenre.setEnabled(false);
+            btnSave.setVisibility(View.GONE);
+            btnUploadTrailer.setVisibility(View.GONE);
+            btnUploadMovie.setVisibility(View.GONE);
         }
     }
 

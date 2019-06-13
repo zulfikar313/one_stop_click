@@ -171,6 +171,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     private void goToEditMoviePage(String id) {
         Intent intent = new Intent(this, EditMovieActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);
+        intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
