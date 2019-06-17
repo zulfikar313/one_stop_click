@@ -25,7 +25,7 @@
         app:layout_constraintVertical_bias="0.3">
 
         <LinearLayout
-            android:id="@+id/layout_input"
+            android:id="@+id/input_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -70,6 +70,33 @@
                     android:hint="@string/address"
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/admin_input_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/label_admin_access"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@string/admin_access"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Switch
+                    android:id="@+id/sw_admin_access"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/label_admin_access"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/label_admin_access" />
+
+            </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_save_profile"

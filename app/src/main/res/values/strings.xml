@@ -137,6 +137,7 @@
     <string name="unknown_error">Unknown error</string>
     <string name="youre_now_an_admin">You\'re now an admin</string>
     <string name="youre_no_longer_an_admin">You\'re no longer an admin</string>
+    <string name="admin_access">Admin access</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

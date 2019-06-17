@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,12 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
+    @BindView(R.id.admin_input_container)
+    ConstraintLayout adminInputContainer;
+
+    @BindView(R.id.sw_admin_access)
+    Switch swAdminAccess;
+
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -93,7 +101,7 @@ public class ProfileFragment extends Fragment {
         adminCounter++;
         if (adminCounter == 7) {
             adminCounter = 0;
-            saveProfileAdminAccess(profile.getEmail(), !profile.isAdmin());
+            adminInputContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -147,6 +155,7 @@ public class ProfileFragment extends Fragment {
         profile.setEmail(viewModel.getUser().getEmail());
         profile.setAddress(address);
         profile.setImageUri(profileImgUri.toString());
+        profile.setAdmin(swAdminAccess.isChecked());
         saveProfileTask = viewModel.saveProfile(profile)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> {
@@ -162,27 +171,6 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    private void saveProfileAdminAccess(String email, boolean isAdmin) {
-        showProgressBar();
-        saveProfileTask = viewModel.saveProfileAdminAccess(email, isAdmin)
-                .addOnCompleteListener(task -> hideProgressBar())
-                .addOnSuccessListener(aVoid -> {
-                    if (isAdmin)
-                        Toast.makeText(context, getString(R.string.youre_now_an_admin), Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(context, getString(R.string.youre_no_longer_an_admin), Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    hideProgressBar();
-                    if (context != null)
-                        Toasty.error(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, e.getMessage());
-                });
-    }
-
-    /**
-     * upload profile image
-     */
     private void uploadProfileImage() {
         imgProfile.showProgressBar();
         String filename = email + "." + getFileExtension(profileImgUri);
@@ -218,6 +206,7 @@ public class ProfileFragment extends Fragment {
                 this.profile = profile;
                 bindProfile(profile);
                 imgProfile.setVisibility(View.VISIBLE);
+                adminInputContainer.setVisibility(profile.isAdmin() ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -228,6 +217,7 @@ public class ProfileFragment extends Fragment {
         if (profile.getImageUri() != null && !profile.getImageUri().isEmpty()) {
             imgProfile.loadImageUri(Uri.parse(profile.getImageUri()));
         }
+        swAdminAccess.setChecked(profile.isAdmin());
     }
 
     private void openImageFileChooser() {
@@ -243,9 +233,6 @@ public class ProfileFragment extends Fragment {
         return mime.getExtensionFromMimeType(resolver.getType(uri));
     }
 
-    /**
-     * @return true if address valid
-     */
     private boolean isAddressValid() {
         String address = txtAddress.getEditText().getText().toString().trim();
         if (address.isEmpty()) {
@@ -256,16 +243,10 @@ public class ProfileFragment extends Fragment {
         return true;
     }
 
-    /**
-     * @return true if upload in progress
-     */
     private boolean isUploadInProgress() {
         return uploadTask != null && !uploadTask.isComplete();
     }
 
-    /**
-     * @return true if save profile in progress
-     */
     private boolean isSaveProfileInProgress() {
         return saveProfileTask != null && !saveProfileTask.isComplete();
     }
