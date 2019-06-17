@@ -18,14 +18,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:gravity="center"
+            android:layout_marginEnd="8dp"
+            android:padding="8dp"
             android:text="@string/title"
+            android:textAlignment="textStart"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:textColor="#000"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/img_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/txt_type" />
 
         <com.example.mitrais.onestopclick.custom_view.CustomImageView
             android:id="@+id/img_thumbnail"
@@ -34,7 +36,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_title"/>
+            app:layout_constraintTop_toBottomOf="@id/txt_title" />
 
         <TextView
             android:id="@+id/txt_author"
@@ -43,11 +45,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:gravity="center"
+            android:padding="8dp"
             android:text="@string/author"
+            android:textAlignment="textStart"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:textColor="#000"
-            app:layout_constraintEnd_toEndOf="@id/img_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/img_thumbnail" />
 
@@ -69,12 +72,26 @@
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="center_vertical"
             android:text="@string/description"
             android:textColor="#000"
-            app:layout_constraintBottom_toBottomOf="@id/txt_author"
+            app:layout_constraintBottom_toBottomOf="@id/img_thumbnail"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/img_thumbnail"
             app:layout_constraintTop_toTopOf="@id/img_thumbnail" />
+
+
+        <TextView
+            android:id="@+id/txt_views"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="@string/views"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_author" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -88,7 +105,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_author">
+            app:layout_constraintTop_toBottomOf="@+id/txt_views">
 
             <ImageView
                 android:id="@+id/img_like"

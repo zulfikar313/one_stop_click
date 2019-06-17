@@ -100,16 +100,17 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onItemClicked(String id, String type) {
-        switch (type) {
+    public void onItemClicked(Product product) {
+        viewModel.addView(product);
+        switch (product.getType()) {
             case Constant.PRODUCT_TYPE_BOOK:
-                goToEditBookPage(id);
+                goToEditBookPage(product.getId());
                 break;
             case Constant.PRODUCT_TYPE_MUSIC:
-                goToEditMusicPage(id);
+                goToEditMusicPage(product.getId());
                 break;
             default: // movie
-                goToEditMoviePage(id);
+                goToEditMoviePage(product.getId());
                 break;
         }
     }

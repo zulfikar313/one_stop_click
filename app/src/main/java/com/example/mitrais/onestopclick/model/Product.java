@@ -28,6 +28,7 @@ public class Product {
     private String movieUri;
     private ArrayList<String> likedBy;
     private ArrayList<String> dislikedBy;
+    private ArrayList<String> viewedBy;
     private int like;
     private int dislike;
     private boolean isLiked;
@@ -37,7 +38,9 @@ public class Product {
     public Product() {
     }
 
-    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author, String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri, ArrayList<String> likedBy, ArrayList<String> dislikedBy, int like, int dislike, boolean isLiked, boolean isDisliked) {
+    public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
+                   String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
+                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, int like, int dislike, boolean isLiked, boolean isDisliked) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -53,6 +56,7 @@ public class Product {
         this.movieUri = movieUri != null ? movieUri : "";
         this.likedBy = likedBy != null ? likedBy : new ArrayList<>();
         this.dislikedBy = dislikedBy != null ? dislikedBy : new ArrayList<>();
+        this.viewedBy = viewedBy != null ? viewedBy : new ArrayList<>();
         this.like = like;
         this.dislike = dislike;
         this.isLiked = isLiked;
@@ -196,6 +200,14 @@ public class Product {
 
     public void setDislike(int dislike) {
         this.dislike = dislike;
+    }
+
+    public ArrayList<String> getViewedBy() {
+        return viewedBy;
+    }
+
+    public void setViewedBy(ArrayList<String> viewedBy) {
+        this.viewedBy = viewedBy;
     }
 
     @Exclude

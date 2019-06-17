@@ -59,6 +59,18 @@ public class ProductListViewModel extends AndroidViewModel {
         return productRepo.getByTypeAndGenre(type, genre);
     }
 
+    void addView(Product product) {
+        String email = authRepo.getUser().getEmail();
+        ArrayList<String> viewedBy = product.getViewedBy();
+
+        if (!viewedBy.contains(email))
+            viewedBy.add(email);
+
+        product.setViewedBy(viewedBy);
+
+        productRepo.save(product);
+    }
+
     Task<Void> addLike(Product product) {
         String email = authRepo.getUser().getEmail();
         ArrayList<String> likedBy = product.getLikedBy();

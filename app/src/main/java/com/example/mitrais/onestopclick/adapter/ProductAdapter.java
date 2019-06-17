@@ -27,7 +27,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     private Context context;
 
     public interface Listener {
-        void onItemClicked(String id, String type);
+        void onItemClicked(Product product);
 
         void onLikeClicked(Product product);
 
@@ -95,6 +95,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_type)
         TextView txtType;
 
+        @BindView(R.id.txt_views)
+        TextView txtViews;
+
         @BindView(R.id.img_like)
         ImageView imgLike;
 
@@ -114,14 +117,11 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
                     Product product = getItem(position);
-                    listener.onItemClicked(product.getId(), product.getType());
+                    listener.onItemClicked(product);
                 }
             });
         }
 
-        /**
-         * @param product product object
-         */
         public void bind(Product product) {
             txtTitle.setText(product.getTitle());
             txtType.setText(product.getType());
@@ -143,9 +143,11 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 }
             }
             txtDescription.setText(product.getDescription());
+            int views = product.getViewedBy() != null ? product.getViewedBy().size() : 0;
+            txtViews.setText(context.getString(R.string.views) + " " + views);
+
             imgLike.setImageDrawable(context.getDrawable(product.isLiked() ? R.drawable.ic_like_active : R.drawable.ic_like));
             imgDislike.setImageDrawable(context.getDrawable(product.isDisliked() ? R.drawable.ic_dislike_active : R.drawable.ic_dislike));
-
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
