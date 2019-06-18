@@ -17,6 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,8 @@ import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
 import com.google.android.gms.tasks.Task;
+
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -62,6 +66,23 @@ public class EditBookActivity extends AppCompatActivity {
 
     @BindView(R.id.sp_genre)
     Spinner spGenre;
+
+    @BindView(R.id.rg_rating)
+    RadioGroup rgRating;
+
+    @BindView(R.id.rb_1)
+    RadioButton rb1;
+
+    @BindView(R.id.rb_2)
+    RadioButton rb2;
+    @BindView(R.id.rb_3)
+    RadioButton rb3;
+
+    @BindView(R.id.rb_4)
+    RadioButton rb4;
+
+    @BindView(R.id.rb_5)
+    RadioButton rb5;
 
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
@@ -213,11 +234,30 @@ public class EditBookActivity extends AppCompatActivity {
             int position = genreAdapter.getPosition(product.getGenre());
             spGenre.setSelection(position);
         }
+
+        if (product.getRating() != null) {
+            String email = viewModel.getUser().getEmail();
+            int rating = product.getRating().get(email) != null ? product.getRating().get(email) : 0;
+            switch (rating) {
+                case 1:
+                    rb1.setChecked(true);
+                    break;
+                case 2:
+                    rb2.setChecked(true);
+                    break;
+                case 3:
+                    rb3.setChecked(true);
+                    break;
+                case 4:
+                    rb4.setChecked(true);
+                    break;
+                case 5:
+                    rb5.setChecked(true);
+                    break;
+            }
+        }
     }
 
-    /**
-     * @param id product id
-     */
     private void saveProduct(String id) {
         showProgressBar();
         hideSoftKeyboard();
@@ -234,6 +274,28 @@ public class EditBookActivity extends AppCompatActivity {
         product.setGenre(spGenre.getSelectedItem().toString());
         product.setThumbnailUri(thumbnailUri.toString());
         product.setBookUri(bookUri.toString());
+
+        String email = viewModel.getUser().getEmail();
+        if (product.getRating() == null)
+            product.setRating(new HashMap<>());
+
+        switch (rgRating.getCheckedRadioButtonId()) {
+            case R.id.rb_1:
+                product.getRating().put(email, 1);
+                break;
+            case R.id.rb_2:
+                product.getRating().put(email, 2);
+                break;
+            case R.id.rb_3:
+                product.getRating().put(email, 3);
+                break;
+            case R.id.rb_4:
+                product.getRating().put(email, 4);
+                break;
+            case R.id.rb_5:
+                product.getRating().put(email, 5);
+                break;
+        }
 
         saveProductTask = viewModel.saveProduct(product)
                 .addOnCompleteListener(task -> hideProgressBar())

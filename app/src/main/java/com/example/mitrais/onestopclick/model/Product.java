@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
 @Entity(tableName = "product")
 public class Product {
     @PrimaryKey
@@ -29,6 +29,7 @@ public class Product {
     private ArrayList<String> likedBy;
     private ArrayList<String> dislikedBy;
     private ArrayList<String> viewedBy;
+    private HashMap<String, Integer> rating;
     private int like;
     private int dislike;
     private boolean isLiked;
@@ -40,7 +41,7 @@ public class Product {
 
     public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
                    String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
-                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, int like, int dislike, boolean isLiked, boolean isDisliked) {
+                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, HashMap<String, Integer> rating, int like, int dislike, boolean isLiked, boolean isDisliked) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -57,6 +58,7 @@ public class Product {
         this.likedBy = likedBy != null ? likedBy : new ArrayList<>();
         this.dislikedBy = dislikedBy != null ? dislikedBy : new ArrayList<>();
         this.viewedBy = viewedBy != null ? viewedBy : new ArrayList<>();
+        this.rating = rating != null ? rating : new HashMap<>();
         this.like = like;
         this.dislike = dislike;
         this.isLiked = isLiked;
@@ -208,6 +210,14 @@ public class Product {
 
     public void setViewedBy(ArrayList<String> viewedBy) {
         this.viewedBy = viewedBy;
+    }
+
+    public HashMap<String, Integer> getRating() {
+        return rating;
+    }
+
+    public void setRating(HashMap<String, Integer> rating) {
+        this.rating = rating;
     }
 
     @Exclude

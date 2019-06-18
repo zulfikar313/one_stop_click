@@ -139,6 +139,12 @@
     <string name="youre_no_longer_an_admin">You\'re no longer an admin</string>
     <string name="admin_access">Admin access</string>
     <string name="views">Views</string>
+    <string name="your_rating">Your rating</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

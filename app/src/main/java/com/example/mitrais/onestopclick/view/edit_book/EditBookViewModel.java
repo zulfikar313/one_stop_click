@@ -9,14 +9,19 @@ import android.support.annotation.NonNull;
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FileDownloadTask;
 
 import javax.inject.Inject;
 
 public class EditBookViewModel extends AndroidViewModel {
+    @Inject
+    AuthRepository authRepo;
+
     @Inject
     StorageRepository storageRepo;
 
@@ -26,6 +31,10 @@ public class EditBookViewModel extends AndroidViewModel {
     public EditBookViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
+    }
+
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
     LiveData<Product> getProductById(String id) {
