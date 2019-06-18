@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.model.Profile;
+import com.example.mitrais.onestopclick.view.add_profile.AddProfileActivity;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordActivity;
 import com.example.mitrais.onestopclick.view.main.MainActivity;
 import com.example.mitrais.onestopclick.view.registration.RegistrationActivity;
@@ -28,7 +30,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import javax.inject.Inject;
 
@@ -137,10 +138,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // region private methods
-
-    /**
-     * initialize dagger injection
-     */
     private void initDagger() {
         LoginActivityComponent component = DaggerLoginActivityComponent.builder()
                 .loginActivity(this)
@@ -148,9 +145,6 @@ public class LoginActivity extends AppCompatActivity {
         component.inject(this);
     }
 
-    /**
-     * initialize google sign in client
-     */
     private void initGoogleSigninClient() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(Constant.WEB_CLIENT_ID)
@@ -159,11 +153,6 @@ public class LoginActivity extends AppCompatActivity {
         googleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
-    /**
-     * sign in using google account
-     *
-     * @param account google account
-     */
     private void googleSignIn(GoogleSignInAccount account) {
         showProgressBar();
         loginTask = viewModel.googleSignIn(account)
@@ -175,9 +164,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toasty.error(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    /**
-     * login using email and password
-     */
     private void login() {
         showProgressBar();
 
@@ -203,11 +189,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toasty.error(this, e.getMessage(), Toasty.LENGTH_SHORT).show());
     }
 
-    /**
-     * send verification email to user email address
-     *
-     * @param user user firebase account
-     */
     private void sendVerificationEmail(FirebaseUser user) {
         showProgressBar();
         sendEmailTask = viewModel.sendVerificationEmail(user)
@@ -221,18 +202,25 @@ public class LoginActivity extends AppCompatActivity {
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    /**
-     * sync user data then go to main page
-     */
     private void goToMainPage() {
         showProgressBar();
         syncProfileTask = viewModel.syncProfile(user)
-                .addOnCompleteListener(task -> {
+                .addOnSuccessListener(documentSnapshot -> {
                     hideProgressBar();
-                    finish();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    CustomIntent.customType(LoginActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+                    Profile profile = documentSnapshot.toObject(Profile.class);
+                    if (profile != null) {
+                        // go to main page
+                        finish();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        CustomIntent.customType(LoginActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+                    } else {
+                        // go to add profile page
+                        finish();
+                        Intent intent = new Intent(LoginActivity.this, AddProfileActivity.class);
+                        startActivity(intent);
+                        CustomIntent.customType(LoginActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+                    }
                 });
     }
 

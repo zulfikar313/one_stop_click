@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.model.Profile;
+import com.example.mitrais.onestopclick.view.add_profile.AddProfileActivity;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.MainActivity;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,16 +50,6 @@ public class SplashActivity extends AppCompatActivity {
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-    /**
-     * initialize dagger injection
-     */
-    private void initDagger() {
-        SplashActivityComponent component = DaggerSplashActivityComponent.builder()
-                .splashActivity(this)
-                .build();
-        component.inject(this);
-    }
-
     private void goToLoginScreen() {
         new Handler().postDelayed(() -> {
             finish();
@@ -69,11 +61,29 @@ public class SplashActivity extends AppCompatActivity {
 
     private void goToMainScreen() {
         viewModel.syncData(user)
-                .addOnCompleteListener(task -> {
-                    finish();
-                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    CustomIntent.customType(SplashActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+                .addOnSuccessListener(documentSnapshot -> {
+                    Profile profile = documentSnapshot.toObject(Profile.class);
+                    if (profile != null) {
+                        // go to main page
+                        finish();
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+                    } else {
+                        // go to add profile page
+                        finish();
+                        Intent intent = new Intent(this, AddProfileActivity.class);
+                        startActivity(intent);
+                        CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+                    }
                 });
     }
+
+    private void initDagger() {
+        SplashActivityComponent component = DaggerSplashActivityComponent.builder()
+                .splashActivity(this)
+                .build();
+        component.inject(this);
+    }
+
 }

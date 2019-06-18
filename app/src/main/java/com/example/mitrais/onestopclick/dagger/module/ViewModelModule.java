@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModelProviders;
 
 import com.example.mitrais.onestopclick.view.add_product.AddProductActivity;
 import com.example.mitrais.onestopclick.view.add_product.AddProductViewModel;
+import com.example.mitrais.onestopclick.view.add_profile.AddProfileActivity;
+import com.example.mitrais.onestopclick.view.add_profile.AddProfileViewModel;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookViewModel;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
@@ -80,6 +82,11 @@ public class ViewModelModule {
     @Provides
     EditMovieViewModel provideEditMovieViewModel(EditMovieActivity activity) {
         return ViewModelProviders.of(activity).get(EditMovieViewModel.class);
+    }
+
+    @Provides
+    AddProfileViewModel provideAddProfileActivityViewModel(AddProfileActivity activity) {
+        return ViewModelProviders.of(activity).get(AddProfileViewModel.class);
     }
 
     @Provides
