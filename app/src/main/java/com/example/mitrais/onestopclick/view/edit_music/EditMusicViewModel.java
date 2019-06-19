@@ -9,13 +9,18 @@ import android.support.annotation.NonNull;
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
 public class EditMusicViewModel extends AndroidViewModel {
+    @Inject
+    AuthRepository authRepo;
+
     @Inject
     StorageRepository storageRepo;
 
@@ -25,6 +30,10 @@ public class EditMusicViewModel extends AndroidViewModel {
     public EditMusicViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
+    }
+
+    FirebaseUser getUser() {
+        return authRepo.getUser();
     }
 
     LiveData<Product> getProductById(String id) {
