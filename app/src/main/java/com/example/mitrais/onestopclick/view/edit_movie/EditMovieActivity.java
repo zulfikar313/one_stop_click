@@ -61,6 +61,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private Uri movieUri = Uri.parse("");
     private ExoPlayer trailerPlayer;
     private String productId;
+    private Product product;
     private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
 
@@ -200,6 +201,31 @@ public class EditMovieActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick({R.id.rb_1, R.id.rb_2, R.id.rb_3, R.id.rb_4, R.id.rb_5})
+    void onRadioButtonClicked(RadioButton radioButton) {
+        if (product != null) {
+            String email = viewModel.getUser().getEmail();
+
+            switch (radioButton.getId()) {
+                case R.id.rb_1:
+                    rateProduct(product, email, 1);
+                    break;
+                case R.id.rb_2:
+                    rateProduct(product, email, 2);
+                    break;
+                case R.id.rb_3:
+                    rateProduct(product, email, 3);
+                    break;
+                case R.id.rb_4:
+                    rateProduct(product, email, 4);
+                    break;
+                case R.id.rb_5:
+                    rateProduct(product, email, 5);
+                    break;
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -232,6 +258,7 @@ public class EditMovieActivity extends AppCompatActivity {
     }
 
     private void bindProduct(Product product) {
+        this.product = product;
         if (!product.getThumbnailUri().isEmpty()) {
             imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
         }
@@ -332,6 +359,18 @@ public class EditMovieActivity extends AppCompatActivity {
                     Toasty.error(this, getString(R.string.failed_to_save_product), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, e.getMessage());
                 });
+    }
+
+    private void rateProduct(Product product, String email, int rate) {
+        HashMap<String, Integer> rating;
+        if (product.getRating() == null)
+            rating = new HashMap<>();
+        else
+            rating = product.getRating();
+
+        rating.put(email, rate);
+        viewModel.saveRating(product.getId(), rating)
+                .addOnFailureListener(e -> Toast.makeText(EditMovieActivity.this, getString(R.string.failed_to_rate_product), Toast.LENGTH_SHORT).show());
     }
 
     /**

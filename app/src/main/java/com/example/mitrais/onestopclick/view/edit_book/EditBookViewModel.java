@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FileDownloadTask;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 public class EditBookViewModel extends AndroidViewModel {
@@ -63,6 +65,10 @@ public class EditBookViewModel extends AndroidViewModel {
 
     Task<Void> saveBookUri(String id, Uri uri) {
         return productRepo.saveBookUri(id, uri);
+    }
+
+    Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+        return productRepo.saveRating(id, rating);
     }
 
     private void initDagger(Application application) {

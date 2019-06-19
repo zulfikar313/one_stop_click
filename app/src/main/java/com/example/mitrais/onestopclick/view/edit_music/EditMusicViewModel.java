@@ -15,6 +15,8 @@ import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 public class EditMusicViewModel extends AndroidViewModel {
@@ -58,6 +60,10 @@ public class EditMusicViewModel extends AndroidViewModel {
 
     Task<Uri> uploadMusic(Uri uri, String filename) {
         return storageRepo.uploadMusic(uri, filename);
+    }
+
+    Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+        return productRepo.saveRating(id, rating);
     }
 
     private void initDagger(Application application) {

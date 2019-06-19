@@ -49,6 +49,7 @@ public class EditBookActivity extends AppCompatActivity {
     private Uri thumbnailUri = Uri.parse("");
     private Uri bookUri = Uri.parse("");
     private String productId;
+    private Product product;
     private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
 
@@ -190,6 +191,31 @@ public class EditBookActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick({R.id.rb_1, R.id.rb_2, R.id.rb_3, R.id.rb_4, R.id.rb_5})
+    void onRadioButtonClicked(RadioButton radioButton) {
+        if (product != null) {
+            String email = viewModel.getUser().getEmail();
+
+            switch (radioButton.getId()) {
+                case R.id.rb_1:
+                    rateProduct(product, email, 1);
+                    break;
+                case R.id.rb_2:
+                    rateProduct(product, email, 2);
+                    break;
+                case R.id.rb_3:
+                    rateProduct(product, email, 3);
+                    break;
+                case R.id.rb_4:
+                    rateProduct(product, email, 4);
+                    break;
+                case R.id.rb_5:
+                    rateProduct(product, email, 5);
+                    break;
+            }
+        }
+    }
+
     private void observeProduct(String id) {
         viewModel.getProductById(id).observe(this, product -> {
             if (product != null) {
@@ -215,9 +241,9 @@ public class EditBookActivity extends AppCompatActivity {
 
     // region private methods
     private void bindProduct(Product product) {
+        this.product = product;
         if (!product.getThumbnailUri().isEmpty())
             imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
-
 
         txtTitle.getEditText().setText(product.getTitle());
         txtAuthor.getEditText().setText(product.getAuthor());
@@ -307,6 +333,18 @@ public class EditBookActivity extends AppCompatActivity {
                     Toasty.error(this, getString(R.string.failed_to_save_product), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, e.getMessage());
                 });
+    }
+
+    private void rateProduct(Product product, String email, int rate) {
+        HashMap<String, Integer> rating;
+        if (product.getRating() == null)
+            rating = new HashMap<>();
+        else
+            rating = product.getRating();
+
+        rating.put(email, rate);
+        viewModel.saveRating(product.getId(), rating)
+                .addOnFailureListener(e -> Toast.makeText(EditBookActivity.this, getString(R.string.failed_to_rate_product), Toast.LENGTH_SHORT).show());
     }
 
     /**

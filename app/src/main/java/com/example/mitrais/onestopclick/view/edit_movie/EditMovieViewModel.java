@@ -15,6 +15,8 @@ import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 public class EditMovieViewModel extends AndroidViewModel {
@@ -54,6 +56,10 @@ public class EditMovieViewModel extends AndroidViewModel {
 
     Task<Void> saveMovieUri(String id, Uri uri) {
         return productRepo.saveMovieUri(id, uri);
+    }
+
+    Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+        return productRepo.saveRating(id, rating);
     }
 
     Task<Uri> uploadThumbnail(Uri uri, String filename) {

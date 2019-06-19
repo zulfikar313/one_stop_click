@@ -20,6 +20,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -187,6 +188,10 @@ public class ProductRepository {
 
     public Task<Void> saveMovieUri(String id, Uri uri) {
         return productService.saveMovieUri(id, uri);
+    }
+
+    public Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+        return productService.saveRating(id, rating);
     }
 
     private void addListener() {

@@ -19,6 +19,7 @@ public class ProductService {
     private static final String KEY_MUSIC_URI = "musicUri";
     private static final String KEY_TRAILER_URI = "trailerUri";
     private static final String KEY_MOVIE_URI = "movieUri";
+    private static final String KEY_RATING = "rating";
     private static ProductService instance;
     private static CollectionReference productRef;
 
@@ -77,6 +78,13 @@ public class ProductService {
         DocumentReference docRef = productRef.document(id);
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_MOVIE_URI, uri.toString());
+        return docRef.update(map);
+    }
+
+    public Task<Void> saveRating(String id, HashMap<String, Integer> ratings) {
+        DocumentReference docRef = productRef.document(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put(KEY_RATING, ratings);
         return docRef.update(map);
     }
 
