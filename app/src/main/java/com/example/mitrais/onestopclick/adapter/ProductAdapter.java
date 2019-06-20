@@ -10,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Product;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,6 +101,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_views)
         TextView txtViews;
 
+        @BindView(R.id.rating_bar)
+        RatingBar ratingBar;
+
         @BindView(R.id.img_like)
         ImageView imgLike;
 
@@ -145,6 +151,17 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             txtDescription.setText(product.getDescription());
             int views = product.getViewedBy() != null ? product.getViewedBy().size() : 0;
             txtViews.setText(context.getString(R.string.views) + " " + views);
+
+            HashMap<String, Float> ratings = product.getRating();
+            if (ratings != null && ratings.size() > 0) {
+                float total = 0f;
+
+                for (Float rating : ratings.values()) {
+                    total += rating;
+                }
+
+                ratingBar.setRating(total / ratings.size());
+            }
 
             imgLike.setImageDrawable(context.getDrawable(product.isLiked() ? R.drawable.ic_like_active : R.drawable.ic_like));
             imgDislike.setImageDrawable(context.getDrawable(product.isDisliked() ? R.drawable.ic_dislike_active : R.drawable.ic_dislike));
