@@ -190,7 +190,7 @@ public class ProductRepository {
         return productService.saveMovieUri(id, uri);
     }
 
-    public Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+    public Task<Void> saveRating(String id, HashMap<String, Float> rating) {
         return productService.saveRating(id, rating);
     }
 

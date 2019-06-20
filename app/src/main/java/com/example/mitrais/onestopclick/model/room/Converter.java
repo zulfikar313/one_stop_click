@@ -25,14 +25,14 @@ public class Converter {
     }
 
     @TypeConverter
-    public static HashMap<String, Integer> hashMapFromString(String value) {
-        Type listType = new TypeToken<HashMap<String, Integer>>() {
+    public static HashMap<String, Float> hashMapFromString(String value) {
+        Type listType = new TypeToken<HashMap<String, Float>>() {
         }.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromHashMap(HashMap<String, Integer> list) {
+    public static String fromHashMap(HashMap<String, Float> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         return json;

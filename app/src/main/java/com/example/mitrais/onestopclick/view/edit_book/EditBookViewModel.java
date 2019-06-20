@@ -67,7 +67,7 @@ public class EditBookViewModel extends AndroidViewModel {
         return productRepo.saveBookUri(id, uri);
     }
 
-    Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+    Task<Void> saveRating(String id, HashMap<String, Float> rating) {
         return productRepo.saveRating(id, rating);
     }
 

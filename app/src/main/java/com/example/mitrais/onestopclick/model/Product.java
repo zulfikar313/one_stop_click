@@ -9,6 +9,7 @@ import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 @Entity(tableName = "product")
 public class Product {
     @PrimaryKey
@@ -29,7 +30,7 @@ public class Product {
     private ArrayList<String> likedBy;
     private ArrayList<String> dislikedBy;
     private ArrayList<String> viewedBy;
-    private HashMap<String, Integer> rating;
+    private HashMap<String, Float> rating;
     private int like;
     private int dislike;
     private boolean isLiked;
@@ -41,7 +42,7 @@ public class Product {
 
     public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
                    String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
-                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, HashMap<String, Integer> rating, int like, int dislike, boolean isLiked, boolean isDisliked) {
+                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, HashMap<String, Float> rating, int like, int dislike, boolean isLiked, boolean isDisliked) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -212,11 +213,11 @@ public class Product {
         this.viewedBy = viewedBy;
     }
 
-    public HashMap<String, Integer> getRating() {
+    public HashMap<String, Float> getRating() {
         return rating;
     }
 
-    public void setRating(HashMap<String, Integer> rating) {
+    public void setRating(HashMap<String, Float> rating) {
         this.rating = rating;
     }
 

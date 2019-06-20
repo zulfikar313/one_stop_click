@@ -81,7 +81,7 @@ public class ProductService {
         return docRef.update(map);
     }
 
-    public Task<Void> saveRating(String id, HashMap<String, Integer> ratings) {
+    public Task<Void> saveRating(String id, HashMap<String, Float> ratings) {
         DocumentReference docRef = productRef.document(id);
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_RATING, ratings);

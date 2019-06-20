@@ -62,7 +62,7 @@ public class EditMusicViewModel extends AndroidViewModel {
         return storageRepo.uploadMusic(uri, filename);
     }
 
-    Task<Void> saveRating(String id, HashMap<String, Integer> rating) {
+    Task<Void> saveRating(String id, HashMap<String, Float> rating) {
         return productRepo.saveRating(id, rating);
     }
 
