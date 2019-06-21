@@ -146,6 +146,11 @@
     <string name="_4">4</string>
     <string name="_5">5</string>
     <string name="failed_to_rate_product">Failed to rate product</string>
+    <string name="viewed_by">Viewed by</string>
+    <string name="lower_user">user</string>
+    <string name="by">By</string>
+    <string name="lower_users">users</string>
+    <string name="lower_by">by</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

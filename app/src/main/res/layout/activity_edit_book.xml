@@ -128,6 +128,8 @@
                     </LinearLayout>
 
                     <RatingBar
+                        android:progressTint="@color/gold"
+                        android:secondaryProgressTint="@color/gold"
                         android:id="@+id/rating_bar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

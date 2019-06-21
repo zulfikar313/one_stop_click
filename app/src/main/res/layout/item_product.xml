@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:padding="8dp"
             android:text="@string/type"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:textColor="#000"
@@ -72,7 +73,8 @@
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:gravity="center_vertical"
+            android:gravity="top"
+            android:padding="8dp"
             android:text="@string/description"
             android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="@id/img_thumbnail"
@@ -80,18 +82,29 @@
             app:layout_constraintStart_toEndOf="@id/img_thumbnail"
             app:layout_constraintTop_toTopOf="@id/img_thumbnail" />
 
-
         <TextView
             android:id="@+id/txt_views"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:padding="8dp"
             android:text="@string/views"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txt_author" />
 
+        <TextView
+            android:id="@+id/txt_viewed_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/viewed_by"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/rating_bar"
+            app:layout_constraintStart_toStartOf="@+id/rating_bar"
+            app:layout_constraintTop_toBottomOf="@+id/rating_bar" />
 
         <RatingBar
             android:id="@+id/rating_bar"
@@ -99,12 +112,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:numStars="5"
+            android:progressTint="@color/gold"
+            android:secondaryProgressTint="@color/gold"
+            app:layout_constraintBottom_toBottomOf="@+id/txt_views"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_author" />
+            app:layout_constraintTop_toTopOf="@+id/txt_views" />
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="0dp"
             android:layout_height="42dp"
             android:layout_marginStart="8dp"
@@ -116,7 +133,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rating_bar">
+            app:layout_constraintTop_toBottomOf="@+id/txt_viewed_by">
 
             <ImageView
                 android:id="@+id/img_like"

@@ -101,6 +101,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_views)
         TextView txtViews;
 
+        @BindView(R.id.txt_viewed_by)
+        TextView txtViewedBy;
+
         @BindView(R.id.rating_bar)
         RatingBar ratingBar;
 
@@ -154,12 +157,13 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
             HashMap<String, Float> ratings = product.getRating();
             if (ratings != null && ratings.size() > 0) {
-                float total = 0f;
+                txtViewedBy.setVisibility(View.VISIBLE);
+                txtViewedBy.setText(context.getString(R.string.lower_by) + " " + ratings.size() + " " + context.getString(R.string.lower_users));
 
+                float total = 0f;
                 for (Float rating : ratings.values()) {
                     total += rating;
                 }
-
                 ratingBar.setRating(total / ratings.size());
             }
 
