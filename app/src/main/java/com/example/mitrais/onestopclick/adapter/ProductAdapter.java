@@ -36,7 +36,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
         void onDislikeClicked(Product product);
 
-        void onShareClicked(String id);
+        void onShareImageClicked(Product product);
+
+        void onShareTextClicked(Product product);
     }
 
     public void setListener(Listener listener) {
@@ -201,7 +203,16 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             int position = getAdapterPosition();
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
-                listener.onShareClicked(product.getId());
+                listener.onShareImageClicked(product);
+            }
+        }
+
+        @OnClick(R.id.txt_share)
+        void onShareTextClicked() {
+            int position = getAdapterPosition();
+            if (listener != null && position != RecyclerView.NO_POSITION) {
+                Product product = getItem(position);
+                listener.onShareTextClicked(product);
             }
         }
     }

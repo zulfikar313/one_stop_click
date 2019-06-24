@@ -158,8 +158,21 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onShareClicked(String id) {
+    public void onShareImageClicked(Product product) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Recommended " + product.getType());
+        intent.putExtra(Intent.EXTRA_TEXT, product.getTitle());
+        startActivity(Intent.createChooser(intent, "Share via"));
+    }
 
+    @Override
+    public void onShareTextClicked(Product product) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Recommended " + product.getType());
+        intent.putExtra(Intent.EXTRA_TEXT, product.getTitle());
+        startActivity(Intent.createChooser(intent, "Share via"));
     }
 
     private void initDagger() {
