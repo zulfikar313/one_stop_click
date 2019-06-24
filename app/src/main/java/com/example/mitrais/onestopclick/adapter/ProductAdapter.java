@@ -39,6 +39,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         void onShareImageClicked(Product product);
 
         void onShareTextClicked(Product product);
+
+        void onAddToCartButtonClicked(Product product);
     }
 
     public void setListener(Listener listener) {
@@ -115,6 +117,9 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.img_dislike)
         ImageView imgDislike;
 
+        @BindView(R.id.img_add_to_cart)
+        ImageView imgAddtoCart;
+
         @BindView(R.id.txt_like_counter)
         TextView txtLikeCounter;
 
@@ -171,6 +176,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
             imgLike.setImageDrawable(context.getDrawable(product.isLiked() ? R.drawable.ic_like_active : R.drawable.ic_like));
             imgDislike.setImageDrawable(context.getDrawable(product.isDisliked() ? R.drawable.ic_dislike_active : R.drawable.ic_dislike));
+            imgAddtoCart.setImageDrawable(context.getDrawable(product.isInCart() ? R.drawable.ic_remove_from_cart : R.drawable.ic_add_to_cart));
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
@@ -213,6 +219,15 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
                 listener.onShareTextClicked(product);
+            }
+        }
+
+        @OnClick(R.id.img_add_to_cart)
+        void onAddToCartButtonClicked() {
+            int position = getAdapterPosition();
+            if (listener != null && position != RecyclerView.NO_POSITION) {
+                Product product = getItem(position);
+                listener.onAddToCartButtonClicked(product);
             }
         }
     }

@@ -95,17 +95,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txt_author" />
 
-        <TextView
-            android:id="@+id/txt_viewed_by"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/viewed_by"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/rating_bar"
-            app:layout_constraintStart_toStartOf="@+id/rating_bar"
-            app:layout_constraintTop_toBottomOf="@+id/rating_bar" />
-
         <RatingBar
             android:id="@+id/rating_bar"
             style="?android:attr/ratingBarStyleSmall"
@@ -120,6 +109,30 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/txt_views" />
 
+        <TextView
+            android:id="@+id/txt_viewed_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/viewed_by"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/rating_bar"
+            app:layout_constraintStart_toStartOf="@+id/rating_bar"
+            app:layout_constraintTop_toBottomOf="@+id/rating_bar" />
+
+
+        <ImageView
+            android:id="@+id/img_add_to_cart"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_add_to_cart"
+            android:text="@string/title_add_to_cart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_viewed_by" />
+
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
@@ -133,7 +146,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_viewed_by">
+            app:layout_constraintTop_toBottomOf="@+id/img_add_to_cart">
 
             <ImageView
                 android:id="@+id/img_like"

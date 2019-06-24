@@ -147,16 +147,25 @@ public class ProductRepository {
                 FirebaseUser user = authService.getUser();
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
+
                 if (product.getLikedBy() != null) {
                     if (user != null)
                         product.setLiked(product.getLikedBy().contains(user.getEmail()));
                     product.setLike(product.getLikedBy().size());
                 }
+
                 if (product.getDislikedBy() != null) {
                     if (user != null)
                         product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
                     product.setDislike(product.getDislikedBy().size());
                 }
+
+                if (product.getPutInCartBy() != null) {
+                    if (user != null) {
+                        product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
+                    }
+                }
+
                 insert(product);
             }
         });
@@ -202,16 +211,25 @@ public class ProductRepository {
                     DocumentSnapshot documentSnapshot = dc.getDocument();
                     Product product = documentSnapshot.toObject(Product.class);
                     product.setId(documentSnapshot.getId());
+
                     if (product.getLikedBy() != null) {
                         if (user != null)
                             product.setLiked(product.getLikedBy().contains(user.getEmail()));
                         product.setLike(product.getLikedBy().size());
                     }
+
                     if (product.getDislikedBy() != null) {
                         if (user != null)
                             product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
                         product.setDislike(product.getDislikedBy().size());
                     }
+
+                    if (product.getPutInCartBy() != null) {
+                        if (user != null) {
+                            product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
+                        }
+                    }
+
                     switch (dc.getType()) {
                         case ADDED: {
                             insert(product);

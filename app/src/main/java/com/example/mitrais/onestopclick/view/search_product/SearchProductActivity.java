@@ -166,6 +166,11 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
         startActivity(Intent.createChooser(intent, "Share via"));
     }
 
+    @Override
+    public void onAddToCartButtonClicked(Product product) {
+
+    }
+
     private void goToEditBookPage(String id) {
         Intent intent = new Intent(this, EditBookActivity.class);
         intent.putExtra(Constant.EXTRA_PRODUCT_ID, id);

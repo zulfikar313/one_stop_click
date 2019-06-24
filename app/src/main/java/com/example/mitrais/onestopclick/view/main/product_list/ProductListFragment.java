@@ -42,6 +42,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private Context context;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
+    private Task<Void> addToCartTask;
     private String productType;
     private String genre = "";
 
@@ -158,6 +159,28 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
+    public void onAddToCartButtonClicked(Product product) {
+        if (isAddToCartInProgress()) {
+            if (context != null)
+                Toasty.info(context, getString(R.string.add_to_cart_in_progress), Toast.LENGTH_SHORT).show();
+        } else {
+            if (!product.isInCart()) {
+                addToCartTask = viewModel
+                        .addPutInCartBy(product)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            } else {
+                addToCartTask = viewModel
+                        .removePutInCartBy(product)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            }
+        }
+    }
+
+    @Override
     public void onShareImageClicked(Product product) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -261,6 +284,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
         intent.putExtra(Constant.EXTRA_IS_ADMIN, profile.isAdmin());
         startActivity(intent);
         CustomIntent.customType(context, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
+    private boolean isAddToCartInProgress() {
+        return addToCartTask != null && !addToCartTask.isComplete();
     }
 
     private boolean isAddLikeInProgress() {

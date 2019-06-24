@@ -30,11 +30,13 @@ public class Product {
     private ArrayList<String> likedBy;
     private ArrayList<String> dislikedBy;
     private ArrayList<String> viewedBy;
+    private ArrayList<String> putInCartBy;
     private HashMap<String, Float> rating;
     private int like;
     private int dislike;
     private boolean isLiked;
     private boolean isDisliked;
+    private boolean isInCart;
 
     @Ignore
     public Product() {
@@ -42,7 +44,8 @@ public class Product {
 
     public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
                    String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
-                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, HashMap<String, Float> rating, int like, int dislike, boolean isLiked, boolean isDisliked) {
+                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, HashMap<String, Float> rating,
+                   ArrayList<String> putInCartBy, int like, int dislike, boolean isLiked, boolean isDisliked, boolean isInCart) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -59,11 +62,13 @@ public class Product {
         this.likedBy = likedBy != null ? likedBy : new ArrayList<>();
         this.dislikedBy = dislikedBy != null ? dislikedBy : new ArrayList<>();
         this.viewedBy = viewedBy != null ? viewedBy : new ArrayList<>();
+        this.putInCartBy = putInCartBy != null ? putInCartBy : new ArrayList<>();
         this.rating = rating != null ? rating : new HashMap<>();
         this.like = like;
         this.dislike = dislike;
         this.isLiked = isLiked;
         this.isDisliked = isDisliked;
+        this.isInCart = isInCart;
     }
 
     @Exclude
@@ -217,6 +222,14 @@ public class Product {
         return rating;
     }
 
+    public ArrayList<String> getPutInCartBy() {
+        return putInCartBy;
+    }
+
+    public void setPutInCartBy(ArrayList<String> putInCartBy) {
+        this.putInCartBy = putInCartBy;
+    }
+
     public void setRating(HashMap<String, Float> rating) {
         this.rating = rating;
     }
@@ -239,6 +252,16 @@ public class Product {
     @Exclude
     public void setDisliked(boolean disliked) {
         isDisliked = disliked;
+    }
+
+    @Exclude
+    public boolean isInCart() {
+        return isInCart;
+    }
+
+    @Exclude
+    public void setInCart(boolean inCart) {
+        isInCart = inCart;
     }
 }
 
