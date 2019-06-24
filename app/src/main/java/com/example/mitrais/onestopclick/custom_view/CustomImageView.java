@@ -3,14 +3,17 @@ package com.example.mitrais.onestopclick.custom_view;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.mitrais.onestopclick.R;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,19 +41,23 @@ public class CustomImageView extends ShimmerLayout {
     }
 
     public void loadImageUri(Uri uri) {
-        startShimmerAnimation();
-        Picasso.get().load(uri).placeholder(R.drawable.skeleton).into(imgView, new Callback() {
-            @Override
-            public void onSuccess() {
-                stopShimmerAnimation();
-            }
+        showProgressBar();
+        Glide.with(this).load(uri)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        hideProgressBar();
+                        return false;
+                    }
 
-            @Override
-            public void onError(Exception e) {
-                stopShimmerAnimation();
-                Log.e(TAG, e.toString());
-            }
-        });
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        hideProgressBar();
+                        return false;
+
+                    }
+                })
+                .into(imgView);
     }
 
     public void startShimmerAnimation() {
