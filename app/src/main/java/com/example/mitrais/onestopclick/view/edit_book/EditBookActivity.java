@@ -67,6 +67,9 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.sp_genre)
     Spinner spGenre;
 
+    @BindView(R.id.txt_price)
+    TextInputLayout txtPrice;
+
     @BindView(R.id.rating_bar)
     RatingBar ratingBar;
 
@@ -226,6 +229,7 @@ public class EditBookActivity extends AppCompatActivity {
             int position = genreAdapter.getPosition(product.getGenre());
             spGenre.setSelection(position);
         }
+        txtPrice.getEditText().setText(Float.toString(product.getPrice()));
 
         if (product.getRating() != null) {
             String email = viewModel.getUser().getEmail();
@@ -240,6 +244,7 @@ public class EditBookActivity extends AppCompatActivity {
         String title = txtTitle.getEditText().getText().toString().trim();
         String author = txtAuthor.getEditText().getText().toString().trim();
         String description = txtDescription.getEditText().getText().toString().trim();
+        float price = Float.parseFloat(txtPrice.getEditText().getText().toString().trim());
 
         Product product = new Product();
         product.setId(id);
@@ -248,6 +253,7 @@ public class EditBookActivity extends AppCompatActivity {
         product.setType(Constant.PRODUCT_TYPE_BOOK);
         product.setDescription(description);
         product.setGenre(spGenre.getSelectedItem().toString());
+        product.setPrice(price);
         product.setThumbnailUri(thumbnailUri.toString());
         product.setBookUri(bookUri.toString());
 

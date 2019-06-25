@@ -156,6 +156,8 @@
     <string name="add_to_cart_in_progress">Add to cart in progress</string>
     <string name="cart">Cart</string>
     <string name="no_product_in_cart">No product in cart</string>
+    <string name="price">Price</string>
+    <string name="price_rupiah">Price (Rp)</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

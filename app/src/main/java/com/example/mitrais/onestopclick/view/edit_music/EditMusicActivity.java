@@ -81,6 +81,9 @@ public class EditMusicActivity extends AppCompatActivity {
     @BindView(R.id.sp_genre)
     Spinner spGenre;
 
+    @BindView(R.id.txt_price)
+    TextInputLayout txtPrice;
+
     @BindView(R.id.rating_bar)
     RatingBar ratingBar;
 
@@ -215,6 +218,7 @@ public class EditMusicActivity extends AppCompatActivity {
             int position = genreAdapter.getPosition(product.getGenre());
             spGenre.setSelection(position);
         }
+        txtPrice.getEditText().setText(Float.toString(product.getPrice()));
 
         if (product.getRating() != null) {
             String email = viewModel.getUser().getEmail();
@@ -232,6 +236,7 @@ public class EditMusicActivity extends AppCompatActivity {
         String title = txtTitle.getEditText().getText().toString().trim();
         String artist = txtArtist.getEditText().getText().toString().trim();
         String description = txtDescription.getEditText().getText().toString().trim();
+        float price = Float.parseFloat(txtPrice.getEditText().getText().toString().trim());
 
         Product product = new Product();
         product.setId(id);
@@ -240,6 +245,7 @@ public class EditMusicActivity extends AppCompatActivity {
         product.setType(Constant.PRODUCT_TYPE_MUSIC);
         product.setDescription(description);
         product.setGenre(spGenre.getSelectedItem().toString());
+        product.setPrice(price);
         product.setThumbnailUri(thumbnailUri.toString());
         product.setMusicUri(musicUri.toString());
 

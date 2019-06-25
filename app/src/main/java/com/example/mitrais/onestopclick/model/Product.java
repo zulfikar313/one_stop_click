@@ -37,6 +37,7 @@ public class Product {
     private boolean isLiked;
     private boolean isDisliked;
     private boolean isInCart;
+    private float price;
 
     @Ignore
     public Product() {
@@ -45,7 +46,7 @@ public class Product {
     public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
                    String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
                    ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, HashMap<String, Float> rating,
-                   ArrayList<String> putInCartBy, int like, int dislike, boolean isLiked, boolean isDisliked, boolean isInCart) {
+                   ArrayList<String> putInCartBy, int like, int dislike, boolean isLiked, boolean isDisliked, boolean isInCart, float price) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -69,6 +70,7 @@ public class Product {
         this.isLiked = isLiked;
         this.isDisliked = isDisliked;
         this.isInCart = isInCart;
+        this.price = price;
     }
 
     @Exclude
@@ -232,6 +234,14 @@ public class Product {
 
     public void setRating(HashMap<String, Float> rating) {
         this.rating = rating;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     @Exclude
