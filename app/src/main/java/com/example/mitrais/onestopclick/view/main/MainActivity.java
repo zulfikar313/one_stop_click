@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
+import com.example.mitrais.onestopclick.view.cart.CartActivity;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.product_list_parent.ProductListParentFragment;
 import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileFragment;
@@ -91,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toasty.info(this, getString(R.string.product_sync_in_progress), Toast.LENGTH_SHORT).show();
                 else
                     syncUserData();
+                return true;
+            case R.id.cart:
+                goToCartPage();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -208,6 +212,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, SearchProductActivity.class);
         intent.putExtra(SearchProductActivity.EXTRA_SEARCH_QUERY, search);
         startActivity(intent);
+        CustomIntent.customType(MainActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
+    private void goToCartPage() {
+        Intent intent = new Intent(this, CartActivity.class);
+        startActivity(intent);
+        CustomIntent.customType(MainActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
     private void logout() {

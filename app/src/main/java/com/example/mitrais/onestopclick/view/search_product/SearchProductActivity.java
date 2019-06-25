@@ -37,6 +37,7 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
     private SearchProductViewModel viewModel;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
+    private Task<Void> addToCartTask;
 
     @Inject
     ProductAdapter productAdapter;
@@ -168,7 +169,23 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
 
     @Override
     public void onAddToCartButtonClicked(Product product) {
-
+        if (isAddToCartInProgress()) {
+            Toasty.info(this, getString(R.string.add_to_cart_in_progress), Toast.LENGTH_SHORT).show();
+        } else {
+            if (!product.isInCart()) {
+                addToCartTask = viewModel
+                        .addPutInCartBy(product)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            } else {
+                addToCartTask = viewModel
+                        .removePutInCartBy(product)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
+            }
+        }
     }
 
     private void goToEditBookPage(String id) {
@@ -201,5 +218,9 @@ public class SearchProductActivity extends AppCompatActivity implements ProductA
 
     private boolean isAddDislikeInProgress() {
         return dislikeTask != null && !dislikeTask.isComplete();
+    }
+
+    private boolean isAddToCartInProgress() {
+        return addToCartTask != null && !addToCartTask.isComplete();
     }
 }

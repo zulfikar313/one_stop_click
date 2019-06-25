@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".view.cart.CartActivity"
+            android:parentActivityName=".view.main.MainActivity"/>
+        <activity
             android:name=".view.add_profile.AddProfileActivity"
             android:screenOrientation="portrait" />
         <activity

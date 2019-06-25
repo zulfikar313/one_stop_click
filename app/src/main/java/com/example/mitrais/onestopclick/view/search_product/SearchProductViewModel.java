@@ -122,6 +122,28 @@ public class SearchProductViewModel extends AndroidViewModel {
         return productRepo.save(product);
     }
 
+    Task<Void> addPutInCartBy(Product product) {
+        String email = authRepo.getUser().getEmail();
+        ArrayList<String> putInCartBy = product.getPutInCartBy();
+
+        if (!putInCartBy.contains(email))
+            putInCartBy.add(email);
+
+        product.setPutInCartBy(putInCartBy);
+        return productRepo.save(product);
+    }
+
+    Task<Void> removePutInCartBy(Product product) {
+        String email = authRepo.getUser().getEmail();
+        ArrayList<String> putInCartBy = product.getPutInCartBy();
+
+        if (putInCartBy.contains(email))
+            putInCartBy.remove(email);
+
+        product.setPutInCartBy(putInCartBy);
+        return productRepo.save(product);
+    }
+
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

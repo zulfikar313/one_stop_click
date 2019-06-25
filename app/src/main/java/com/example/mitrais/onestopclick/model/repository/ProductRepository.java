@@ -138,6 +138,10 @@ public class ProductRepository {
     public LiveData<List<Product>> search(String search) {
         return productDao.search("%" + search + "%");
     }
+
+    public LiveData<List<Product>> getProductsInCart() {
+        return productDao.getProductsInCart();
+    }
     //endregion
 
     // region firestore

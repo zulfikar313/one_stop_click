@@ -8,6 +8,9 @@
         android:id="@+id/sync"
         android:title="@string/sync" />
     <item
+        android:id="@+id/cart"
+        android:title="@string/cart" />
+    <item
         android:id="@+id/search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"

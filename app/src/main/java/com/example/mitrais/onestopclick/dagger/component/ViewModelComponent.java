@@ -5,6 +5,7 @@ import android.app.Application;
 import com.example.mitrais.onestopclick.dagger.module.RepositoryModule;
 import com.example.mitrais.onestopclick.view.add_product.AddProductViewModel;
 import com.example.mitrais.onestopclick.view.add_profile.AddProfileViewModel;
+import com.example.mitrais.onestopclick.view.cart.CartViewModel;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookViewModel;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieViewModel;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
@@ -47,6 +48,8 @@ public interface ViewModelComponent {
     void inject(EditMovieViewModel viewModel);
 
     void inject(AddProfileViewModel viewModel);
+
+    void inject(CartViewModel viewModel);
 
     @Component.Builder
     interface Builder {

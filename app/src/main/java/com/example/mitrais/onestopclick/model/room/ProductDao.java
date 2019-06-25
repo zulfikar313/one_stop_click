@@ -31,6 +31,9 @@ public interface ProductDao {
     @Query("SELECT * FROM product WHERE title LIKE :search OR author LIKE :search OR artist LIKE :search or director LIKE :search ORDER BY title")
     LiveData<List<Product>> search(String search);
 
+    @Query("SELECT * FROM product WHERE isInCart = 1")
+    LiveData<List<Product>> getProductsInCart();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Product product);
 

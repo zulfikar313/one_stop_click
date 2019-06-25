@@ -156,7 +156,6 @@ public class ProductListViewModel extends AndroidViewModel {
         return productRepo.save(product);
     }
 
-
     private void initDagger(Application application) {
         ViewModelComponent component = DaggerViewModelComponent.builder()
                 .application(application)

@@ -224,6 +224,7 @@ public class EditMovieActivity extends AppCompatActivity {
 
     private void bindProduct(Product product) {
         this.product = product;
+        setTitle(product.getTitle());
         if (!product.getThumbnailUri().isEmpty()) {
             imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
         }

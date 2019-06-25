@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,9 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @BindView(R.id.txt_product_not_found)
     TextView txtProductNotFound;
+
+    @BindView(R.id.img_add_product)
+    ImageView imgAddProduct;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -221,7 +225,11 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void observeProfile(String email) {
-        viewModel.getProfileByEmail(email).observe(getViewLifecycleOwner(), profile -> this.profile = profile);
+        viewModel.getProfileByEmail(email).observe(getViewLifecycleOwner(), profile -> {
+            this.profile = profile;
+            if (profile.isAdmin())
+                imgAddProduct.setVisibility(View.VISIBLE);
+        });
     }
 
     private void observeProducts(String type, String genre) {
