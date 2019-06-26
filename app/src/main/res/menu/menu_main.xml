@@ -8,6 +8,9 @@
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
         <item
+            android:id="@+id/library"
+            android:title="@string/library" />
+        <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_person"
             android:title="@string/profile" />

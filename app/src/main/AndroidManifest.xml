@@ -14,8 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".view.library.LibraryActivity"
+            android:parentActivityName=".view.main.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.cart.CartActivity"
-            android:parentActivityName=".view.main.MainActivity"/>
+            android:parentActivityName=".view.main.MainActivity" />
         <activity
             android:name=".view.add_profile.AddProfileActivity"
             android:screenOrientation="portrait" />

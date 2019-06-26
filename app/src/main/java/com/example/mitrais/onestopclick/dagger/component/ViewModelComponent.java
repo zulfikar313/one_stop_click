@@ -10,6 +10,7 @@ import com.example.mitrais.onestopclick.view.edit_book.EditBookViewModel;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieViewModel;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordViewModel;
+import com.example.mitrais.onestopclick.view.library.LibraryViewModel;
 import com.example.mitrais.onestopclick.view.login.LoginViewModel;
 import com.example.mitrais.onestopclick.view.main.MainViewModel;
 import com.example.mitrais.onestopclick.view.main.product_list.ProductListViewModel;
@@ -50,6 +51,8 @@ public interface ViewModelComponent {
     void inject(AddProfileViewModel viewModel);
 
     void inject(CartViewModel viewModel);
+
+    void inject(LibraryViewModel viewModel);
 
     @Component.Builder
     interface Builder {

@@ -15,6 +15,8 @@ import com.example.mitrais.onestopclick.view.edit_movie.EditMovieViewModel;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicActivity;
 import com.example.mitrais.onestopclick.view.edit_music.EditMusicViewModel;
 import com.example.mitrais.onestopclick.view.forgot_password.ForgotPasswordActivity;
+import com.example.mitrais.onestopclick.view.library.LibraryActivity;
+import com.example.mitrais.onestopclick.view.library.LibraryViewModel;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.MainActivity;
 import com.example.mitrais.onestopclick.view.main.product_list.ProductListFragment;
@@ -94,6 +96,11 @@ public class ViewModelModule {
     @Provides
     CartViewModel provideCartViewModel(CartActivity activity) {
         return ViewModelProviders.of(activity).get(CartViewModel.class);
+    }
+
+    @Provides
+    LibraryViewModel provideLibraryViewModel(LibraryActivity activity) {
+        return ViewModelProviders.of(activity).get(LibraryViewModel.class);
     }
 
     @Provides

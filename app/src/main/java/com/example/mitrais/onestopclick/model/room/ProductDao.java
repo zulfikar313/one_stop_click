@@ -34,6 +34,9 @@ public interface ProductDao {
     @Query("SELECT * FROM product WHERE isInCart = 1 AND isOwned = 0")
     LiveData<List<Product>> getProductsInCart();
 
+    @Query("SELECT * FROM product WHERE isOwned = 1")
+    LiveData<List<Product>> getOwnedProducts();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Product product);
 

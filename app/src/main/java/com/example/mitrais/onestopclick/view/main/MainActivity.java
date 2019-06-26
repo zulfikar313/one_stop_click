@@ -26,6 +26,7 @@ import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.view.cart.CartActivity;
+import com.example.mitrais.onestopclick.view.library.LibraryActivity;
 import com.example.mitrais.onestopclick.view.login.LoginActivity;
 import com.example.mitrais.onestopclick.view.main.product_list_parent.ProductListParentFragment;
 import com.example.mitrais.onestopclick.view.main.edit_profile.ProfileFragment;
@@ -116,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setTitle(getString(R.string.home));
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ProductListParentFragment.newInstance("")).commit();
                 break;
+            }
+            case R.id.library: {
+                goToLibraryPage();
             }
             case R.id.profile: {
                 setTitle(getString(R.string.profile));
@@ -217,6 +221,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void goToCartPage() {
         Intent intent = new Intent(this, CartActivity.class);
+        startActivity(intent);
+        CustomIntent.customType(MainActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
+    }
+
+    private void goToLibraryPage() {
+        Intent intent = new Intent(this, LibraryActivity.class);
         startActivity(intent);
         CustomIntent.customType(MainActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }

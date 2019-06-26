@@ -161,6 +161,8 @@
     <string name="total">Total</string>
     <string name="buy">Buy</string>
     <string name="summary">Summary</string>
+    <string name="no_product_in_library">No product in library</string>
+    <string name="library">Library</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

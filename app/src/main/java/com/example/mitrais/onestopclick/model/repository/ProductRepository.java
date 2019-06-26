@@ -142,6 +142,10 @@ public class ProductRepository {
     public LiveData<List<Product>> getProductsInCart() {
         return productDao.getProductsInCart();
     }
+
+    public LiveData<List<Product>> getOwnedProducts() {
+        return productDao.getOwnedProducts();
+    }
     //endregion
 
     // region firestore
