@@ -227,7 +227,7 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private void observeProfile(String email) {
         viewModel.getProfileByEmail(email).observe(getViewLifecycleOwner(), profile -> {
             this.profile = profile;
-            if (profile.isAdmin())
+            if (profile != null && profile.isAdmin())
                 imgAddProduct.setVisibility(View.VISIBLE);
         });
     }

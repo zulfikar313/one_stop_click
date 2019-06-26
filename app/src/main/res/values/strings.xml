@@ -158,6 +158,9 @@
     <string name="no_product_in_cart">No product in cart</string>
     <string name="price">Price</string>
     <string name="price_rupiah">Price (Rp)</string>
+    <string name="total">Total</string>
+    <string name="buy">Buy</string>
+    <string name="summary">Summary</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

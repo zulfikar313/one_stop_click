@@ -164,6 +164,11 @@ public class ProductRepository {
                     product.setDislike(product.getDislikedBy().size());
                 }
 
+                if (product.getOwnedBy() != null) {
+                    if (user != null)
+                        product.setOwned(product.getOwnedBy().contains(user.getEmail()));
+                }
+
                 if (product.getPutInCartBy() != null) {
                     if (user != null) {
                         product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
@@ -226,6 +231,11 @@ public class ProductRepository {
                         if (user != null)
                             product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
                         product.setDislike(product.getDislikedBy().size());
+                    }
+
+                    if (product.getOwnedBy() != null) {
+                        if (user != null)
+                            product.setOwned(product.getOwnedBy().contains(user.getEmail()));
                     }
 
                     if (product.getPutInCartBy() != null) {

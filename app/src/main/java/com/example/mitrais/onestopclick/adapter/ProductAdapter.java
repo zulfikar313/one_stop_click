@@ -176,6 +176,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
             imgLike.setImageDrawable(context.getDrawable(product.isLiked() ? R.drawable.ic_like_active : R.drawable.ic_like));
             imgDislike.setImageDrawable(context.getDrawable(product.isDisliked() ? R.drawable.ic_dislike_active : R.drawable.ic_dislike));
+            imgAddtoCart.setVisibility(product.isOwned() ? View.INVISIBLE : View.VISIBLE);
             imgAddtoCart.setImageDrawable(context.getDrawable(product.isInCart() ? R.drawable.ic_remove_from_cart : R.drawable.ic_add_to_cart));
             txtLikeCounter.setText(Integer.toString(product.getLike()));
             txtDislikeCounter.setText(Integer.toString(product.getDislike()));
