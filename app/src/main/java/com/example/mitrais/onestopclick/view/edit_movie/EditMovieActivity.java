@@ -62,6 +62,7 @@ public class EditMovieActivity extends AppCompatActivity {
     private String productId;
     private Product product;
     private boolean isAdmin;
+    private boolean isOwned;
     private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
@@ -120,10 +121,11 @@ public class EditMovieActivity extends AppCompatActivity {
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
+            isOwned = getIntent().getBooleanExtra(Constant.EXTRA_IS_OWNED, false);
             observeProduct(productId);
         }
 
-        if (!isAdmin) {
+        if (!isAdmin || !isOwned) {
             txtTitle.getEditText().setEnabled(false);
             txtDirector.getEditText().setEnabled(false);
             txtDescription.getEditText().setEnabled(false);
