@@ -8,8 +8,10 @@ import android.support.annotation.NonNull;
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
+import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -19,10 +21,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class CartViewModel extends AndroidViewModel {
-    LiveData<List<Product>> products;
+    private LiveData<List<Product>> products;
 
     @Inject
     AuthRepository authRepo;
+
+    @Inject
+    ProfileRepository profileRepo;
 
     @Inject
     ProductRepository productRepo;
@@ -33,27 +38,28 @@ public class CartViewModel extends AndroidViewModel {
         products = productRepo.getInCart();
     }
 
-    public LiveData<List<Product>> getProductsInCart() {
-        return products;
-    }
-
     public FirebaseUser getUser() {
         return authRepo.getUser();
     }
 
-    public Task<Void> saveProduct(Product product) {
+    public LiveData<Profile> getProfile(String email) {
+        return profileRepo.get(email);
+    }
+
+    LiveData<List<Product>> getProductsInCart() {
+        return products;
+    }
+
+    Task<Void> saveProduct(Product product) {
         return productRepo.save(product);
     }
 
-    Task<Void> removePutInCartBy(Product product) {
+    void removePutInCartBy(Product product) {
         String email = authRepo.getUser().getEmail();
         ArrayList<String> putInCartBy = product.getPutInCartBy();
-
-        if (putInCartBy.contains(email))
-            putInCartBy.remove(email);
-
+        putInCartBy.remove(email);
         product.setPutInCartBy(putInCartBy);
-        return productRepo.save(product);
+        productRepo.save(product);
     }
 
     private void initDagger(Application application) {

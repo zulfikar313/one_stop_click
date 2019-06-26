@@ -10,28 +10,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 class Converter {
-    @TypeConverter
-    static ArrayList<String> fromString(String value) {
+    @TypeConverter // must be public
+    public static ArrayList<String> fromString(String value) {
         Type listType = new TypeToken<ArrayList<String>>() {
         }.getType();
         return new Gson().fromJson(value, listType);
     }
 
-    @TypeConverter
-    static String fromArrayList(ArrayList<String> list) {
+    @TypeConverter // must be public
+    public static String fromArrayList(ArrayList<String> list) {
         Gson gson = new Gson();
         return gson.toJson(list);
     }
 
-    @TypeConverter
-    static HashMap<String, Float> hashMapFromString(String value) {
+    @TypeConverter // must be public
+    public static HashMap<String, Float> hashMapFromString(String value) {
         Type listType = new TypeToken<HashMap<String, Float>>() {
         }.getType();
         return new Gson().fromJson(value, listType);
     }
 
-    @TypeConverter
-    static String fromHashMap(HashMap<String, Float> list) {
+    @TypeConverter // must be public
+    public static String fromHashMap(HashMap<String, Float> list) {
         Gson gson = new Gson();
         return gson.toJson(list);
     }
