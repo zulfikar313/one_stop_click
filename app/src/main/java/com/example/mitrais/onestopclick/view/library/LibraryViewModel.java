@@ -20,7 +20,7 @@ public class LibraryViewModel extends AndroidViewModel {
     public LibraryViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
-        products = productRepo.getOwnedProducts();
+        products = productRepo.getOwned();
     }
 
     LiveData<List<Product>> products;

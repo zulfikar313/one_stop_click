@@ -13,6 +13,12 @@ import java.util.List;
 
 @Dao
 public interface ProductDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(Product product);
+
+    @Delete
+    void delete(Product product);
+
     @Query("SELECT * FROM product ORDER BY title")
     LiveData<List<Product>> getAll();
 
@@ -32,17 +38,8 @@ public interface ProductDao {
     LiveData<List<Product>> search(String search);
 
     @Query("SELECT * FROM product WHERE isInCart = 1 AND isOwned = 0")
-    LiveData<List<Product>> getProductsInCart();
+    LiveData<List<Product>> getInCart();
 
     @Query("SELECT * FROM product WHERE isOwned = 1")
-    LiveData<List<Product>> getOwnedProducts();
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Product product);
-
-    @Delete
-    void delete(Product product);
-
-    @Query("UPDATE product SET isLiked = 0, isDisliked = 0")
-    void deleteBoundData();
+    LiveData<List<Product>> getOwned();
 }

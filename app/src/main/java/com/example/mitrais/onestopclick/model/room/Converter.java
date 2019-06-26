@@ -9,32 +9,30 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Converter {
+class Converter {
     @TypeConverter
-    public static ArrayList<String> fromString(String value) {
+    static ArrayList<String> fromString(String value) {
         Type listType = new TypeToken<ArrayList<String>>() {
         }.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromArrayList(ArrayList<String> list) {
+    static String fromArrayList(ArrayList<String> list) {
         Gson gson = new Gson();
-        String json = gson.toJson(list);
-        return json;
+        return gson.toJson(list);
     }
 
     @TypeConverter
-    public static HashMap<String, Float> hashMapFromString(String value) {
+    static HashMap<String, Float> hashMapFromString(String value) {
         Type listType = new TypeToken<HashMap<String, Float>>() {
         }.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromHashMap(HashMap<String, Float> list) {
+    static String fromHashMap(HashMap<String, Float> list) {
         Gson gson = new Gson();
-        String json = gson.toJson(list);
-        return json;
+        return gson.toJson(list);
     }
 }

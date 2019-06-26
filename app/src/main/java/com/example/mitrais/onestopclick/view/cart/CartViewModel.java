@@ -30,7 +30,7 @@ public class CartViewModel extends AndroidViewModel {
     public CartViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
-        products = productRepo.getProductsInCart();
+        products = productRepo.getInCart();
     }
 
     public LiveData<List<Product>> getProductsInCart() {

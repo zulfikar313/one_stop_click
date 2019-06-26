@@ -47,8 +47,9 @@ public class Product {
 
     public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
                    String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
-                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, ArrayList<String> ownedBy, HashMap<String, Float> rating,
-                   ArrayList<String> putInCartBy, int like, int dislike, boolean isLiked, boolean isDisliked, boolean isOwned, boolean isInCart, float price) {
+                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, ArrayList<String> ownedBy,
+                   HashMap<String, Float> rating, ArrayList<String> putInCartBy, int like, int dislike, boolean isLiked, boolean isDisliked,
+                   boolean isOwned, boolean isInCart, float price) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -200,22 +201,6 @@ public class Product {
         this.dislikedBy = dislikedBy;
     }
 
-    public int getLike() {
-        return like;
-    }
-
-    public void setLike(int like) {
-        this.like = like;
-    }
-
-    public int getDislike() {
-        return dislike;
-    }
-
-    public void setDislike(int dislike) {
-        this.dislike = dislike;
-    }
-
     public ArrayList<String> getViewedBy() {
         return viewedBy;
     }
@@ -232,10 +217,6 @@ public class Product {
         this.ownedBy = ownedBy;
     }
 
-    public HashMap<String, Float> getRating() {
-        return rating;
-    }
-
     public ArrayList<String> getPutInCartBy() {
         return putInCartBy;
     }
@@ -244,8 +225,28 @@ public class Product {
         this.putInCartBy = putInCartBy;
     }
 
+    public HashMap<String, Float> getRating() {
+        return rating;
+    }
+
     public void setRating(HashMap<String, Float> rating) {
         this.rating = rating;
+    }
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
+    public int getDislike() {
+        return dislike;
+    }
+
+    public void setDislike(int dislike) {
+        this.dislike = dislike;
     }
 
     public float getPrice() {

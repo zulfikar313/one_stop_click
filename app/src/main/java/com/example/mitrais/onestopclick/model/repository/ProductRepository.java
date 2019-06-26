@@ -93,28 +93,6 @@ public class ProductRepository {
                 });
     }
 
-    public void deleteBoundData() {
-        Completable.fromAction(() -> productDao.deleteBoundData())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                });
-    }
-
     public LiveData<List<Product>> getAll() {
         return productDao.getAll();
     }
@@ -139,12 +117,12 @@ public class ProductRepository {
         return productDao.search("%" + search + "%");
     }
 
-    public LiveData<List<Product>> getProductsInCart() {
-        return productDao.getProductsInCart();
+    public LiveData<List<Product>> getInCart() {
+        return productDao.getInCart();
     }
 
-    public LiveData<List<Product>> getOwnedProducts() {
-        return productDao.getOwnedProducts();
+    public LiveData<List<Product>> getOwned() {
+        return productDao.getOwned();
     }
     //endregion
 
@@ -156,23 +134,27 @@ public class ProductRepository {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
 
+                // set excluded liked value
                 if (product.getLikedBy() != null) {
                     if (user != null)
                         product.setLiked(product.getLikedBy().contains(user.getEmail()));
                     product.setLike(product.getLikedBy().size());
                 }
 
+                // set excluded disliked value
                 if (product.getDislikedBy() != null) {
                     if (user != null)
                         product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
                     product.setDislike(product.getDislikedBy().size());
                 }
 
+                // set excluded isOwned value
                 if (product.getOwnedBy() != null) {
                     if (user != null)
                         product.setOwned(product.getOwnedBy().contains(user.getEmail()));
                 }
 
+                // set excluded isInCart value
                 if (product.getPutInCartBy() != null) {
                     if (user != null) {
                         product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
@@ -225,23 +207,27 @@ public class ProductRepository {
                     Product product = documentSnapshot.toObject(Product.class);
                     product.setId(documentSnapshot.getId());
 
+                    // set excluded liked value
                     if (product.getLikedBy() != null) {
                         if (user != null)
                             product.setLiked(product.getLikedBy().contains(user.getEmail()));
                         product.setLike(product.getLikedBy().size());
                     }
 
+                    // set excluded disliked value
                     if (product.getDislikedBy() != null) {
                         if (user != null)
                             product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
                         product.setDislike(product.getDislikedBy().size());
                     }
 
+                    // set excluded isOwned value
                     if (product.getOwnedBy() != null) {
                         if (user != null)
                             product.setOwned(product.getOwnedBy().contains(user.getEmail()));
                     }
 
+                    // set excluded isInCart value
                     if (product.getPutInCartBy() != null) {
                         if (user != null) {
                             product.setInCart(product.getPutInCartBy().contains(user.getEmail()));

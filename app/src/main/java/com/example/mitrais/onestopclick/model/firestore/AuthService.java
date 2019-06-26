@@ -25,6 +25,10 @@ public class AuthService {
         return auth.signInWithEmailAndPassword(email, password);
     }
 
+    public void logout() {
+        auth.signOut();
+    }
+
     public Task<AuthResult> googleSignIn(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         return auth.signInWithCredential(credential);
@@ -32,10 +36,6 @@ public class AuthService {
 
     public Task<AuthResult> register(String email, String password) {
         return auth.createUserWithEmailAndPassword(email, password);
-    }
-
-    public void logout() {
-        auth.signOut();
     }
 
     public Task<Void> sendVerificationEmail(FirebaseUser user) {

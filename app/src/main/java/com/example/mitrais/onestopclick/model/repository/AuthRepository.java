@@ -28,12 +28,12 @@ public class AuthRepository {
         return authService.googleSignIn(account);
     }
 
-    public Task<AuthResult> register(String email, String password) {
-        return authService.register(email, password);
-    }
-
     public void logout() {
         authService.logout();
+    }
+
+    public Task<AuthResult> register(String email, String password) {
+        return authService.register(email, password);
     }
 
     public Task<Void> sendVerificationEmail(FirebaseUser user) {
