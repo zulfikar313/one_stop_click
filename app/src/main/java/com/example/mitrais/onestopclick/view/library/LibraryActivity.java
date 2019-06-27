@@ -8,11 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
-import com.example.mitrais.onestopclick.adapter.ProductV2Adapter;
+import com.example.mitrais.onestopclick.adapter.ProductV3Adapter;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.edit_book.EditBookActivity;
 import com.example.mitrais.onestopclick.view.edit_movie.EditMovieActivity;
@@ -27,9 +26,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import maes.tech.intentanim.CustomIntent;
 
-public class LibraryActivity extends AppCompatActivity implements ProductV2Adapter.Listener {
+public class LibraryActivity extends AppCompatActivity implements ProductV3Adapter.Listener {
     private List<Product> products;
-    private ProductV2Adapter productAdapter;
+    private ProductV3Adapter productAdapter;
     private Task<Void> purchaseTask;
 
     @Inject
@@ -49,6 +48,7 @@ public class LibraryActivity extends AppCompatActivity implements ProductV2Adapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
         ButterKnife.bind(this);
+        setTitle(getString(R.string.library));
         initDagger();
         initRecyclerView();
         observeProducts();
@@ -69,11 +69,6 @@ public class LibraryActivity extends AppCompatActivity implements ProductV2Adapt
         }
     }
 
-    @Override
-    public void onDeleteClicked(Product product) {
-        Toast.makeText(this, "Delete clicked", Toast.LENGTH_SHORT).show();
-    }
-
     private void observeProducts() {
         viewModel.getOwnedProducts().observe(this, products -> {
             if (products != null) {
@@ -89,7 +84,7 @@ public class LibraryActivity extends AppCompatActivity implements ProductV2Adapt
     }
 
     private void initRecyclerView() {
-        productAdapter = new ProductV2Adapter();
+        productAdapter = new ProductV3Adapter();
         productAdapter.setListener(this);
         recProduct.setHasFixedSize(true);
         recProduct.setAdapter(productAdapter);
@@ -120,23 +115,10 @@ public class LibraryActivity extends AppCompatActivity implements ProductV2Adapt
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
 
-
     private void initDagger() {
         LibraryActivityComponent component = DaggerLibraryActivityComponent.builder()
                 .libraryActivity(this)
                 .build();
         component.inject(this);
-    }
-
-    private boolean isPurchaseInProgress() {
-        return purchaseTask != null && !purchaseTask.isComplete();
-    }
-
-    private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        progressBar.setVisibility(View.INVISIBLE);
     }
 }

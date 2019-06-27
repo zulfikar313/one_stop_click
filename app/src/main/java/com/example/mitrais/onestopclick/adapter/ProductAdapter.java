@@ -64,10 +64,16 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                         product.getAuthor().equals(t1.getAuthor()) &&
                         product.getDirector().equals(t1.getDirector()) &&
                         product.getThumbnailUri().equals(t1.getThumbnailUri()) &&
+                        product.getMusicUri().equals(t1.getMusicUri()) &&
+                        product.getTrailerUri().equals(t1.getTrailerUri()) &&
+                        product.getMovieUri().equals(t1.getMovieUri()) &&
                         product.getLike() == t1.getLike() &&
                         product.getDislike() == t1.getDislike() &&
                         (product.isLiked() && t1.isLiked()) &&
-                        (product.isDisliked() && t1.isDisliked());
+                        (product.isDisliked() && t1.isDisliked()) &&
+                        (product.isInCart() && t1.isInCart()) &&
+                        (product.isOwned() && t1.isOwned()) &&
+                        product.getPrice() == t1.getPrice();
             }
         });
     }

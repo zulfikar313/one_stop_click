@@ -17,24 +17,16 @@ import com.example.mitrais.onestopclick.model.Product;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class ProductV2Adapter extends ListAdapter<Product, ProductV2Adapter.ProductV2ViewHolder> {
-    private static final String TAG = "ProductV2Adapter";
+public class ProductV3Adapter extends ListAdapter<Product, ProductV3Adapter.ProductV3ViewHolder> {
     private Listener listener;
     private Context context;
-
-    public interface Listener {
-        void onItemClicked(Product product);
-
-        void onDeleteClicked(Product product);
-    }
 
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
-    public ProductV2Adapter() {
+    public ProductV3Adapter() {
         super(new DiffUtil.ItemCallback<Product>() {
             @Override
             public boolean areItemsTheSame(@NonNull Product product, @NonNull Product t1) {
@@ -67,29 +59,33 @@ public class ProductV2Adapter extends ListAdapter<Product, ProductV2Adapter.Prod
 
     @NonNull
     @Override
-    public ProductV2ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ProductV3ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         context = viewGroup.getContext();
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_product_v2, viewGroup, false);
-        return new ProductV2ViewHolder(view);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_product_v3, viewGroup, false);
+        return new ProductV3ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProductV2ViewHolder productViewHolder, int position) {
+    public void onBindViewHolder(@NonNull ProductV3ViewHolder productV3ViewHolder, int position) {
         if (position != RecyclerView.NO_POSITION)
-            productViewHolder.bind(getItem(position));
+            productV3ViewHolder.bind(getItem(position));
     }
 
-    class ProductV2ViewHolder extends RecyclerView.ViewHolder {
+    public interface Listener {
+        void onItemClicked(Product product);
+    }
+
+    class ProductV3ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.img_thumbnail)
         CustomImageView imgThumbnail;
 
         @BindView(R.id.txt_title)
         TextView txtTitle;
 
-        @BindView(R.id.txt_price)
-        TextView txtPrice;
+        @BindView(R.id.txt_type)
+        TextView txtType;
 
-        ProductV2ViewHolder(@NonNull View itemView) {
+        ProductV3ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(v -> {
@@ -101,15 +97,6 @@ public class ProductV2Adapter extends ListAdapter<Product, ProductV2Adapter.Prod
             });
         }
 
-        @OnClick(R.id.img_delete)
-        void onDeleteClicked() {
-            int position = getAdapterPosition();
-            if (listener != null && position != RecyclerView.NO_POSITION) {
-                Product product = getItem(position);
-                listener.onDeleteClicked(product);
-            }
-        }
-
         public void bind(Product product) {
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
                 imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
@@ -117,8 +104,7 @@ public class ProductV2Adapter extends ListAdapter<Product, ProductV2Adapter.Prod
                 imgThumbnail.setImageDrawable(context.getDrawable(R.drawable.skeleton));
             }
             txtTitle.setText(product.getTitle());
-            txtPrice.setText("Rp." + product.getPrice());
+            txtType.setText(product.getType());
         }
-
     }
 }
