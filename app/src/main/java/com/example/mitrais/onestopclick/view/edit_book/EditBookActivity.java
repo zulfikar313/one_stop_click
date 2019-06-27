@@ -116,6 +116,7 @@ public class EditBookActivity extends AppCompatActivity {
                 txtTitle.getEditText().setEnabled(false);
                 txtAuthor.getEditText().setEnabled(false);
                 txtDescription.getEditText().setEnabled(false);
+                txtPrice.setEnabled(false);
                 spGenre.setEnabled(false);
                 btnSave.setVisibility(View.GONE);
                 emptyFileCard.setVisibility(View.GONE);

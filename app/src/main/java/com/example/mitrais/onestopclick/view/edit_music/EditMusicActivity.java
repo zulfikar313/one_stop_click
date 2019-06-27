@@ -115,6 +115,7 @@ public class EditMusicActivity extends AppCompatActivity {
                 txtTitle.getEditText().setEnabled(false);
                 txtArtist.getEditText().setEnabled(false);
                 txtDescription.getEditText().setEnabled(false);
+                txtPrice.setEnabled(false);
                 spGenre.setEnabled(false);
                 btnSave.setVisibility(View.GONE);
                 btnUploadMusic.setVisibility(View.GONE);

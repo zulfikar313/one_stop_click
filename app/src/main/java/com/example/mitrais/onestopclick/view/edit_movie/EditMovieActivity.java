@@ -129,6 +129,7 @@ public class EditMovieActivity extends AppCompatActivity {
             txtTitle.getEditText().setEnabled(false);
             txtDirector.getEditText().setEnabled(false);
             txtDescription.getEditText().setEnabled(false);
+            txtPrice.setEnabled(false);
             spGenre.setEnabled(false);
             btnSave.setVisibility(View.GONE);
             btnUploadTrailer.setVisibility(View.GONE);
