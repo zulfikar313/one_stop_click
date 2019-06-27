@@ -6,10 +6,11 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
 
-@Database(entities = {Profile.class, Product.class}, version = 25)
+@Database(entities = {Profile.class, Product.class, Comment.class}, version = 26)
 @TypeConverters(Converter.class)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;
@@ -17,6 +18,8 @@ public abstract class MainDatabase extends RoomDatabase {
     public abstract ProfileDao profileDao();
 
     public abstract ProductDao productDao();
+
+    public abstract CommentDao commentDao();
 
     public static synchronized MainDatabase getInstance(Context context) {
         if (instance == null) {

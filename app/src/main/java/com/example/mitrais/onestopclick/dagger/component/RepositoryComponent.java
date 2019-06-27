@@ -5,6 +5,7 @@ import android.app.Application;
 import com.example.mitrais.onestopclick.dagger.module.DaoModule;
 import com.example.mitrais.onestopclick.dagger.module.ServiceModule;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
+import com.example.mitrais.onestopclick.model.repository.CommentRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
@@ -21,6 +22,8 @@ public interface RepositoryComponent {
     void inject(ProfileRepository profileRepository);
 
     void inject(ProductRepository productRepository);
+
+    void inject(CommentRepository commentRepository);
 
     @Component.Builder
     interface Builder {

@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 class Converter {
@@ -34,5 +35,18 @@ class Converter {
     public static String fromHashMap(HashMap<String, Float> list) {
         Gson gson = new Gson();
         return gson.toJson(list);
+    }
+
+    @TypeConverter // must be public
+    public static Date dateFromString(String value) {
+        Type listType = new TypeToken<Date>() {
+        }.getType();
+        return new Gson().fromJson(value, listType);
+    }
+
+    @TypeConverter // must be public
+    public static String fromDate(Date date) {
+        Gson gson = new Gson();
+        return gson.toJson(date);
     }
 }
