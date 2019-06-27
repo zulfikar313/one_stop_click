@@ -34,15 +34,15 @@
             android:paddingEnd="16dp"
             android:paddingBottom="8dp">
 
-            <com.example.mitrais.onestopclick.custom_view.CustomImageView
-                android:id="@+id/img_profile"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="32dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!--<com.example.mitrais.onestopclick.custom_view.CustomImageView-->
+                <!--android:id="@+id/img_profile"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginTop="32dp"-->
+                <!--app:layout_constraintEnd_toEndOf="parent"-->
+                <!--app:layout_constraintStart_toStartOf="parent"-->
+                <!--app:layout_constraintTop_toTopOf="parent" />-->
 
             <TextView
                 android:id="@+id/txt_email"

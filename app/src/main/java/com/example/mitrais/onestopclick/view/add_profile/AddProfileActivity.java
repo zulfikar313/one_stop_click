@@ -36,7 +36,7 @@ public class AddProfileActivity extends AppCompatActivity {
     private static final String TAG = "AddProfileActivity";
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private Uri profileImgUri = Uri.parse("");
-    private Task<Uri> uploadTask;
+    //    private Task<Uri> uploadTask;
     private Task<Void> saveProfileTask;
     private String email;
     private int adminCounter = 0;
@@ -44,8 +44,8 @@ public class AddProfileActivity extends AppCompatActivity {
     @Inject
     AddProfileViewModel viewModel;
 
-    @BindView(R.id.img_profile)
-    CustomImageView imgProfile;
+//    @BindView(R.id.img_profile)
+//    CustomImageView imgProfile;
 
     @BindView(R.id.txt_email)
     TextView txtEmail;
@@ -88,33 +88,33 @@ public class AddProfileActivity extends AppCompatActivity {
     @OnClick(R.id.btn_save_profile)
     void onSaveProfileButtonClicked() {
         if (isAddressValid()) {
-            if (isUploadInProgress() || isSaveProfileInProgress()) {
+            if (isSaveProfileInProgress()) {
                 Toasty.info(this, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
             } else {
                 saveProfile();
             }
         }
     }
-
-    @OnClick(R.id.img_profile)
-    void onProfileImageClicked() {
-        if (isUploadInProgress() || isSaveProfileInProgress()) {
-            Toasty.info(this, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
-        } else if (!App.isOnline()) {
-            Toasty.info(this, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
-        } else
-            openImageFileChooser();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK
-                && data != null && data.getData() != null) {
-            profileImgUri = data.getData();
-            uploadProfileImage();
-        }
-    }
+//
+//    @OnClick(R.id.img_profile)
+//    void onProfileImageClicked() {
+//        if (isUploadInProgress() || isSaveProfileInProgress()) {
+//            Toasty.info(this, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
+//        } else if (!App.isOnline()) {
+//            Toasty.info(this, getString(R.string.internet_required), Toast.LENGTH_SHORT).show();
+//        } else
+//            openImageFileChooser();
+//    }
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK
+//                && data != null && data.getData() != null) {
+//            profileImgUri = data.getData();
+//            uploadProfileImage();
+//        }
+//    }
 
     // region private methods
     private void initDagger() {
@@ -135,7 +135,7 @@ public class AddProfileActivity extends AppCompatActivity {
         saveProfileTask = viewModel.saveProfile(profile)
                 .addOnCompleteListener(task -> hideProgressBar())
                 .addOnSuccessListener(aVoid -> {
-                    imgProfile.setVisibility(View.VISIBLE);
+//                    imgProfile.setVisibility(View.VISIBLE);
                     Toasty.success(this, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show();
                     goToMainPage();
                 })
@@ -145,32 +145,32 @@ public class AddProfileActivity extends AppCompatActivity {
                     Log.e(TAG, e.getMessage());
                 });
     }
-
-    private void uploadProfileImage() {
-        imgProfile.showProgressBar();
-        String filename = email + "." + getFileExtension(profileImgUri);
-        uploadTask = viewModel.uploadProfileImage(profileImgUri, filename)
-                .addOnSuccessListener(uri -> {
-                    Profile profile = new Profile();
-                    profile.setEmail(email);
-                    profile.setImageUri(uri.toString());
-
-                    saveProfileTask = viewModel.saveProfileImageUri(profile)
-                            .addOnCompleteListener(task -> imgProfile.hideProgressBar())
-                            .addOnSuccessListener(aVoid -> {
-                                Toasty.success(this, getString(R.string.thumbnail_saved), Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
-                                Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    imgProfile.hideProgressBar();
-                    Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
-                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                });
-    }
+//
+//    private void uploadProfileImage() {
+//        imgProfile.showProgressBar();
+//        String filename = email + "." + getFileExtension(profileImgUri);
+//        uploadTask = viewModel.uploadProfileImage(profileImgUri, filename)
+//                .addOnSuccessListener(uri -> {
+//                    Profile profile = new Profile();
+//                    profile.setEmail(email);
+//                    profile.setImageUri(uri.toString());
+//
+//                    saveProfileTask = viewModel.saveProfileImageUri(profile)
+//                            .addOnCompleteListener(task -> imgProfile.hideProgressBar())
+//                            .addOnSuccessListener(aVoid -> {
+//                                Toasty.success(this, getString(R.string.thumbnail_saved), Toast.LENGTH_SHORT).show();
+//                            })
+//                            .addOnFailureListener(e -> {
+//                                Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
+//                                Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//                            });
+//                })
+//                .addOnFailureListener(e -> {
+//                    imgProfile.hideProgressBar();
+//                    Log.e(TAG, getString(R.string.failed_to_upload_thumbnail));
+//                    Toasty.error(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//                });
+//    }
 
     private void openImageFileChooser() {
         Intent intent = new Intent();
@@ -202,9 +202,9 @@ public class AddProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean isUploadInProgress() {
-        return uploadTask != null && !uploadTask.isComplete();
-    }
+//    private boolean isUploadInProgress() {
+//        return uploadTask != null && !uploadTask.isComplete();
+//    }
 
     private boolean isSaveProfileInProgress() {
         return saveProfileTask != null && !saveProfileTask.isComplete();
