@@ -110,6 +110,7 @@ public class EditMusicActivity extends AppCompatActivity {
             observeProduct(productId);
 
             if (!isAdmin) {
+                ratingBar.setVisibility(View.VISIBLE);
                 txtTitle.getEditText().setEnabled(false);
                 txtArtist.getEditText().setEnabled(false);
                 txtDescription.getEditText().setEnabled(false);

@@ -148,6 +148,7 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <RatingBar
+                        android:visibility="gone"
                         android:progressTint="@color/gold"
                         android:secondaryProgressTint="@color/gold"
                         android:id="@+id/rating_bar"

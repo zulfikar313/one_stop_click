@@ -124,6 +124,7 @@ public class EditMovieActivity extends AppCompatActivity {
         }
 
         if (!isAdmin) {
+            ratingBar.setVisibility(View.VISIBLE);
             txtTitle.getEditText().setEnabled(false);
             txtDirector.getEditText().setEnabled(false);
             txtDescription.getEditText().setEnabled(false);

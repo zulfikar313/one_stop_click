@@ -1,7 +1,6 @@
 package com.example.mitrais.onestopclick.view.edit_book;
 
 import android.app.Service;
-import android.arch.lifecycle.Observer;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -124,6 +123,7 @@ public class EditBookActivity extends AppCompatActivity {
 //            observeComments(productId);
 
             if (!isAdmin) {
+                ratingBar.setVisibility(View.VISIBLE);
                 txtTitle.getEditText().setEnabled(false);
                 txtAuthor.getEditText().setEnabled(false);
                 txtDescription.getEditText().setEnabled(false);
