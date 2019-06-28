@@ -59,7 +59,6 @@ public class EditBookActivity extends AppCompatActivity {
     private String productId;
     private Product product;
     private boolean isAdmin;
-    private boolean isOwned;
     private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
@@ -121,11 +120,10 @@ public class EditBookActivity extends AppCompatActivity {
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
-            isOwned = getIntent().getBooleanExtra(Constant.EXTRA_IS_OWNED, false);
             observeProduct(productId);
-            observeComments(productId);
+//            observeComments(productId);
 
-            if (!isAdmin || !isOwned) {
+            if (!isAdmin) {
                 txtTitle.getEditText().setEnabled(false);
                 txtAuthor.getEditText().setEnabled(false);
                 txtDescription.getEditText().setEnabled(false);
@@ -240,15 +238,14 @@ public class EditBookActivity extends AppCompatActivity {
         });
     }
 
-    private void observeComments(String productId) {
-        viewModel.getCommentsByProductId(productId).observe(this, new Observer<List<Comment>>() {
-            @Override
-            public void onChanged(@Nullable List<Comment> comments) {
-                int x = 5;
-            }
-        });
-
-    }
+//    private void observeComments(String productId) {
+//        viewModel.getCommentsByProductId(productId).observe(this, new Observer<List<Comment>>() {
+//            @Override
+//            public void onChanged(@Nullable List<Comment> comments) {
+//                int x = 5;
+//            }
+//        });
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

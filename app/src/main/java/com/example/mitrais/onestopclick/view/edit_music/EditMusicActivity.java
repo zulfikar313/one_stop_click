@@ -58,7 +58,6 @@ public class EditMusicActivity extends AppCompatActivity {
     private String productId;
     private Product product;
     private boolean isAdmin;
-    private boolean isOwned;
     private ArrayAdapter<CharSequence> genreAdapter;
 
     @Inject
@@ -108,10 +107,9 @@ public class EditMusicActivity extends AppCompatActivity {
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
-            isOwned = getIntent().getBooleanExtra(Constant.EXTRA_IS_OWNED, false);
             observeProduct(productId);
 
-            if (!isAdmin || !isOwned) {
+            if (!isAdmin) {
                 txtTitle.getEditText().setEnabled(false);
                 txtArtist.getEditText().setEnabled(false);
                 txtDescription.getEditText().setEnabled(false);
