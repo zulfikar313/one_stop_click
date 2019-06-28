@@ -8,15 +8,18 @@ import android.support.annotation.NonNull;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerViewModelComponent;
 import com.example.mitrais.onestopclick.dagger.component.ViewModelComponent;
+import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.repository.AuthRepository;
 import com.example.mitrais.onestopclick.model.repository.ProductRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FileDownloadTask;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -41,6 +44,10 @@ public class EditBookViewModel extends AndroidViewModel {
 
     LiveData<Product> getProductById(String id) {
         return productRepo.getById(id);
+    }
+
+    LiveData<List<Comment>> getCommentsByProductId(String productId) {
+        return productRepo.getCommentsByProductId(productId);
     }
 
     FileDownloadTask downloadBook(Uri localUri, String filename) {
@@ -69,6 +76,10 @@ public class EditBookViewModel extends AndroidViewModel {
 
     Task<Void> saveRating(String id, HashMap<String, Float> rating) {
         return productRepo.saveRating(id, rating);
+    }
+
+    Task<DocumentReference> addComment(String productId, Comment comment) {
+        return productRepo.addComment(productId, comment);
     }
 
     private void initDagger(Application application) {

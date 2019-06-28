@@ -163,6 +163,9 @@
     <string name="summary">Summary</string>
     <string name="no_product_in_library">No product in library</string>
     <string name="library">Library</string>
+    <string name="comment">Comment</string>
+    <string name="add_comment">Add comment</string>
+    <string name="comment_cant_be_empty">Comment can\'t be empty</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

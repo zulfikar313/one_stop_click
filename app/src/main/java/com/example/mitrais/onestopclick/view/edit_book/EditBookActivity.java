@@ -1,9 +1,11 @@
 package com.example.mitrais.onestopclick.view.edit_book;
 
 import android.app.Service;
+import android.arch.lifecycle.Observer;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +27,18 @@ import android.widget.Toast;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
+import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -74,6 +83,9 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.rating_bar)
     RatingBar ratingBar;
 
+    @BindView(R.id.txt_comment)
+    TextInputLayout txtComment;
+
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
@@ -111,6 +123,7 @@ public class EditBookActivity extends AppCompatActivity {
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             isOwned = getIntent().getBooleanExtra(Constant.EXTRA_IS_OWNED, false);
             observeProduct(productId);
+            observeComments(productId);
 
             if (!isAdmin || !isOwned) {
                 txtTitle.getEditText().setEnabled(false);
@@ -158,7 +171,7 @@ public class EditBookActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    @OnClick({R.id.btn_save, R.id.btn_read_book, R.id.btn_upload_book, R.id.btn_edit_book, R.id.img_thumbnail})
+    @OnClick({R.id.btn_add_comment, R.id.btn_save, R.id.btn_read_book, R.id.btn_upload_book, R.id.btn_edit_book, R.id.img_thumbnail})
     void onButtonClicked(View view) {
         if (isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
@@ -166,6 +179,37 @@ public class EditBookActivity extends AppCompatActivity {
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else {
             switch (view.getId()) {
+                case R.id.btn_add_comment: {
+                    if (isCommentValid()) {
+                        String email = viewModel.getUser().getEmail();
+                        Comment comment = new Comment();
+                        comment.setContent(txtComment.getEditText().getText().toString().trim());
+                        comment.setDate(new Date());
+                        comment.setEmail(email);
+
+                        showProgressBar();
+                        viewModel.addComment(productId, comment)
+                                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                                        hideProgressBar();
+                                    }
+                                })
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Toast.makeText(EditBookActivity.this, "Comment saved", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(EditBookActivity.this, "Failed to save comment", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                    break;
+                }
                 case R.id.btn_save:
                     if (isAuthorValid() & isTitleValid() & isDescriptionValid())
                         saveProduct(productId);
@@ -194,6 +238,16 @@ public class EditBookActivity extends AppCompatActivity {
             } else
                 Toasty.error(this, getString(R.string.product_not_found), Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void observeComments(String productId) {
+        viewModel.getCommentsByProductId(productId).observe(this, new Observer<List<Comment>>() {
+            @Override
+            public void onChanged(@Nullable List<Comment> comments) {
+                int x = 5;
+            }
+        });
+
     }
 
     @Override
@@ -415,6 +469,16 @@ public class EditBookActivity extends AppCompatActivity {
             return false;
         }
         txtDescription.setError("");
+        return true;
+    }
+
+    private boolean isCommentValid() {
+        String comment = txtComment.getEditText().getText().toString().trim();
+        if (comment.isEmpty()) {
+            txtComment.setError(getString(R.string.comment_cant_be_empty));
+            return false;
+        }
+        txtComment.setError("");
         return true;
     }
 

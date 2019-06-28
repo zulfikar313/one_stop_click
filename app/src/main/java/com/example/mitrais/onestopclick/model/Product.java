@@ -262,11 +262,13 @@ public class Product {
     }
 
     @Ignore
+    @Exclude
     public List<Comment> getComments() {
         return comments;
     }
 
     @Ignore
+    @Exclude
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
