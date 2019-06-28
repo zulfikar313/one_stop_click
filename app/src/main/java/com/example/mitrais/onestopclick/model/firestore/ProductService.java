@@ -2,6 +2,7 @@ package com.example.mitrais.onestopclick.model.firestore;
 
 import android.net.Uri;
 
+import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 public class ProductService {
     private static final String REF_PRODUCT = "product";
+    private static final String REF_COMMENT = "comment";
     private static final String KEY_THUMBNAIL_URI = "thumbnailUri";
     private static final String KEY_BOOK_URI = "bookUri";
     private static final String KEY_MUSIC_URI = "musicUri";
@@ -86,6 +88,16 @@ public class ProductService {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_RATING, ratings);
         return docRef.update(map);
+    }
+
+    public Task<DocumentReference> addComment(String productId, Comment comment) {
+        return productRef.document(productId).collection(REF_COMMENT)
+                .add(comment);
+    }
+
+    public Task<Void> saveComment(String productId, Comment comment) {
+        return productRef.document(productId).collection(REF_COMMENT)
+                .document(comment.getId()).set(comment);
     }
 
     public static CollectionReference getReference() {

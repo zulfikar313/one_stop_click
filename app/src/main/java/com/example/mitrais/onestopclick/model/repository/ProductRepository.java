@@ -7,9 +7,11 @@ import android.util.Log;
 
 import com.example.mitrais.onestopclick.dagger.component.DaggerRepositoryComponent;
 import com.example.mitrais.onestopclick.dagger.component.RepositoryComponent;
+import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.firestore.AuthService;
 import com.example.mitrais.onestopclick.model.firestore.ProductService;
+import com.example.mitrais.onestopclick.model.room.CommentDao;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +39,9 @@ public class ProductRepository {
 
     @Inject
     ProductDao productDao;
+
+    @Inject
+    CommentDao commentDao;
 
     @Inject
     ProductService productService;
@@ -124,6 +129,75 @@ public class ProductRepository {
     public LiveData<List<Product>> getOwned() {
         return productDao.getOwned();
     }
+
+    private void insertComment(Comment comment) {
+        Completable.fromAction(() -> commentDao.insert(comment))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
+    }
+
+    private void deleteComment(Comment comment) {
+        Completable.fromAction(() -> commentDao.delete(comment))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
+    }
+
+    private void deleteCommentByProductId(String productId) {
+        Completable.fromAction(() -> commentDao.deleteByProductId(productId))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
+    }
+
+    public LiveData<List<Comment>> getCommentsByProductId(String productId) {
+        return commentDao.getByProductId(productId);
+    }
     //endregion
 
     // region firestore
@@ -162,6 +236,13 @@ public class ProductRepository {
                 }
 
                 insert(product);
+
+                if (product.getComments() != null && product.getComments().size() > 0) {
+                    for (Comment comment : product.getComments()) {
+                        comment.setProductId(product.getId());
+                        insertComment(comment);
+                    }
+                }
             }
         });
     }
@@ -196,6 +277,14 @@ public class ProductRepository {
 
     public Task<Void> saveRating(String id, HashMap<String, Float> rating) {
         return productService.saveRating(id, rating);
+    }
+
+    public Task<DocumentReference> addComment(String productId, Comment comment) {
+        return productService.addComment(productId, comment);
+    }
+
+    public Task<Void> saveComment(String productId, Comment comment) {
+        return productService.saveComment(productId, comment);
     }
 
     private void addListener() {
@@ -237,14 +326,30 @@ public class ProductRepository {
                     switch (dc.getType()) {
                         case ADDED: {
                             insert(product);
+
+                            if (product.getComments() != null && product.getComments().size() > 0) {
+                                for (Comment comment : product.getComments()) {
+                                    comment.setProductId(product.getId());
+                                    insertComment(comment);
+                                }
+                            }
                             break;
                         }
                         case MODIFIED: {
                             insert(product);
+
+                            if (product.getComments() != null && product.getComments().size() > 0) {
+                                for (Comment comment : product.getComments()) {
+                                    comment.setProductId(product.getId());
+                                    insertComment(comment);
+                                }
+                            }
                             break;
                         }
                         case REMOVED: {
                             delete(product);
+
+                            deleteCommentByProductId(product.getId());
                             break;
                         }
                     }

@@ -9,6 +9,7 @@ import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Entity(tableName = "product")
 public class Product {
@@ -40,6 +41,9 @@ public class Product {
     private boolean isOwned;
     private boolean isInCart;
     private float price;
+
+    @Ignore
+    private List<Comment> comments;
 
     @Ignore
     public Product() {
@@ -255,6 +259,16 @@ public class Product {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    @Ignore
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    @Ignore
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     @Exclude

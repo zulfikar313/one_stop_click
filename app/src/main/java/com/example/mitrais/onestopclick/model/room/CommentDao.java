@@ -19,6 +19,9 @@ public interface CommentDao {
     @Delete
     void delete(Comment comment);
 
+    @Query("DELETE FROM comment WHERE productId = :productId")
+    void deleteByProductId(String productId);
+
     @Query("SELECT * FROM comment WHERE productId = :productId")
     LiveData<List<Comment>> getByProductId(String productId);
 }
