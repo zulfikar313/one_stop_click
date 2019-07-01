@@ -7,6 +7,7 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -37,6 +38,15 @@ public class ProductService {
 
     public Task<QuerySnapshot> sync() {
         return productRef.get();
+    }
+
+    public Task<QuerySnapshot> syncComments(String productId) {
+        CollectionReference reference = productRef.document(productId).collection(REF_COMMENT);
+        return reference.get();
+    }
+
+    public Task<DocumentSnapshot> sync(String productId) {
+        return productRef.document(productId).get();
     }
 
     public Task<DocumentReference> add(Product product) {

@@ -119,8 +119,10 @@ public class EditBookActivity extends AppCompatActivity {
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
+            viewModel.sync(productId);
+            viewModel.syncComments(productId);
             observeProduct(productId);
-//            observeComments(productId);
+            observeComments(productId);
 
             if (!isAdmin) {
                 ratingBar.setVisibility(View.VISIBLE);
@@ -238,14 +240,11 @@ public class EditBookActivity extends AppCompatActivity {
         });
     }
 
-//    private void observeComments(String productId) {
-//        viewModel.getCommentsByProductId(productId).observe(this, new Observer<List<Comment>>() {
-//            @Override
-//            public void onChanged(@Nullable List<Comment> comments) {
-//                int x = 5;
-//            }
-//        });
-//    }
+    private void observeComments(String productId) {
+        viewModel.getCommentsByProductId(productId).observe(this, comments -> {
+            int x = 5;
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

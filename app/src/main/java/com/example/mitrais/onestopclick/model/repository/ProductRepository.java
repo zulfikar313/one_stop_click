@@ -195,6 +195,10 @@ public class ProductRepository {
                 });
     }
 
+    public LiveData<List<Comment>> getAllComments() {
+        return commentDao.getAll();
+    }
+
     public LiveData<List<Comment>> getCommentsByProductId(String productId) {
         return commentDao.getByProductId(productId);
     }
@@ -245,6 +249,63 @@ public class ProductRepository {
                 }
             }
         });
+    }
+
+    public Task<DocumentSnapshot> sync(String productId) {
+        return productService.sync(productId)
+                .addOnSuccessListener(documentSnapshot -> {
+                    FirebaseUser user = authService.getUser();
+                    Product product = documentSnapshot.toObject(Product.class);
+                    product.setId(documentSnapshot.getId());
+
+                    // set excluded liked value
+                    if (product.getLikedBy() != null) {
+                        if (user != null)
+                            product.setLiked(product.getLikedBy().contains(user.getEmail()));
+                        product.setLike(product.getLikedBy().size());
+                    }
+
+                    // set excluded disliked value
+                    if (product.getDislikedBy() != null) {
+                        if (user != null)
+                            product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
+                        product.setDislike(product.getDislikedBy().size());
+                    }
+
+                    // set excluded isOwned value
+                    if (product.getOwnedBy() != null) {
+                        if (user != null)
+                            product.setOwned(product.getOwnedBy().contains(user.getEmail()));
+                    }
+
+                    // set excluded isInCart value
+                    if (product.getPutInCartBy() != null) {
+                        if (user != null) {
+                            product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
+                        }
+                    }
+
+                    insert(product);
+
+                    if (product.getComments() != null && product.getComments().size() > 0) {
+                        for (Comment comment : product.getComments()) {
+                            comment.setProductId(product.getId());
+                            insertComment(comment);
+                        }
+                    }
+                });
+    }
+
+    public Task<QuerySnapshot> syncComments(String productId) {
+        return productService.syncComments(productId)
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                        Comment comment = queryDocumentSnapshot.toObject(Comment.class);
+                        comment.setId(queryDocumentSnapshot.getId());
+                        comment.setProductId(productId);
+                        insertComment(comment);
+                    }
+                });
     }
 
     public Task<DocumentReference> add(Product product) {
