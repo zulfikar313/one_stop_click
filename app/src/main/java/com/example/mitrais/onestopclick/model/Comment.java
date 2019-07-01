@@ -16,6 +16,8 @@ public class Comment {
     private String id = "";
     private String productId;
     private String email;
+    private String username;
+    private String userImageUri;
     private Date date;
     private String content;
 
@@ -23,10 +25,12 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(@NonNull String id, String productId, String email, Date date, String content) {
+    public Comment(@NonNull String id, String productId, String email, String username, String userImageUri, Date date, String content) {
         this.id = id;
         this.productId = productId != null ? productId : "";
         this.email = email != null ? email : "";
+        this.username = username != null ? username : "";
+        this.userImageUri = userImageUri != null ? userImageUri : "";
         this.date = date != null ? date : new Date();
         this.content = content != null ? content : "";
     }
@@ -56,6 +60,22 @@ public class Comment {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserImageUri() {
+        return userImageUri;
+    }
+
+    public void setUserImageUri(String userImageUri) {
+        this.userImageUri = userImageUri;
     }
 
     public Date getDate() {

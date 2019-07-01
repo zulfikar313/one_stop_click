@@ -1,5 +1,7 @@
 package com.example.mitrais.onestopclick.adapter;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
@@ -19,6 +21,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentViewHolder> {
+    private Context context;
+
     public CommentAdapter() {
         super(new DiffUtil.ItemCallback<Comment>() {
             @Override
@@ -29,6 +33,8 @@ public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentV
             @Override
             public boolean areContentsTheSame(@NonNull Comment comment, @NonNull Comment t1) {
                 return comment.getEmail().equals(t1.getEmail()) &&
+                        comment.getUsername().equals(t1.getUsername()) &&
+                        comment.getUserImageUri().equals(t1.getUserImageUri()) &&
                         comment.getContent().equals(t1.getContent()) &&
                         comment.getProductId().equals(t1.getProductId()) &&
                         comment.getDate().equals(t1.getDate());
@@ -39,6 +45,7 @@ public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentV
     @NonNull
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        context = viewGroup.getContext();
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_comment, viewGroup, false);
         return new CommentViewHolder(view);
     }
@@ -72,6 +79,12 @@ public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentV
         }
 
         void bindData(Comment comment) {
+            txtUsename.setText(comment.getUsername());
+            if (comment.getUserImageUri() == null || !comment.getUserImageUri().isEmpty()) {
+                imgUser.loadImageUri(Uri.parse(comment.getUserImageUri()));
+            } else {
+                imgUser.setImageDrawable(context.getDrawable(R.drawable.skeleton));
+            }
             txtContent.setText(comment.getContent());
             String date = DateFormat.format("M/d/yyyy", comment.getDate()).toString();
             txtDate.setText(date);

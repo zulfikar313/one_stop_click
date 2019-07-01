@@ -30,6 +30,7 @@ import com.example.mitrais.onestopclick.adapter.CommentAdapter;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
 import com.google.android.gms.tasks.Task;
 
@@ -52,6 +53,7 @@ public class EditBookActivity extends AppCompatActivity {
     private Task<Void> saveProductTask;
     private Uri thumbnailUri = Uri.parse("");
     private Uri bookUri = Uri.parse("");
+    private Profile profile;
     private String productId;
     private Product product;
     private boolean isAdmin;
@@ -123,6 +125,7 @@ public class EditBookActivity extends AppCompatActivity {
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             viewModel.sync(productId);
             viewModel.syncComments(productId);
+            observeProfile();
             observeProduct(productId);
             observeComments(productId);
 
@@ -183,11 +186,12 @@ public class EditBookActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.btn_add_comment: {
                     if (isCommentValid()) {
-                        String email = viewModel.getUser().getEmail();
                         Comment comment = new Comment();
                         comment.setContent(txtComment.getEditText().getText().toString().trim());
                         comment.setDate(new Date());
-                        comment.setEmail(email);
+                        comment.setEmail(profile.getEmail());
+                        comment.setUsername(profile.getUsername());
+                        comment.setUserImageUri(profile.getImageUri() != null ? profile.getImageUri() : "");
 
                         showProgressBar();
 
@@ -220,6 +224,13 @@ public class EditBookActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    private void observeProfile() {
+        String email = viewModel.getUser().getEmail();
+        viewModel.getProfile(email).observe(this, profile -> {
+            this.profile = profile;
+        });
     }
 
     private void observeProduct(String id) {
