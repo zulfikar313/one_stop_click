@@ -166,6 +166,10 @@
     <string name="comment">Comment</string>
     <string name="add_comment">Add comment</string>
     <string name="comment_cant_be_empty">Comment can\'t be empty</string>
+    <string name="content">Content</string>
+    <string name="failed_to_add_comment">Failed to add comment</string>
+    <string name="username">Username</string>
+    <string name="date">Date</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

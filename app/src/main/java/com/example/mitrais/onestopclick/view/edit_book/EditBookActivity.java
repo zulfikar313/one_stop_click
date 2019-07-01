@@ -4,13 +4,14 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,19 +26,15 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.adapter.CommentAdapter;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -59,6 +56,7 @@ public class EditBookActivity extends AppCompatActivity {
     private Product product;
     private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
+    private CommentAdapter commentAdapter;
 
     @Inject
     EditBookViewModel viewModel;
@@ -105,6 +103,9 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.btn_edit_book)
     AppCompatButton btnEditBook;
 
+    @BindView(R.id.rec_comments)
+    RecyclerView recComments;
+
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
@@ -115,6 +116,7 @@ public class EditBookActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initDagger();
         initSpinner();
+        initRecyclerView();
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
@@ -188,25 +190,14 @@ public class EditBookActivity extends AppCompatActivity {
                         comment.setEmail(email);
 
                         showProgressBar();
+
                         viewModel.addComment(productId, comment)
-                                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                                        hideProgressBar();
-                                    }
+                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnSuccessListener(documentReference -> {
+                                    txtComment.getEditText().setText("");
+                                    viewModel.syncComments(productId);
                                 })
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Toast.makeText(EditBookActivity.this, "Comment saved", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(EditBookActivity.this, "Failed to save comment", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                .addOnFailureListener(e -> Toast.makeText(EditBookActivity.this, getString(R.string.failed_to_add_comment), Toast.LENGTH_SHORT).show());
                     }
                     break;
                 }
@@ -242,7 +233,7 @@ public class EditBookActivity extends AppCompatActivity {
 
     private void observeComments(String productId) {
         viewModel.getCommentsByProductId(productId).observe(this, comments -> {
-            int x = 5;
+            commentAdapter.submitList(comments);
         });
     }
 
@@ -416,6 +407,13 @@ public class EditBookActivity extends AppCompatActivity {
         genreAdapter = ArrayAdapter.createFromResource(this, R.array.movie_or_book_genre, R.layout.genre_spinner_item);
         genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spGenre.setAdapter(genreAdapter);
+    }
+
+    private void initRecyclerView() {
+        commentAdapter = new CommentAdapter();
+        recComments.setHasFixedSize(true);
+        recComments.setAdapter(commentAdapter);
+        recComments.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void openThumbnailFileChooser() {
