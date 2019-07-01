@@ -1,6 +1,5 @@
 package com.example.mitrais.onestopclick.view.add_profile;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,10 +15,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mitrais.onestopclick.App;
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
-import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.view.main.MainActivity;
 import com.google.android.gms.tasks.Task;
@@ -44,8 +41,11 @@ public class AddProfileActivity extends AppCompatActivity {
     @Inject
     AddProfileViewModel viewModel;
 
-//    @BindView(R.id.img_profile)
-//    CustomImageView imgProfile;
+    // @BindView(R.id.img_profile)
+    // CustomImageView imgProfile;
+
+    @BindView(R.id.txt_username)
+    TextInputLayout txtUsername;
 
     @BindView(R.id.txt_email)
     TextView txtEmail;
@@ -87,7 +87,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_save_profile)
     void onSaveProfileButtonClicked() {
-        if (isAddressValid()) {
+        if (isAddressValid() & isUsernameValid()) {
             if (isSaveProfileInProgress()) {
                 Toasty.info(this, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
             } else {
@@ -95,7 +95,7 @@ public class AddProfileActivity extends AppCompatActivity {
             }
         }
     }
-//
+
 //    @OnClick(R.id.img_profile)
 //    void onProfileImageClicked() {
 //        if (isUploadInProgress() || isSaveProfileInProgress()) {
@@ -127,8 +127,10 @@ public class AddProfileActivity extends AppCompatActivity {
     private void saveProfile() {
         showProgressBar();
         String address = txtAddress.getEditText().getText().toString().trim();
+        String username = txtUsername.getEditText().getText().toString().trim();
         Profile profile = new Profile();
         profile.setEmail(viewModel.getUser().getEmail());
+        profile.setUsername(username);
         profile.setAddress(address);
         profile.setImageUri(profileImgUri.toString());
         profile.setAdmin(swAdminAccess.isChecked());
@@ -145,7 +147,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     Log.e(TAG, e.getMessage());
                 });
     }
-//
+
 //    private void uploadProfileImage() {
 //        imgProfile.showProgressBar();
 //        String filename = email + "." + getFileExtension(profileImgUri);
@@ -191,6 +193,17 @@ public class AddProfileActivity extends AppCompatActivity {
         startActivity(intent);
         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
     }
+
+    private boolean isUsernameValid() {
+        String username = txtUsername.getEditText().getText().toString().trim();
+        if (username.isEmpty()) {
+            txtUsername.setError(getString(R.string.username_cant_be_empty));
+            return false;
+        }
+        txtUsername.setError("");
+        return true;
+    }
+
 
     private boolean isAddressValid() {
         String address = txtAddress.getEditText().getText().toString().trim();
