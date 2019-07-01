@@ -12,6 +12,7 @@ public class Profile {
     @PrimaryKey
     @NonNull
     private String email = "";
+    private String username;
     private String imageUri;
     private String address;
     private boolean isAdmin;
@@ -20,8 +21,9 @@ public class Profile {
     public Profile() {
     }
 
-    public Profile(@NonNull String email, String imageUri, String address, boolean isAdmin) {
+    public Profile(@NonNull String email, String username, String imageUri, String address, boolean isAdmin) {
         this.email = email;
+        this.username = username;
         this.imageUri = imageUri == null ? "" : imageUri;
         this.address = address == null ? "" : address;
         this.isAdmin = isAdmin;
@@ -36,6 +38,14 @@ public class Profile {
     @Exclude
     public void setEmail(@NonNull String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getImageUri() {

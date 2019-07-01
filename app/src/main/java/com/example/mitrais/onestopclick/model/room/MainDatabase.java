@@ -10,7 +10,7 @@ import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
 
-@Database(entities = {Profile.class, Product.class, Comment.class}, version = 26)
+@Database(entities = {Profile.class, Product.class, Comment.class}, version = 27)
 @TypeConverters(Converter.class)
 public abstract class MainDatabase extends RoomDatabase {
     private static MainDatabase instance;

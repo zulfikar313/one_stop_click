@@ -53,6 +53,9 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.txt_email)
     TextView txtEmail;
 
+    @BindView(R.id.txt_username)
+    TextInputLayout txtUsername;
+
     @BindView(R.id.txt_address)
     TextInputLayout txtAddress;
 
@@ -107,7 +110,7 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.btn_save_profile)
     void onSaveProfileButtonClicked() {
-        if (isAddressValid()) {
+        if (isAddressValid() & isUsernameValid()) {
             if (isUploadInProgress() || isSaveProfileInProgress()) {
                 if (context != null)
                     Toasty.info(context, getString(R.string.save_profile_in_progress), Toast.LENGTH_SHORT).show();
@@ -151,8 +154,10 @@ public class ProfileFragment extends Fragment {
     private void saveProfile() {
         showProgressBar();
         String address = txtAddress.getEditText().getText().toString().trim();
+        String username = txtUsername.getEditText().getText().toString().trim();
         Profile profile = new Profile();
         profile.setEmail(viewModel.getUser().getEmail());
+        profile.setUsername(username);
         profile.setAddress(address);
         profile.setImageUri(profileImgUri.toString());
         profile.setAdmin(swAdminAccess.isChecked());
@@ -213,6 +218,7 @@ public class ProfileFragment extends Fragment {
 
     private void bindProfile(Profile profile) {
         txtEmail.setText(profile.getEmail());
+        txtUsername.getEditText().setText(profile.getUsername());
         txtAddress.getEditText().setText(profile.getAddress());
         if (profile.getImageUri() != null && !profile.getImageUri().isEmpty()) {
             imgProfile.loadImageUri(Uri.parse(profile.getImageUri()));
@@ -231,6 +237,16 @@ public class ProfileFragment extends Fragment {
         ContentResolver resolver = context.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(resolver.getType(uri));
+    }
+
+    private boolean isUsernameValid() {
+        String username = txtUsername.getEditText().getText().toString().trim();
+        if (username.isEmpty()) {
+            txtUsername.setError(getString(R.string.username_cant_be_empty));
+            return false;
+        }
+        txtUsername.setError("");
+        return true;
     }
 
     private boolean isAddressValid() {
