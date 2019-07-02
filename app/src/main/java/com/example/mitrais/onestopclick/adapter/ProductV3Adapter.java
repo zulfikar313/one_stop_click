@@ -46,10 +46,6 @@ public class ProductV3Adapter extends ListAdapter<Product, ProductV3Adapter.Prod
                         product.getMusicUri().equals(t1.getMusicUri()) &&
                         product.getTrailerUri().equals(t1.getTrailerUri()) &&
                         product.getMovieUri().equals(t1.getMovieUri()) &&
-                        product.getLike() == t1.getLike() &&
-                        product.getDislike() == t1.getDislike() &&
-                        (product.isLiked() && t1.isLiked()) &&
-                        (product.isDisliked() && t1.isDisliked()) &&
                         (product.isInCart() && t1.isInCart()) &&
                         (product.isOwned() && t1.isOwned()) &&
                         product.getPrice() == t1.getPrice();

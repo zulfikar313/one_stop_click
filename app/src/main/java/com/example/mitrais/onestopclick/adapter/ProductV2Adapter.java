@@ -20,7 +20,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ProductV2Adapter extends ListAdapter<Product, ProductV2Adapter.ProductV2ViewHolder> {
-    private static final String TAG = "ProductV2Adapter";
     private Listener listener;
     private Context context;
 
@@ -54,10 +53,6 @@ public class ProductV2Adapter extends ListAdapter<Product, ProductV2Adapter.Prod
                         product.getMusicUri().equals(t1.getMusicUri()) &&
                         product.getTrailerUri().equals(t1.getTrailerUri()) &&
                         product.getMovieUri().equals(t1.getMovieUri()) &&
-                        product.getLike() == t1.getLike() &&
-                        product.getDislike() == t1.getDislike() &&
-                        (product.isLiked() && t1.isLiked()) &&
-                        (product.isDisliked() && t1.isDisliked()) &&
                         (product.isInCart() && t1.isInCart()) &&
                         (product.isOwned() && t1.isOwned()) &&
                         product.getPrice() == t1.getPrice();

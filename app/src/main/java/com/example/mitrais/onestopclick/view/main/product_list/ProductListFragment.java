@@ -43,8 +43,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private Context context;
     private String productType;
     private String genre;
-    private Task<Void> likeTask;
-    private Task<Void> dislikeTask;
     private Task<Void> addToCartTask;
 
     @Inject
@@ -121,48 +119,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     @Override
-    public void onLikeClicked(Product product) {
-        if (isAddLikeInProgress()) {
-            if (context != null)
-                Toasty.info(context, getString(R.string.add_like_in_progress), Toast.LENGTH_SHORT).show();
-        } else {
-            if (!product.isLiked()) {
-                likeTask = viewModel.addLike(product)
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, e.getMessage());
-                        });
-            } else {
-                likeTask = viewModel.removeLike(product)
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, e.getMessage());
-                        });
-            }
-        }
-    }
-
-    @Override
-    public void onDislikeClicked(Product product) {
-        if (isAddDislikeInProgress()) {
-            if (context != null)
-                Toasty.info(context, getString(R.string.add_dislike_in_progress), Toast.LENGTH_SHORT).show();
-        } else {
-            if (!product.isDisliked()) {
-                dislikeTask = viewModel
-                        .addDislike(product)
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, e.getMessage());
-                        });
-            } else {
-                dislikeTask = viewModel
-                        .removeDislike(product)
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, e.getMessage());
-                        });
-            }
-        }
-    }
-
-    @Override
     public void onAddToCartButtonClicked(Product product) {
         if (isAddToCartInProgress()) {
             if (context != null)
@@ -186,15 +142,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     @Override
     public void onShareImageClicked(Product product) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Recommended " + product.getType());
-        intent.putExtra(Intent.EXTRA_TEXT, product.getTitle());
-        startActivity(Intent.createChooser(intent, "Share via"));
-    }
-
-    @Override
-    public void onShareTextClicked(Product product) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, "Recommended " + product.getType());
@@ -289,14 +236,6 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     private boolean isAddToCartInProgress() {
         return addToCartTask != null && !addToCartTask.isComplete();
-    }
-
-    private boolean isAddLikeInProgress() {
-        return likeTask != null && !likeTask.isComplete();
-    }
-
-    private boolean isAddDislikeInProgress() {
-        return dislikeTask != null && !dislikeTask.isComplete();
     }
     // endregion
 }

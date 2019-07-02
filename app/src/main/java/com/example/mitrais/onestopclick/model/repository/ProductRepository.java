@@ -212,20 +212,6 @@ public class ProductRepository {
                 Product product = queryDocumentSnapshot.toObject(Product.class);
                 product.setId(queryDocumentSnapshot.getId());
 
-                // set excluded liked value
-                if (product.getLikedBy() != null) {
-                    if (user != null)
-                        product.setLiked(product.getLikedBy().contains(user.getEmail()));
-                    product.setLike(product.getLikedBy().size());
-                }
-
-                // set excluded disliked value
-                if (product.getDislikedBy() != null) {
-                    if (user != null)
-                        product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
-                    product.setDislike(product.getDislikedBy().size());
-                }
-
                 // set excluded isOwned value
                 if (product.getOwnedBy() != null) {
                     if (user != null)
@@ -257,20 +243,6 @@ public class ProductRepository {
                     FirebaseUser user = authService.getUser();
                     Product product = documentSnapshot.toObject(Product.class);
                     product.setId(documentSnapshot.getId());
-
-                    // set excluded liked value
-                    if (product.getLikedBy() != null) {
-                        if (user != null)
-                            product.setLiked(product.getLikedBy().contains(user.getEmail()));
-                        product.setLike(product.getLikedBy().size());
-                    }
-
-                    // set excluded disliked value
-                    if (product.getDislikedBy() != null) {
-                        if (user != null)
-                            product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
-                        product.setDislike(product.getDislikedBy().size());
-                    }
 
                     // set excluded isOwned value
                     if (product.getOwnedBy() != null) {
@@ -356,20 +328,6 @@ public class ProductRepository {
                     DocumentSnapshot documentSnapshot = dc.getDocument();
                     Product product = documentSnapshot.toObject(Product.class);
                     product.setId(documentSnapshot.getId());
-
-                    // set excluded liked value
-                    if (product.getLikedBy() != null) {
-                        if (user != null)
-                            product.setLiked(product.getLikedBy().contains(user.getEmail()));
-                        product.setLike(product.getLikedBy().size());
-                    }
-
-                    // set excluded disliked value
-                    if (product.getDislikedBy() != null) {
-                        if (user != null)
-                            product.setDisliked(product.getDislikedBy().contains(user.getEmail()));
-                        product.setDislike(product.getDislikedBy().size());
-                    }
 
                     // set excluded isOwned value
                     if (product.getOwnedBy() != null) {

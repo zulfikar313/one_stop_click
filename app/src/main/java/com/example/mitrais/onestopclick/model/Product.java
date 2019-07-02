@@ -28,16 +28,10 @@ public class Product {
     private String musicUri;
     private String trailerUri;
     private String movieUri;
-    private ArrayList<String> likedBy;
-    private ArrayList<String> dislikedBy;
     private ArrayList<String> viewedBy;
     private ArrayList<String> ownedBy;
     private ArrayList<String> putInCartBy;
     private HashMap<String, Float> rating;
-    private int like;
-    private int dislike;
-    private boolean isLiked;
-    private boolean isDisliked;
     private boolean isOwned;
     private boolean isInCart;
     private float price;
@@ -50,10 +44,8 @@ public class Product {
     }
 
     public Product(@NonNull String id, String title, String description, String type, String genre, String artist, String author,
-                   String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri,
-                   ArrayList<String> likedBy, ArrayList<String> dislikedBy, ArrayList<String> viewedBy, ArrayList<String> ownedBy,
-                   HashMap<String, Float> rating, ArrayList<String> putInCartBy, int like, int dislike, boolean isLiked, boolean isDisliked,
-                   boolean isOwned, boolean isInCart, float price) {
+                   String director, String thumbnailUri, String bookUri, String musicUri, String trailerUri, String movieUri, ArrayList<String> viewedBy, ArrayList<String> ownedBy,
+                   HashMap<String, Float> rating, ArrayList<String> putInCartBy, boolean isOwned, boolean isInCart, float price) {
         this.id = id;
         this.title = title != null ? title : "";
         this.description = description != null ? description : "";
@@ -67,16 +59,10 @@ public class Product {
         this.musicUri = musicUri != null ? musicUri : "";
         this.trailerUri = trailerUri != null ? trailerUri : "";
         this.movieUri = movieUri != null ? movieUri : "";
-        this.likedBy = likedBy != null ? likedBy : new ArrayList<>();
-        this.dislikedBy = dislikedBy != null ? dislikedBy : new ArrayList<>();
         this.viewedBy = viewedBy != null ? viewedBy : new ArrayList<>();
         this.ownedBy = ownedBy != null ? ownedBy : new ArrayList<>();
         this.putInCartBy = putInCartBy != null ? putInCartBy : new ArrayList<>();
         this.rating = rating != null ? rating : new HashMap<>();
-        this.like = like;
-        this.dislike = dislike;
-        this.isLiked = isLiked;
-        this.isDisliked = isDisliked;
         this.isOwned = isOwned;
         this.isInCart = isInCart;
         this.price = price;
@@ -189,22 +175,6 @@ public class Product {
         this.movieUri = movieUri;
     }
 
-    public ArrayList<String> getLikedBy() {
-        return likedBy;
-    }
-
-    public void setLikedBy(ArrayList<String> likedBy) {
-        this.likedBy = likedBy;
-    }
-
-    public ArrayList<String> getDislikedBy() {
-        return dislikedBy;
-    }
-
-    public void setDislikedBy(ArrayList<String> dislikedBy) {
-        this.dislikedBy = dislikedBy;
-    }
-
     public ArrayList<String> getViewedBy() {
         return viewedBy;
     }
@@ -237,22 +207,6 @@ public class Product {
         this.rating = rating;
     }
 
-    public int getLike() {
-        return like;
-    }
-
-    public void setLike(int like) {
-        this.like = like;
-    }
-
-    public int getDislike() {
-        return dislike;
-    }
-
-    public void setDislike(int dislike) {
-        this.dislike = dislike;
-    }
-
     public float getPrice() {
         return price;
     }
@@ -273,25 +227,6 @@ public class Product {
         this.comments = comments;
     }
 
-    @Exclude
-    public boolean isLiked() {
-        return isLiked;
-    }
-
-    @Exclude
-    public void setLiked(boolean liked) {
-        isLiked = liked;
-    }
-
-    @Exclude
-    public boolean isDisliked() {
-        return isDisliked;
-    }
-
-    @Exclude
-    public void setDisliked(boolean disliked) {
-        isDisliked = disliked;
-    }
 
     @Exclude
     public boolean isOwned() {

@@ -25,20 +25,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
-    private static final String TAG = "ProductAdapter";
     private Listener listener;
     private Context context;
 
     public interface Listener {
         void onItemClicked(Product product);
 
-        void onLikeClicked(Product product);
-
-        void onDislikeClicked(Product product);
-
         void onShareImageClicked(Product product);
-
-        void onShareTextClicked(Product product);
 
         void onAddToCartButtonClicked(Product product);
     }
@@ -67,10 +60,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                         product.getMusicUri().equals(t1.getMusicUri()) &&
                         product.getTrailerUri().equals(t1.getTrailerUri()) &&
                         product.getMovieUri().equals(t1.getMovieUri()) &&
-                        product.getLike() == t1.getLike() &&
-                        product.getDislike() == t1.getDislike() &&
-                        (product.isLiked() && t1.isLiked()) &&
-                        (product.isDisliked() && t1.isDisliked()) &&
                         (product.isInCart() && t1.isInCart()) &&
                         (product.isOwned() && t1.isOwned()) &&
                         product.getPrice() == t1.getPrice();
@@ -105,9 +94,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_description)
         TextView txtDescription;
 
-        @BindView(R.id.txt_type)
-        TextView txtType;
-
         @BindView(R.id.txt_views)
         TextView txtViews;
 
@@ -117,20 +103,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.rating_bar)
         RatingBar ratingBar;
 
-        @BindView(R.id.img_like)
-        ImageView imgLike;
-
-        @BindView(R.id.img_dislike)
-        ImageView imgDislike;
-
         @BindView(R.id.img_add_to_cart)
         ImageView imgAddtoCart;
-
-        @BindView(R.id.txt_like_counter)
-        TextView txtLikeCounter;
-
-        @BindView(R.id.txt_dislike_counter)
-        TextView txtDislikeCounter;
 
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -146,7 +120,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
         public void bind(Product product) {
             txtTitle.setText(product.getTitle());
-            txtType.setText(product.getType());
             switch (product.getType()) {
                 case Constant.PRODUCT_TYPE_MUSIC: {
                     txtAuthor.setText(product.getArtist());
@@ -180,34 +153,12 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 ratingBar.setRating(total / ratings.size());
             }
 
-            imgLike.setImageDrawable(context.getDrawable(product.isLiked() ? R.drawable.ic_like_active : R.drawable.ic_like));
-            imgDislike.setImageDrawable(context.getDrawable(product.isDisliked() ? R.drawable.ic_dislike_active : R.drawable.ic_dislike));
             imgAddtoCart.setVisibility(product.isOwned() ? View.INVISIBLE : View.VISIBLE);
             imgAddtoCart.setImageDrawable(context.getDrawable(product.isInCart() ? R.drawable.ic_remove_from_cart : R.drawable.ic_add_to_cart));
-            txtLikeCounter.setText(Integer.toString(product.getLike()));
-            txtDislikeCounter.setText(Integer.toString(product.getDislike()));
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
                 imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
             } else {
                 imgThumbnail.setImageDrawable(context.getDrawable(R.drawable.skeleton));
-            }
-        }
-
-        @OnClick(R.id.img_like)
-        void onLikeImageClicked() {
-            int position = getAdapterPosition();
-            if (listener != null && position != RecyclerView.NO_POSITION) {
-                Product product = getItem(position);
-                listener.onLikeClicked(product);
-            }
-        }
-
-        @OnClick(R.id.img_dislike)
-        void onDislikeImageClicked() {
-            int position = getAdapterPosition();
-            if (listener != null && position != RecyclerView.NO_POSITION) {
-                Product product = getItem(position);
-                listener.onDislikeClicked(product);
             }
         }
 
@@ -217,15 +168,6 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             if (listener != null && position != RecyclerView.NO_POSITION) {
                 Product product = getItem(position);
                 listener.onShareImageClicked(product);
-            }
-        }
-
-        @OnClick(R.id.txt_share)
-        void onShareTextClicked() {
-            int position = getAdapterPosition();
-            if (listener != null && position != RecyclerView.NO_POSITION) {
-                Product product = getItem(position);
-                listener.onShareTextClicked(product);
             }
         }
 

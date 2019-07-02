@@ -43,10 +43,6 @@ public class ProductListViewModel extends AndroidViewModel {
         return profileRepo.get(email);
     }
 
-    LiveData<List<Product>> getAllProducts() {
-        return productRepo.getAll();
-    }
-
     LiveData<List<Product>> getProductsByType(String type) {
         return productRepo.getByType(type);
     }
@@ -69,69 +65,6 @@ public class ProductListViewModel extends AndroidViewModel {
         product.setViewedBy(viewedBy);
 
         productRepo.save(product);
-    }
-
-    Task<Void> addLike(Product product) {
-        String email = authRepo.getUser().getEmail();
-        ArrayList<String> likedBy = product.getLikedBy();
-        ArrayList<String> dislikedBy = product.getDislikedBy();
-
-        if (!likedBy.contains(email))
-            likedBy.add(email);
-        dislikedBy.remove(email);
-
-        product.setLikedBy(likedBy);
-        product.setDislikedBy(dislikedBy);
-        product.setLike(likedBy.size());
-        product.setDislike(dislikedBy.size());
-
-        return productRepo.save(product);
-    }
-
-    Task<Void> removeLike(Product product) {
-        String email = authRepo.getUser().getEmail();
-        ArrayList<String> likedBy = product.getLikedBy();
-        ArrayList<String> dislikedBy = product.getDislikedBy();
-
-        likedBy.remove(email);
-
-        product.setLikedBy(likedBy);
-        product.setDislikedBy(dislikedBy);
-        product.setLike(likedBy.size());
-        product.setDislike(dislikedBy.size());
-
-        return productRepo.save(product);
-    }
-
-    Task<Void> addDislike(Product product) {
-        String email = authRepo.getUser().getEmail();
-        ArrayList<String> likedBy = product.getLikedBy();
-        ArrayList<String> dislikedBy = product.getDislikedBy();
-
-        likedBy.remove(email);
-        if (!dislikedBy.contains(email))
-            dislikedBy.add(email);
-
-        product.setLikedBy(likedBy);
-        product.setDislikedBy(dislikedBy);
-        product.setLike(likedBy.size());
-        product.setDislike(dislikedBy.size());
-        return productRepo.save(product);
-    }
-
-    Task<Void> removeDislike(Product product) {
-        String email = authRepo.getUser().getEmail();
-        ArrayList<String> likedBy = product.getLikedBy();
-        ArrayList<String> dislikedBy = product.getDislikedBy();
-
-        dislikedBy.remove(email);
-
-        product.setLikedBy(likedBy);
-        product.setDislikedBy(dislikedBy);
-        product.setLike(likedBy.size());
-        product.setDislike(dislikedBy.size());
-
-        return productRepo.save(product);
     }
 
     Task<Void> addPutInCartBy(Product product) {
