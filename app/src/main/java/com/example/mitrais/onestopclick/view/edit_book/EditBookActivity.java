@@ -191,8 +191,6 @@ public class EditBookActivity extends AppCompatActivity {
                         comment.setContent(txtComment.getEditText().getText().toString().trim());
                         comment.setDate(new Date());
                         comment.setEmail(profile.getEmail());
-                        comment.setUsername(profile.getUsername());
-                        comment.setUserImageUri(profile.getImageUri() != null ? profile.getImageUri() : "");
 
                         showProgressBar();
 
@@ -248,7 +246,7 @@ public class EditBookActivity extends AppCompatActivity {
             // populate comment data with rating from product data
             if (comments != null) {
                 for (Comment comment : comments) {
-                    if (product!= null && product.getRating() != null) {
+                    if (product != null && product.getRating() != null) {
                         float rating = product.getRating().get(comment.getEmail()) != null ? product.getRating().get(comment.getEmail()) : 0f;
                         comment.setUserRate(rating);
                     }

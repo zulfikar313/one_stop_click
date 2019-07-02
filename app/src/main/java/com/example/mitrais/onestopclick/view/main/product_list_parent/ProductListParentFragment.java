@@ -26,7 +26,7 @@ public class ProductListParentFragment extends Fragment {
     ViewPager viewPager;
 
     public ProductListParentFragment() {
-        // Required empty public constructor
+        // empty constructor required
     }
 
     public static ProductListParentFragment newInstance(String genre) {
@@ -51,9 +51,6 @@ public class ProductListParentFragment extends Fragment {
         return view;
     }
 
-    /**
-     * initialize view pager
-     */
     private void initViewPager() {
         ProductPagerAdapter adapter = new ProductPagerAdapter(getChildFragmentManager(), genre);
         viewPager.setAdapter(adapter);

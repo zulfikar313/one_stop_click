@@ -41,11 +41,11 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     private static final String ARG_GENRE = "ARG_GENRE";
     private Profile profile;
     private Context context;
+    private String productType;
+    private String genre;
     private Task<Void> likeTask;
     private Task<Void> dislikeTask;
     private Task<Void> addToCartTask;
-    private String productType;
-    private String genre = "";
 
     @Inject
     ProductAdapter productAdapter;
@@ -233,28 +233,21 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void observeProducts(String type, String genre) {
-        if (type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
-            viewModel.getAllProducts().observe(getViewLifecycleOwner(), products -> {
-                if (products != null) {
-                    productAdapter.submitList(products);
-                    txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-                }
-            });
-        } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && genre.isEmpty()) {
+        if (!type.isEmpty() && genre.isEmpty()) {
             viewModel.getProductsByType(type).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
                     productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
-        } else if (type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
+        } else if (type.isEmpty() && !genre.isEmpty()) {
             viewModel.getProductsByGenre(genre).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
                     productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
                 }
             });
-        } else if (!type.equals(Constant.PRODUCT_TYPE_ALL) && !genre.isEmpty()) {
+        } else if (!type.isEmpty() && !genre.isEmpty()) {
             viewModel.getProductsByTypeAndGenre(type, genre).observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
                     productAdapter.submitList(products);
