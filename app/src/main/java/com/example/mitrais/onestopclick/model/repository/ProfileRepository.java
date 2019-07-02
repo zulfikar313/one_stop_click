@@ -12,6 +12,10 @@ import com.example.mitrais.onestopclick.model.room.ProfileDao;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -80,6 +84,10 @@ public class ProfileRepository {
                 });
     }
 
+    public LiveData<List<Profile>> getAll() {
+        return profileDao.getAll();
+    }
+
     public LiveData<Profile> get(String email) {
         return profileDao.get(email);
     }
@@ -107,6 +115,17 @@ public class ProfileRepository {
                 .addOnSuccessListener(aVoid -> {
                     if (listenerRegistration == null)
                         addListener(email);
+                });
+    }
+
+    public Task<QuerySnapshot> syncAll() {
+        return profileService.syncAll()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                        Profile profile = queryDocumentSnapshot.toObject(Profile.class);
+                        profile.setEmail(queryDocumentSnapshot.getId());
+                        insert(profile);
+                    }
                 });
     }
 

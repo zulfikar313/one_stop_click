@@ -8,10 +8,15 @@ import android.arch.persistence.room.Query;
 
 import com.example.mitrais.onestopclick.model.Profile;
 
+import java.util.List;
+
 @Dao
 public interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Profile profile);
+
+    @Query("SELECT * FROM profile")
+    LiveData<List<Profile>> getAll();
 
     @Query("SELECT * FROM profile WHERE email = :email")
     LiveData<Profile> get(String email);

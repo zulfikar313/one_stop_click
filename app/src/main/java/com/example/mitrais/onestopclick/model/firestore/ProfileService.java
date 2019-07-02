@@ -6,6 +6,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,10 @@ public class ProfileService {
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_IS_ADMIN, isAdmin);
         return docRef.update(map);
+    }
+
+    public Task<QuerySnapshot> syncAll() {
+        return profileRef.get();
     }
 
     public Task<DocumentSnapshot> sync(String email) {

@@ -61,6 +61,10 @@ public class EditBookViewModel extends AndroidViewModel {
         return productRepo.syncComments(productId);
     }
 
+    Task<QuerySnapshot> syncProfiles() {
+        return profileRepo.syncAll();
+    }
+
     LiveData<Product> getProductById(String id) {
         return productRepo.getById(id);
     }

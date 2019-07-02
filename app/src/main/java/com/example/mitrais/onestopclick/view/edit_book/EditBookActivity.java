@@ -125,6 +125,7 @@ public class EditBookActivity extends AppCompatActivity {
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             viewModel.sync(productId);
             viewModel.syncComments(productId);
+            viewModel.syncProfiles();
             observeProfile();
             observeProduct(productId);
             observeComments(productId);
