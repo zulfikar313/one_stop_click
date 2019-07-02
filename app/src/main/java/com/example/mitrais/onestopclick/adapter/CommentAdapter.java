@@ -86,6 +86,7 @@ public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentV
                 imgUser.setImageDrawable(context.getDrawable(R.drawable.skeleton));
             }
             txtContent.setText(comment.getContent());
+            ratingBar.setRating(comment.getUserRate());
             String date = DateFormat.format("M/d/yyyy", comment.getDate()).toString();
             txtDate.setText(date);
         }

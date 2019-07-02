@@ -245,7 +245,16 @@ public class EditBookActivity extends AppCompatActivity {
 
     private void observeComments(String productId) {
         viewModel.getCommentsByProductId(productId).observe(this, comments -> {
-            commentAdapter.submitList(comments);
+            // populate comment data with rating from product data
+            if (comments != null) {
+                for (Comment comment : comments) {
+                    if (product!= null && product.getRating() != null) {
+                        float rating = product.getRating().get(comment.getEmail()) != null ? product.getRating().get(comment.getEmail()) : 0f;
+                        comment.setUserRate(rating);
+                    }
+                }
+                commentAdapter.submitList(comments);
+            }
         });
     }
 

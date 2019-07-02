@@ -18,6 +18,8 @@ public class Comment {
     private String email;
     private String username;
     private String userImageUri;
+    @Ignore
+    private float userRate;
     private Date date;
     private String content;
 
@@ -62,20 +64,36 @@ public class Comment {
         this.email = email;
     }
 
+    @Exclude
     public String getUsername() {
         return username;
     }
 
+    @Exclude
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Exclude
     public String getUserImageUri() {
         return userImageUri;
     }
 
+    @Exclude
     public void setUserImageUri(String userImageUri) {
         this.userImageUri = userImageUri;
+    }
+
+    @Exclude
+    @Ignore
+    public float getUserRate() {
+        return userRate;
+    }
+
+    @Exclude
+    @Ignore
+    public void setUserRate(float userRate) {
+        this.userRate = userRate;
     }
 
     public Date getDate() {
