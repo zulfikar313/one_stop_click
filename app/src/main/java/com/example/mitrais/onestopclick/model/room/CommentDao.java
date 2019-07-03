@@ -27,6 +27,6 @@ public interface CommentDao {
     LiveData<List<Comment>> getAll();
 
     @Query("SELECT comment.id, comment.productId, comment.email, profile.username, profile.imageUri as userImageUri, comment.date, comment.content " +
-            "FROM comment LEFT JOIN profile ON comment.email = profile.email WHERE comment.productId = :productId")
+            "FROM comment LEFT JOIN profile ON comment.email = profile.email WHERE comment.productId = :productId ORDER BY date")
     LiveData<List<Comment>> getByProductId(String productId);
 }

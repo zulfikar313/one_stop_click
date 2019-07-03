@@ -180,8 +180,10 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
     }
 
     private void observeProducts(String type, String genre) {
+        showProgressBar();
         if (!type.isEmpty() && genre.isEmpty()) {
             viewModel.getProductsByType(type).observe(getViewLifecycleOwner(), products -> {
+                hideProgressBar();
                 if (products != null) {
                     productAdapter.submitList(products);
                     txtProductNotFound.setVisibility(products.size() == 0 ? View.VISIBLE : View.INVISIBLE);
@@ -236,6 +238,14 @@ public class ProductListFragment extends Fragment implements ProductAdapter.List
 
     private boolean isAddToCartInProgress() {
         return addToCartTask != null && !addToCartTask.isComplete();
+    }
+
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
     // endregion
 }

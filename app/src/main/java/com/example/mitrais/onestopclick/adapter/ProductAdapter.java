@@ -148,8 +148,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                 averageRating = total / ratings.size();
                 ratingBar.setRating(averageRating);
             }
-            txtRating.setText(context.getString(R.string.rate) + ": " + averageRating + "/5 - " + voteNumber + " " + context.getString(R.string.lower_votes));
-
+            txtRating.setText(context.getString(R.string.rate) + ": " + String.format("%.1f", averageRating) + "/5 - " + voteNumber + " " + context.getString(R.string.lower_votes));
             txtPrice.setVisibility(product.isOwned() ? View.GONE : View.VISIBLE);
             txtPrice.setText("Rp. " + product.getPrice());
             imgAddtoCart.setVisibility(product.isOwned() ? View.GONE : View.VISIBLE);
