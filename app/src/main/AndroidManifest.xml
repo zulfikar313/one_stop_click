@@ -15,62 +15,76 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".view.library.LibraryActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.cart.CartActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity" />
         <activity
             android:name=".view.add_profile.AddProfileActivity"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.play_movie.PlayMovieActivity"
+            android:exported="true"
             android:parentActivityName=".view.edit_movie.EditMovieActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.add_product.AddProductActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.edit_book.EditBookActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.read_book.ReadBookActivity"
+            android:exported="true"
             android:parentActivityName=".view.edit_book.EditBookActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.edit_music.EditMusicActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.edit_movie.EditMovieActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.search_product.SearchProductActivity"
+            android:exported="true"
             android:parentActivityName=".view.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.forgot_password.ForgotPasswordActivity"
+            android:exported="true"
             android:parentActivityName=".view.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.registration.RegistrationActivity"
+            android:exported="true"
             android:parentActivityName=".view.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.login.LoginActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.splash.SplashActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar">
             <intent-filter>
@@ -81,6 +95,7 @@
         </activity>
         <activity
             android:name=".view.main.MainActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar"
             android:windowSoftInputMode="adjustResize" />
