@@ -171,6 +171,9 @@
     <string name="username">Username</string>
     <string name="date">Date</string>
     <string name="username_cant_be_empty">Username can\'t be empty</string>
+    <string name="rating">Rating</string>
+    <string name="rate">Rate</string>
+    <string name="lower_votes">votes</string>
 
     <!--string arrays-->
     <string-array name="movie_or_book_genre">

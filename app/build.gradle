@@ -50,13 +50,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // Play service
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.9'
-    implementation 'com.google.firebase:firebase-auth:17.0.0'
-    implementation 'com.google.firebase:firebase-storage:17.0.0'
-    implementation 'com.google.firebase:firebase-firestore:19.0.2'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-auth:18.0.0'
+    implementation 'com.google.firebase:firebase-storage:18.0.0'
+    implementation 'com.google.firebase:firebase-firestore:20.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     // Room
@@ -110,4 +110,8 @@ dependencies {
 
     // PDF viewer
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+
+    // WordUtils
+    implementation 'org.apache.commons:commons-text:1.4'
+
 }

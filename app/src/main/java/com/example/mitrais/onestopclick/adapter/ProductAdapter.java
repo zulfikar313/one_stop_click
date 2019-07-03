@@ -18,6 +18,8 @@ import com.example.mitrais.onestopclick.R;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.model.Product;
 
+import org.apache.commons.text.WordUtils;
+
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -91,14 +93,11 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         @BindView(R.id.txt_author)
         TextView txtAuthor;
 
-        @BindView(R.id.txt_description)
-        TextView txtDescription;
+        @BindView(R.id.txt_rating)
+        TextView txtRating;
 
-        @BindView(R.id.txt_views)
-        TextView txtViews;
-
-        @BindView(R.id.txt_viewed_by)
-        TextView txtViewedBy;
+        @BindView(R.id.txt_price)
+        TextView txtPrice;
 
         @BindView(R.id.rating_bar)
         RatingBar ratingBar;
@@ -119,7 +118,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         }
 
         public void bind(Product product) {
-            txtTitle.setText(product.getTitle());
+            txtTitle.setText(WordUtils.capitalizeFully(product.getTitle()));
             switch (product.getType()) {
                 case Constant.PRODUCT_TYPE_MUSIC: {
                     txtAuthor.setText(product.getArtist());
@@ -137,23 +136,23 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
                     break;
                 }
             }
-            txtDescription.setText(product.getDescription());
-            int views = product.getViewedBy() != null ? product.getViewedBy().size() : 0;
-            txtViews.setText(context.getString(R.string.views) + " " + views);
 
             HashMap<String, Float> ratings = product.getRating();
-            if (ratings != null && ratings.size() > 0) {
-                txtViewedBy.setVisibility(View.VISIBLE);
-                txtViewedBy.setText(context.getString(R.string.lower_by) + " " + ratings.size() + " " + context.getString(R.string.lower_users));
-
+            float averageRating = 0f;
+            int voteNumber = ratings.size();
+            if (ratings.size() > 0) {
                 float total = 0f;
                 for (Float rating : ratings.values()) {
                     total += rating;
                 }
-                ratingBar.setRating(total / ratings.size());
+                averageRating = total / ratings.size();
+                ratingBar.setRating(averageRating);
             }
+            txtRating.setText(context.getString(R.string.rate) + ": " + averageRating + "/5 - " + voteNumber + " " + context.getString(R.string.lower_votes));
 
-            imgAddtoCart.setVisibility(product.isOwned() ? View.INVISIBLE : View.VISIBLE);
+            txtPrice.setVisibility(product.isOwned() ? View.GONE : View.VISIBLE);
+            txtPrice.setText("Rp. " + product.getPrice());
+            imgAddtoCart.setVisibility(product.isOwned() ? View.GONE : View.VISIBLE);
             imgAddtoCart.setImageDrawable(context.getDrawable(product.isInCart() ? R.drawable.ic_remove_from_cart : R.drawable.ic_add_to_cart));
             if (product.getThumbnailUri() == null || !product.getThumbnailUri().isEmpty()) {
                 imgThumbnail.loadImageUri(Uri.parse(product.getThumbnailUri()));
