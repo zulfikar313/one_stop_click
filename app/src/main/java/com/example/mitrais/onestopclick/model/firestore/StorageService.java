@@ -15,60 +15,60 @@ public class StorageService {
     private static final String REF_TRAILER = "trailer";
     private static final String REF_MOVIE = "movie";
     private static StorageService instance;
-    private static StorageReference profileImgRef;
-    private static StorageReference productImgRef;
-    private static StorageReference bookRef;
-    private static StorageReference musicRef;
-    private static StorageReference trailerRef;
-    private static StorageReference movieRef;
+    private static StorageReference profileImageReference;
+    private static StorageReference productImageReference;
+    private static StorageReference bookReference;
+    private static StorageReference musicReference;
+    private static StorageReference trailerReference;
+    private static StorageReference movieReference;
 
     public static StorageService getInstance() {
         if (instance == null) {
             instance = new StorageService();
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            profileImgRef = storage.getReference(REF_PROFILE_IMG);
-            productImgRef = storage.getReference(REF_PRODUCT_IMG);
-            bookRef = storage.getReference(REF_BOOK);
-            musicRef = storage.getReference(REF_MUSIC);
-            trailerRef = storage.getReference(REF_TRAILER);
-            movieRef = storage.getReference(REF_MOVIE);
+            profileImageReference = storage.getReference(REF_PROFILE_IMG);
+            productImageReference = storage.getReference(REF_PRODUCT_IMG);
+            bookReference = storage.getReference(REF_BOOK);
+            musicReference = storage.getReference(REF_MUSIC);
+            trailerReference = storage.getReference(REF_TRAILER);
+            movieReference = storage.getReference(REF_MOVIE);
         }
 
         return instance;
     }
 
     public FileDownloadTask downloadBook(Uri localUri, String filename) {
-        StorageReference reference = bookRef.child(filename);
+        StorageReference reference = bookReference.child(filename);
         return reference.getFile(localUri);
     }
 
     public Task<Uri> uploadProfileImage(Uri uri, String filename) {
-        StorageReference reference = profileImgRef.child(filename);
+        StorageReference reference = profileImageReference.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 
-    public Task<Uri> uploadThumbnail(Uri uri, String filename) {
-        StorageReference reference = productImgRef.child(filename);
+    public Task<Uri> uploadProductThumbnail(Uri uri, String filename) {
+        StorageReference reference = productImageReference.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 
-    public Task<Uri> uploadBook(Uri uri, String filename) {
-        StorageReference reference = bookRef.child(filename);
+    public Task<Uri> uploadBookFile(Uri uri, String filename) {
+        StorageReference reference = bookReference.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 
-    public Task<Uri> uploadMusic(Uri uri, String filename) {
-        StorageReference reference = musicRef.child(filename);
-        return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
-    }
-    
-    public Task<Uri> uploadTrailer(Uri uri, String filename) {
-        StorageReference reference = trailerRef.child(filename);
+    public Task<Uri> uploadMusicFile(Uri uri, String filename) {
+        StorageReference reference = musicReference.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 
-    public Task<Uri> uploadMovie(Uri uri, String filename) {
-        StorageReference reference = movieRef.child(filename);
+    public Task<Uri> uploadTrailerFile(Uri uri, String filename) {
+        StorageReference reference = trailerReference.child(filename);
+        return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
+    }
+
+    public Task<Uri> uploadMovieFile(Uri uri, String filename) {
+        StorageReference reference = movieReference.child(filename);
         return reference.putFile(uri).continueWithTask(task -> reference.getDownloadUrl());
     }
 }

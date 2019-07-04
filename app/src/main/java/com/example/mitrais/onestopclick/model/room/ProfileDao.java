@@ -15,12 +15,9 @@ public interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Profile profile);
 
-    @Query("SELECT * FROM profile")
-    LiveData<List<Profile>> getAll();
-
-    @Query("SELECT * FROM profile WHERE email = :email")
-    LiveData<Profile> get(String email);
-
     @Query("DELETE FROM profile")
     void delete();
+
+    @Query("SELECT * FROM profile WHERE email = :email")
+    LiveData<Profile> getProfileByEmail(String email);
 }

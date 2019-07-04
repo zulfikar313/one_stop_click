@@ -177,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (!user.isEmailVerified()) {
                         showEmailNotVerifiedDialog();
                     } else {
-                        // save last logged in email if remember me enabled
+                        // saveProduct last logged in email if remember me enabled
                         if (App.prefs.getBoolean(Constant.PREF_IS_REMEMBER_ME_ENABLED))
                             App.prefs.putString(Constant.PREF_LAST_LOGGED_IN_EMAIL, email);
                         else
@@ -215,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         CustomIntent.customType(LoginActivity.this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
                     } else {
-                        // go to add profile page
+                        // go to addProduct profile page
                         finish();
                         Intent intent = new Intent(LoginActivity.this, AddProfileActivity.class);
                         startActivity(intent);

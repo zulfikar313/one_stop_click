@@ -358,7 +358,7 @@ public class EditMusicActivity extends AppCompatActivity {
     }
 
     /**
-     * upload thumbnail file then save thumbnail uri in product
+     * upload thumbnail file then saveProduct thumbnail uri in product
      *
      * @param id  product id
      * @param uri thumbnail uri

@@ -35,7 +35,7 @@ public class CartViewModel extends AndroidViewModel {
     public CartViewModel(@NonNull Application application) {
         super(application);
         initDagger(application);
-        products = productRepo.getInCart();
+        products = productRepo.getProductInCart();
     }
 
     public FirebaseUser getUser() {
@@ -43,7 +43,7 @@ public class CartViewModel extends AndroidViewModel {
     }
 
     public LiveData<Profile> getProfile(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     LiveData<List<Product>> getProductsInCart() {
@@ -51,7 +51,7 @@ public class CartViewModel extends AndroidViewModel {
     }
 
     Task<Void> saveProduct(Product product) {
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     void removePutInCartBy(Product product) {
@@ -59,7 +59,7 @@ public class CartViewModel extends AndroidViewModel {
         ArrayList<String> putInCartBy = product.getPutInCartBy();
         putInCartBy.remove(email);
         product.setPutInCartBy(putInCartBy);
-        productRepo.save(product);
+        productRepo.saveProduct(product);
     }
 
     private void initDagger(Application application) {

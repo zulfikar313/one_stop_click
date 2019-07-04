@@ -51,18 +51,18 @@ public class ProductRepository {
     CommentDao commentDao;
 
     @Inject
-    ProductService productService;
+    AuthService authService;
 
     @Inject
-    AuthService authService;
+    ProductService productService;
 
     public ProductRepository(Application application) {
         initDagger(application);
-        addListener();
+        addProductListener();
     }
 
-    // region room
-    private void insert(Product product) {
+    // region product operations
+    private void insertProduct(Product product) {
         Completable.fromAction(() -> productDao.insert(product))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -83,7 +83,7 @@ public class ProductRepository {
                 });
     }
 
-    private void delete(Product product) {
+    private void deleteProduct(Product product) {
         Completable.fromAction(() -> productDao.delete(product))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -105,39 +105,38 @@ public class ProductRepository {
                 });
     }
 
-    public LiveData<List<Product>> getAll() {
-        return productDao.getAll();
+    public LiveData<Product> getProductById(String productId) {
+        return productDao.getProductById(productId);
     }
 
-    public LiveData<Product> getById(String id) {
-        return productDao.getById(id);
+    public LiveData<List<Product>> getProductByType(String productType) {
+        return productDao.getProductByType(productType);
     }
 
-    public LiveData<List<Product>> getByType(String type) {
-        return productDao.getByType(type);
+    public LiveData<List<Product>> getProductByGenre(String genre) {
+        return productDao.getProductByGenre(genre);
     }
 
-    public LiveData<List<Product>> getByGenre(String genre) {
-        return productDao.getByGenre(genre);
+    public LiveData<List<Product>> getProductByTypeAndGenre(String productType, String genre) {
+        return productDao.getProducyByTypeAndGenre(productType, genre);
     }
 
-    public LiveData<List<Product>> getByTypeAndGenre(String type, String genre) {
-        return productDao.getByTypeAndGenre(type, genre);
+    public LiveData<List<Product>> searchProductByQuery(String searchQuery) {
+        return productDao.searchProductByQuery("%" + searchQuery + "%");
     }
 
-    public LiveData<List<Product>> search(String search) {
-        return productDao.search("%" + search + "%");
-    }
-
-    public LiveData<List<Product>> getInCart() {
+    // inCart attribute is cached data only so no need product id as input
+    public LiveData<List<Product>> getProductInCart() {
         return productDao.getInCart();
     }
 
-    public LiveData<List<Product>> getOwned() {
+    // isOwned attribute is cached data only so no need product id as input
+    public LiveData<List<Product>> getProductOwned() {
         return productDao.getOwned();
     }
+    // endregion
 
-
+    // region ownership operations
     private void insertOwnership(Ownership ownership) {
         Completable.fromAction(() -> ownershipDao.insert(ownership))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -158,7 +157,9 @@ public class ProductRepository {
                     }
                 });
     }
+    // endregion
 
+    // region comment operations
     public void insertComment(Comment comment) {
         Completable.fromAction(() -> commentDao.insert(comment))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -233,9 +234,9 @@ public class ProductRepository {
     }
     //endregion
 
-    // region firestore
-    public Task<QuerySnapshot> sync() {
-        return productService.sync().addOnSuccessListener(queryDocumentSnapshots -> {
+    // region product services
+    public Task<QuerySnapshot> syncAllProducts() {
+        return productService.syncAllProducts().addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                 FirebaseUser user = authService.getUser();
                 Product product = queryDocumentSnapshot.toObject(Product.class);
@@ -254,8 +255,9 @@ public class ProductRepository {
                     }
                 }
 
-                insert(product);
+                insertProduct(product);
 
+                // insert ownership data
                 if (product.getRating() != null && product.getRating().size() > 0) {
                     for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
                         Ownership ownership = new Ownership();
@@ -269,42 +271,45 @@ public class ProductRepository {
         });
     }
 
-    public Task<DocumentSnapshot> sync(String productId) {
-        return productService.sync(productId)
+    public Task<DocumentSnapshot> syncProductById(String productId) {
+        return productService.syncProductById(productId)
                 .addOnSuccessListener(documentSnapshot -> {
-                    FirebaseUser user = authService.getUser();
                     Product product = documentSnapshot.toObject(Product.class);
-                    product.setId(documentSnapshot.getId());
+                    if (product != null) {
+                        FirebaseUser user = authService.getUser();
+                        product.setId(documentSnapshot.getId());
 
-                    // set excluded isOwned value
-                    if (product.getOwnedBy() != null) {
-                        if (user != null)
-                            product.setOwned(product.getOwnedBy().contains(user.getEmail()));
-                    }
-
-                    // set excluded isInCart value
-                    if (product.getPutInCartBy() != null) {
-                        if (user != null) {
-                            product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
+                        // set excluded isOwned value
+                        if (product.getOwnedBy() != null) {
+                            if (user != null)
+                                product.setOwned(product.getOwnedBy().contains(user.getEmail()));
                         }
-                    }
 
-                    insert(product);
+                        // set excluded isInCart value
+                        if (product.getPutInCartBy() != null) {
+                            if (user != null) {
+                                product.setInCart(product.getPutInCartBy().contains(user.getEmail()));
+                            }
+                        }
 
-                    if (product.getRating() != null && product.getRating().size() > 0) {
-                        for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
-                            Ownership ownership = new Ownership();
-                            ownership.setEmail(entry.getKey());
-                            ownership.setProductId(product.getId());
-                            ownership.setRating(entry.getValue());
-                            insertOwnership(ownership);
+                        insertProduct(product);
+
+                        // insert ownership data
+                        if (product.getRating() != null && product.getRating().size() > 0) {
+                            for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
+                                Ownership ownership = new Ownership();
+                                ownership.setEmail(entry.getKey());
+                                ownership.setProductId(product.getId());
+                                ownership.setRating(entry.getValue());
+                                insertOwnership(ownership);
+                            }
                         }
                     }
                 });
     }
 
-    public Task<QuerySnapshot> syncComments(String productId) {
-        return productService.syncComments(productId)
+    public Task<QuerySnapshot> syncCommentByProductId(String productId) {
+        return productService.syncCommentByProductId(productId)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                         Comment comment = queryDocumentSnapshot.toObject(Comment.class);
@@ -314,52 +319,40 @@ public class ProductRepository {
                 });
     }
 
-    public Task<DocumentReference> add(Product product) {
-        return productService.add(product);
+    public Task<DocumentReference> addProduct(Product product) {
+        return productService.addProduct(product);
     }
 
-    public Task<Void> save(Product product) {
-        return productService.save(product);
+    public Task<Void> saveProduct(Product product) {
+        return productService.saveProduct(product);
     }
 
-    public Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productService.saveThumbnailUri(id, uri);
+    public Task<Void> saveProductThumbnailUri(String id, Uri uri) {
+        return productService.saveProductThumbnailUri(id, uri);
     }
 
-    public Task<Void> saveBookUri(String id, Uri uri) {
-        return productService.saveBookUri(id, uri);
+    public Task<Void> saveBookFileUri(String id, Uri uri) {
+        return productService.saveBookFileUri(id, uri);
     }
 
-    public Task<Void> saveMusicUri(String id, Uri uri) {
-        return productService.saveMusicUri(id, uri);
+    public Task<Void> saveMusicFileUri(String id, Uri uri) {
+        return productService.saveMusicFileUri(id, uri);
     }
 
-    public Task<Void> saveTrailerUri(String id, Uri uri) {
-        return productService.saveTrailerUri(id, uri);
+    public Task<Void> saveTrailerFileUri(String id, Uri uri) {
+        return productService.saveTrailerFileUri(id, uri);
     }
 
-    public Task<Void> saveMovieUri(String id, Uri uri) {
-        return productService.saveMovieUri(id, uri);
+    public Task<Void> saveMovieFileUri(String id, Uri uri) {
+        return productService.saveMovieFileUri(id, uri);
     }
 
-    public Task<Void> saveRating(String id, HashMap<String, Float> rating) {
-        return productService.saveRating(id, rating);
+    public Task<Void> saveProductRating(String id, HashMap<String, Float> rating) {
+        return productService.saveProductRating(id, rating);
     }
 
-    public Task<DocumentReference> addComment(String productId, Comment comment) {
-        return productService.addComment(productId, comment);
-    }
-
-    public Task<Void> saveComment(String productId, Comment comment) {
-        return productService.saveComment(productId, comment);
-    }
-
-    public CollectionReference getCommentReference(String productId) {
-        return productService.getCommentReference(productId);
-    }
-
-    private void addListener() {
-        listenerRegistration = ProductService.getReference().addSnapshotListener((queryDocumentSnapshots, e) -> {
+    private void addProductListener() {
+        listenerRegistration = ProductService.getProductReference().addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null) {
                 FirebaseUser user = authService.getUser();
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
@@ -382,8 +375,9 @@ public class ProductRepository {
 
                     switch (dc.getType()) {
                         case ADDED: {
-                            insert(product);
+                            insertProduct(product);
 
+                            // insert product ownership
                             if (product.getRating() != null && product.getRating().size() > 0) {
                                 for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
                                     Ownership ownership = new Ownership();
@@ -396,8 +390,9 @@ public class ProductRepository {
                             break;
                         }
                         case MODIFIED: {
-                            insert(product);
+                            insertProduct(product);
 
+                            // insert product ownership
                             if (product.getRating() != null && product.getRating().size() > 0) {
                                 for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
                                     Ownership ownership = new Ownership();
@@ -410,15 +405,25 @@ public class ProductRepository {
                             break;
                         }
                         case REMOVED: {
-                            delete(product);
+                            deleteProduct(product);
+                            // TODO: add function to deleteProfile ownership by id here
                             deleteCommentByProductId(product.getId());
-
                             break;
                         }
                     }
                 }
             }
         });
+    }
+    // endregion
+
+    // region comment services
+    public Task<DocumentReference> addComment(String productId, Comment comment) {
+        return productService.addComment(productId, comment);
+    }
+
+    public CollectionReference getCommentReference(String productId) {
+        return productService.getCommentReference(productId);
     }
     // endregion
 

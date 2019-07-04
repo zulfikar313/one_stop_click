@@ -20,6 +20,10 @@ public class AuthRepository {
         initDagger(application);
     }
 
+    public FirebaseUser getUser() {
+        return authService.getUser();
+    }
+
     public Task<AuthResult> login(String email, String password) {
         return authService.login(email, password);
     }
@@ -42,10 +46,6 @@ public class AuthRepository {
 
     public Task<Void> sendPasswordResetEmail(String email) {
         return authService.sendPasswordResetEmail(email);
-    }
-
-    public FirebaseUser getUser() {
-        return authService.getUser();
     }
 
     private void initDagger(Application application) {

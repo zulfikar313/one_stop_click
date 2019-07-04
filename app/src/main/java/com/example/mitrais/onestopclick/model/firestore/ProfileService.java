@@ -16,47 +16,47 @@ public class ProfileService {
     private static final String KEY_IS_ADMIN = "admin";
     private static final String REF_PROFILE = "profile";
     private static ProfileService instance;
-    private static CollectionReference profileRef;
+    private static CollectionReference profileReference;
 
     public static ProfileService getInstance() {
         if (instance == null) {
             instance = new ProfileService();
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-            profileRef = firestore.collection(REF_PROFILE);
+            profileReference = firestore.collection(REF_PROFILE);
         }
 
         return instance;
     }
 
-    public Task<Void> save(Profile profile) {
-        DocumentReference reference = profileRef.document(profile.getEmail());
+    public Task<Void> saveProfile(Profile profile) {
+        DocumentReference reference = profileReference.document(profile.getEmail());
         return reference.set(profile);
     }
 
-    public Task<Void> saveImageUri(Profile profile) {
-        DocumentReference docRef = profileRef.document(profile.getEmail());
+    public Task<Void> saveProfileImageUri(Profile profile) {
+        DocumentReference docRef = profileReference.document(profile.getEmail());
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_IMAGE_URI, profile.getImageUri());
         return docRef.update(map);
     }
 
     public Task<Void> saveProfileAdminAccess(String email, boolean isAdmin) {
-        DocumentReference docRef = profileRef.document(email);
+        DocumentReference docRef = profileReference.document(email);
         Map<String, Object> map = new HashMap<>();
         map.put(KEY_IS_ADMIN, isAdmin);
         return docRef.update(map);
     }
 
-    public Task<QuerySnapshot> syncAll() {
-        return profileRef.get();
+    public Task<QuerySnapshot> syncAllProfiles() {
+        return profileReference.get();
     }
 
-    public Task<DocumentSnapshot> sync(String email) {
-        DocumentReference reference = profileRef.document(email);
+    public Task<DocumentSnapshot> syncProfileByEmail(String email) {
+        DocumentReference reference = profileReference.document(email);
         return reference.get();
     }
 
-    public DocumentReference getProfileRef(String email) {
-        return profileRef.document(email);
+    public DocumentReference getProfileReference(String email) {
+        return profileReference.document(email);
     }
 }

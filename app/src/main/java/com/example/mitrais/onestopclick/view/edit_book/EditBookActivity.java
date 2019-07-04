@@ -367,7 +367,7 @@ public class EditBookActivity extends AppCompatActivity {
     }
 
     /**
-     * upload thumbnail file then save thumbnail uri in product
+     * upload thumbnail file then saveProduct thumbnail uri in product
      *
      * @param id  product id
      * @param uri thumbnail uri
@@ -391,7 +391,7 @@ public class EditBookActivity extends AppCompatActivity {
     }
 
     /**
-     * upload book file then save book uri
+     * upload book file then saveProduct book uri
      *
      * @param id  product id
      * @param uri book uri

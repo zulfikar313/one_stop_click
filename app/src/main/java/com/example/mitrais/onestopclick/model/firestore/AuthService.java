@@ -21,6 +21,10 @@ public class AuthService {
         return instance;
     }
 
+    public FirebaseUser getUser() {
+        return auth.getCurrentUser();
+    }
+
     public Task<AuthResult> login(String email, String password) {
         return auth.signInWithEmailAndPassword(email, password);
     }
@@ -44,9 +48,5 @@ public class AuthService {
 
     public Task<Void> sendPasswordResetEmail(String email) {
         return auth.sendPasswordResetEmail(email);
-    }
-
-    public FirebaseUser getUser() {
-        return auth.getCurrentUser();
     }
 }

@@ -51,15 +51,15 @@ public class EditBookViewModel extends AndroidViewModel {
     }
 
     LiveData<Profile> getProfile(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     Task<DocumentSnapshot> sync(String productId) {
-        return productRepo.sync(productId);
+        return productRepo.syncProductById(productId);
     }
 
     Task<QuerySnapshot> syncComments(String productId) {
-        return productRepo.syncComments(productId);
+        return productRepo.syncCommentByProductId(productId);
     }
 
     CollectionReference getCommentReference(String productId) {
@@ -75,11 +75,11 @@ public class EditBookViewModel extends AndroidViewModel {
     }
 
     Task<QuerySnapshot> syncProfiles() {
-        return profileRepo.syncAll();
+        return profileRepo.syncAllProfiles();
     }
 
     LiveData<Product> getProductById(String id) {
-        return productRepo.getById(id);
+        return productRepo.getProductById(id);
     }
 
     LiveData<List<Comment>> getAllComments() {
@@ -99,23 +99,23 @@ public class EditBookViewModel extends AndroidViewModel {
     }
 
     Task<Uri> uploadBook(Uri uri, String filename) {
-        return storageRepo.uploadBook(uri, filename);
+        return storageRepo.uploadBookFile(uri, filename);
     }
 
     Task<Void> saveProduct(Product product) {
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productRepo.saveThumbnailUri(id, uri);
+        return productRepo.saveProductThumbnailUri(id, uri);
     }
 
     Task<Void> saveBookUri(String id, Uri uri) {
-        return productRepo.saveBookUri(id, uri);
+        return productRepo.saveBookFileUri(id, uri);
     }
 
     Task<Void> saveRating(String id, HashMap<String, Float> rating) {
-        return productRepo.saveRating(id, rating);
+        return productRepo.saveProductRating(id, rating);
     }
 
     Task<DocumentReference> addComment(String productId, Comment comment) {

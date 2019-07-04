@@ -70,7 +70,7 @@ public class SplashActivity extends AppCompatActivity {
                         startActivity(intent);
                         CustomIntent.customType(this, Constant.ANIMATION_FADEIN_TO_FADEOUT);
                     } else {
-                        // go to add profile page
+                        // go to addProduct profile page
                         finish();
                         Intent intent = new Intent(this, AddProfileActivity.class);
                         startActivity(intent);

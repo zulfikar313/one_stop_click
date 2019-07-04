@@ -41,16 +41,16 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     Task<QuerySnapshot> syncProducts() {
-        return productRepo.sync();
+        return productRepo.syncAllProducts();
     }
 
     LiveData<Profile> getProfile(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     void deleteUserData() {
-        profileRepo.delete();
-//        productRepo.deleteBoundData();
+        profileRepo.deleteProfile();
+        // TODO: delete bound data tied to logged in user
     }
 
     private void initDagger(Application application) {

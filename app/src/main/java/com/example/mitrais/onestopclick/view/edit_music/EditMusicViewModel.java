@@ -50,23 +50,23 @@ public class EditMusicViewModel extends AndroidViewModel {
     }
 
     LiveData<Profile> getProfile(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     Task<DocumentSnapshot> sync(String productId) {
-        return productRepo.sync(productId);
+        return productRepo.syncProductById(productId);
     }
 
     Task<QuerySnapshot> syncProfiles() {
-        return profileRepo.syncAll();
+        return profileRepo.syncAllProfiles();
     }
 
     LiveData<Product> getProductById(String id) {
-        return productRepo.getById(id);
+        return productRepo.getProductById(id);
     }
 
     Task<Void> saveProduct(Product product) {
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     LiveData<List<Comment>> getAllComments() {
@@ -90,11 +90,11 @@ public class EditMusicViewModel extends AndroidViewModel {
     }
 
     Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productRepo.saveThumbnailUri(id, uri);
+        return productRepo.saveProductThumbnailUri(id, uri);
     }
 
     Task<Void> saveMusicUri(String id, Uri uri) {
-        return productRepo.saveMusicUri(id, uri);
+        return productRepo.saveMusicFileUri(id, uri);
     }
 
     Task<Uri> uploadThumbnail(Uri uri, String filename) {
@@ -102,11 +102,11 @@ public class EditMusicViewModel extends AndroidViewModel {
     }
 
     Task<Uri> uploadMusic(Uri uri, String filename) {
-        return storageRepo.uploadMusic(uri, filename);
+        return storageRepo.uploadMusicFile(uri, filename);
     }
 
     Task<Void> saveRating(String id, HashMap<String, Float> rating) {
-        return productRepo.saveRating(id, rating);
+        return productRepo.saveProductRating(id, rating);
     }
 
     Task<DocumentReference> addComment(String productId, Comment comment) {

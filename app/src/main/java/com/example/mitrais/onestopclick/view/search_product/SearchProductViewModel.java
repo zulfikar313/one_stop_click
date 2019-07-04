@@ -40,11 +40,11 @@ public class SearchProductViewModel extends AndroidViewModel {
     }
 
     LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     LiveData<List<Product>> searchProduct(String search) {
-        return productRepo.search(search);
+        return productRepo.searchProductByQuery(search);
     }
 
     void addView(Product product) {
@@ -56,7 +56,7 @@ public class SearchProductViewModel extends AndroidViewModel {
 
         product.setViewedBy(viewedBy);
 
-        productRepo.save(product);
+        productRepo.saveProduct(product);
     }
 
     Task<Void> addPutInCartBy(Product product) {
@@ -67,7 +67,7 @@ public class SearchProductViewModel extends AndroidViewModel {
             putInCartBy.add(email);
 
         product.setPutInCartBy(putInCartBy);
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     Task<Void> removePutInCartBy(Product product) {
@@ -78,7 +78,7 @@ public class SearchProductViewModel extends AndroidViewModel {
             putInCartBy.remove(email);
 
         product.setPutInCartBy(putInCartBy);
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     private void initDagger(Application application) {

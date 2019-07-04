@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "ownership", primaryKeys = {"email", "productId"})
 public class Ownership {
     @NonNull
-    private String email;
+    private String email = "";
     @NonNull
-    private String productId;
+    private String productId = "";
     private float rating;
 
     @Ignore

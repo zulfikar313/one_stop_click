@@ -40,19 +40,19 @@ public class ProductListViewModel extends AndroidViewModel {
     }
 
     LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     LiveData<List<Product>> getProductsByType(String type) {
-        return productRepo.getByType(type);
+        return productRepo.getProductByType(type);
     }
 
     LiveData<List<Product>> getProductsByGenre(String genre) {
-        return productRepo.getByGenre(genre);
+        return productRepo.getProductByGenre(genre);
     }
 
     LiveData<List<Product>> getProductsByTypeAndGenre(String type, String genre) {
-        return productRepo.getByTypeAndGenre(type, genre);
+        return productRepo.getProductByTypeAndGenre(type, genre);
     }
 
     void addView(Product product) {
@@ -64,7 +64,7 @@ public class ProductListViewModel extends AndroidViewModel {
 
         product.setViewedBy(viewedBy);
 
-        productRepo.save(product);
+        productRepo.saveProduct(product);
     }
 
     Task<Void> addPutInCartBy(Product product) {
@@ -75,7 +75,7 @@ public class ProductListViewModel extends AndroidViewModel {
             putInCartBy.add(email);
 
         product.setPutInCartBy(putInCartBy);
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     Task<Void> removePutInCartBy(Product product) {
@@ -86,7 +86,7 @@ public class ProductListViewModel extends AndroidViewModel {
             putInCartBy.remove(email);
 
         product.setPutInCartBy(putInCartBy);
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     private void initDagger(Application application) {

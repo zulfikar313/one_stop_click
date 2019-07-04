@@ -28,23 +28,23 @@ public class StorageRepository {
     }
 
     public Task<Uri> uploadThumbnail(Uri uri, String filename) {
-        return storageService.uploadThumbnail(uri, filename);
+        return storageService.uploadProductThumbnail(uri, filename);
     }
 
-    public Task<Uri> uploadBook(Uri uri, String filename) {
-        return storageService.uploadBook(uri, filename);
+    public Task<Uri> uploadBookFile(Uri uri, String filename) {
+        return storageService.uploadBookFile(uri, filename);
     }
 
-    public Task<Uri> uploadMusic(Uri uri, String filename) {
-        return storageService.uploadMusic(uri, filename);
+    public Task<Uri> uploadMusicFile(Uri uri, String filename) {
+        return storageService.uploadMusicFile(uri, filename);
     }
 
-    public Task<Uri> uploadTrailer(Uri uri, String filename) {
-        return storageService.uploadTrailer(uri, filename);
+    public Task<Uri> uploadTrailerFile(Uri uri, String filename) {
+        return storageService.uploadTrailerFile(uri, filename);
     }
 
-    public Task<Uri> uploadMovie(Uri uri, String filename) {
-        return storageService.uploadMovie(uri, filename);
+    public Task<Uri> uploadMovieFile(Uri uri, String filename) {
+        return storageService.uploadMovieFile(uri, filename);
     }
 
     private void initDagger(Application application) {

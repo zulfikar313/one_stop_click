@@ -23,7 +23,7 @@ public class AddProductViewModel extends AndroidViewModel {
     }
 
     Task<DocumentReference> addProduct(Product product) {
-        return productRepo.add(product);
+        return productRepo.addProduct(product);
     }
 
     private void initDagger(Application application) {

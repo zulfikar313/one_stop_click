@@ -15,8 +15,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
@@ -40,7 +38,7 @@ public class ProfileRepository {
     }
 
     // region room
-    private void insert(Profile profile) {
+    private void insertProfile(Profile profile) {
         Completable.fromAction(() -> profileDao.insert(profile))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -62,7 +60,9 @@ public class ProfileRepository {
                 });
     }
 
-    public void delete() {
+    // since only one profile matters all profile will be deleted
+    // also in case there are undeleted profile data from previous login
+    public void deleteProfile() {
         Completable.fromAction(() -> profileDao.delete())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -84,29 +84,25 @@ public class ProfileRepository {
                 });
     }
 
-    public LiveData<List<Profile>> getAll() {
-        return profileDao.getAll();
-    }
-
-    public LiveData<Profile> get(String email) {
-        return profileDao.get(email);
+    public LiveData<Profile> getProfileByEmail(String email) {
+        return profileDao.getProfileByEmail(email);
     }
     // endregion
 
     // region firestore
     public Task<Void> saveProfile(Profile profile) {
-        return profileService.save(profile)
+        return profileService.saveProfile(profile)
                 .addOnSuccessListener(aVoid -> {
                     if (listenerRegistration == null)
-                        addListener(profile.getEmail());
+                        addProfileListenerListener(profile.getEmail());
                 });
     }
 
     public Task<Void> saveImageUri(Profile profile) {
-        return profileService.saveImageUri(profile)
+        return profileService.saveProfileImageUri(profile)
                 .addOnSuccessListener(aVoid -> {
                     if (listenerRegistration == null)
-                        addListener(profile.getEmail());
+                        addProfileListenerListener(profile.getEmail());
                 });
     }
 
@@ -114,36 +110,36 @@ public class ProfileRepository {
         return profileService.saveProfileAdminAccess(email, isAdmin)
                 .addOnSuccessListener(aVoid -> {
                     if (listenerRegistration == null)
-                        addListener(email);
+                        addProfileListenerListener(email);
                 });
     }
 
-    public Task<QuerySnapshot> syncAll() {
-        return profileService.syncAll()
+    public Task<QuerySnapshot> syncAllProfiles() {
+        return profileService.syncAllProfiles()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                         Profile profile = queryDocumentSnapshot.toObject(Profile.class);
                         profile.setEmail(queryDocumentSnapshot.getId());
-                        insert(profile);
+                        insertProfile(profile);
                     }
                 });
     }
 
-    public Task<DocumentSnapshot> sync(String email) {
-        return profileService.sync(email)
+    public Task<DocumentSnapshot> syncProfileByEmail(String email) {
+        return profileService.syncProfileByEmail(email)
                 .addOnSuccessListener(documentSnapshot -> {
                     Profile profile = documentSnapshot.toObject(Profile.class);
                     if (profile != null) {
                         profile.setEmail(documentSnapshot.getId());
-                        insert(profile);
+                        insertProfile(profile);
                         if (listenerRegistration == null)
-                            addListener(email);
+                            addProfileListenerListener(email);
                     }
                 });
     }
 
-    private void addListener(String email) {
-        listenerRegistration = profileService.getProfileRef(email)
+    private void addProfileListenerListener(String email) {
+        listenerRegistration = profileService.getProfileReference(email)
                 .addSnapshotListener((documentSnapshot, e) -> {
                     if (e != null)
                         Log.e(TAG, e.getMessage());
@@ -152,7 +148,8 @@ public class ProfileRepository {
                             Profile profile = documentSnapshot.toObject(Profile.class);
                             if (profile != null) {
                                 profile.setEmail(documentSnapshot.getId());
-                                insert(profile);
+                                insertProfile(profile);
+                                // TODO: add conditinal to handle different kind of changes (ADDED, MODIFIED, REMOVED)
                             }
                         }
                     }

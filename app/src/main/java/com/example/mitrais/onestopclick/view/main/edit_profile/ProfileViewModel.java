@@ -33,7 +33,7 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     LiveData<Profile> getProfileByEmail(String email) {
-        return profileRepo.get(email);
+        return profileRepo.getProfileByEmail(email);
     }
 
     FirebaseUser getUser() {

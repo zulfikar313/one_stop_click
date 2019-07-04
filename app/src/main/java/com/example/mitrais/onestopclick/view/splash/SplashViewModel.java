@@ -33,7 +33,7 @@ public class SplashViewModel extends AndroidViewModel {
     }
 
     Task<DocumentSnapshot> syncData(@NonNull FirebaseUser user) {
-        return profileRepo.sync(user.getEmail());
+        return profileRepo.syncProfileByEmail(user.getEmail());
     }
 
     private void initDagger(Application application) {

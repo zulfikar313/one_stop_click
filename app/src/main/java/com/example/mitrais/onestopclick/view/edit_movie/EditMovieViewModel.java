@@ -39,27 +39,27 @@ public class EditMovieViewModel extends AndroidViewModel {
     }
 
     LiveData<Product> getProductById(String id) {
-        return productRepo.getById(id);
+        return productRepo.getProductById(id);
     }
 
     Task<Void> saveProduct(Product product) {
-        return productRepo.save(product);
+        return productRepo.saveProduct(product);
     }
 
     Task<Void> saveThumbnailUri(String id, Uri uri) {
-        return productRepo.saveThumbnailUri(id, uri);
+        return productRepo.saveProductThumbnailUri(id, uri);
     }
 
     Task<Void> saveTrailerUri(String id, Uri uri) {
-        return productRepo.saveTrailerUri(id, uri);
+        return productRepo.saveTrailerFileUri(id, uri);
     }
 
     Task<Void> saveMovieUri(String id, Uri uri) {
-        return productRepo.saveMovieUri(id, uri);
+        return productRepo.saveMovieFileUri(id, uri);
     }
 
     Task<Void> saveRating(String id, HashMap<String, Float> rating) {
-        return productRepo.saveRating(id, rating);
+        return productRepo.saveProductRating(id, rating);
     }
 
     Task<Uri> uploadThumbnail(Uri uri, String filename) {
@@ -67,11 +67,11 @@ public class EditMovieViewModel extends AndroidViewModel {
     }
 
     Task<Uri> uploadTrailer(Uri uri, String filename) {
-        return storageRepo.uploadTrailer(uri, filename);
+        return storageRepo.uploadTrailerFile(uri, filename);
     }
 
     Task<Uri> uploadMovie(Uri uri, String filename) {
-        return storageRepo.uploadMovie(uri, filename);
+        return storageRepo.uploadMovieFile(uri, filename);
     }
 
     private void initDagger(Application application) {

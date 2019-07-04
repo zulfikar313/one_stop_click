@@ -19,23 +19,20 @@ public interface ProductDao {
     @Delete
     void delete(Product product);
 
-    @Query("SELECT * FROM product ORDER BY title")
-    LiveData<List<Product>> getAll();
-
     @Query("SELECT * FROM product WHERE id = :id")
-    LiveData<Product> getById(String id);
+    LiveData<Product> getProductById(String id);
 
     @Query("SELECT * FROM product WHERE type = :type ORDER BY title")
-    LiveData<List<Product>> getByType(String type);
+    LiveData<List<Product>> getProductByType(String type);
 
     @Query("SELECT * FROM product WHERE genre = :genre ORDER BY title")
-    LiveData<List<Product>> getByGenre(String genre);
+    LiveData<List<Product>> getProductByGenre(String genre);
 
-    @Query("SELECT * FROM product WHERE type = :type AND genre = :genre ORDER BY title")
-    LiveData<List<Product>> getByTypeAndGenre(String type, String genre);
+    @Query("SELECT * FROM product WHERE type = :productType AND genre = :genre ORDER BY title")
+    LiveData<List<Product>> getProducyByTypeAndGenre(String productType, String genre);
 
-    @Query("SELECT * FROM product WHERE title LIKE :search OR author LIKE :search OR artist LIKE :search or director LIKE :search ORDER BY title")
-    LiveData<List<Product>> search(String search);
+    @Query("SELECT * FROM product WHERE title LIKE :query OR author LIKE :query OR artist LIKE :query or director LIKE :query ORDER BY title")
+    LiveData<List<Product>> searchProductByQuery(String query);
 
     @Query("SELECT * FROM product WHERE isInCart = 1 AND isOwned = 0")
     LiveData<List<Product>> getInCart();
