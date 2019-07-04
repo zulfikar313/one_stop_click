@@ -84,9 +84,6 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.rating_bar)
     RatingBar ratingBar;
 
-    @BindView(R.id.txt_comment)
-    TextInputLayout txtComment;
-
     @BindView(R.id.txt_description)
     TextInputLayout txtDescription;
 
@@ -108,6 +105,9 @@ public class EditBookActivity extends AppCompatActivity {
     @BindView(R.id.btn_edit_book)
     AppCompatButton btnEditBook;
 
+    @BindView(R.id.txt_comment)
+    TextInputLayout txtComment;
+
     @BindView(R.id.rec_comments)
     RecyclerView recComments;
 
@@ -127,7 +127,6 @@ public class EditBookActivity extends AppCompatActivity {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             viewModel.sync(productId);
-//            viewModel.syncComments(productId);
             viewModel.getCommentReference(productId).addSnapshotListener((queryDocumentSnapshots, e) -> {
                 if (queryDocumentSnapshots != null) {
                     for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
@@ -226,9 +225,8 @@ public class EditBookActivity extends AppCompatActivity {
                                 .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(documentReference -> {
                                     txtComment.getEditText().setText("");
-//                                    viewModel.syncComments(productId);
                                 })
-                                .addOnFailureListener(e -> Toast.makeText(EditBookActivity.this, getString(R.string.failed_to_add_comment), Toast.LENGTH_SHORT).show());
+                                .addOnFailureListener(e -> Toast.makeText(this, getString(R.string.failed_to_add_comment), Toast.LENGTH_SHORT).show());
                     }
                     break;
                 }

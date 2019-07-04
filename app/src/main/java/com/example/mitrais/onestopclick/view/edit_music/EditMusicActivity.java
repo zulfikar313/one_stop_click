@@ -8,6 +8,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +23,12 @@ import android.widget.Toast;
 
 import com.example.mitrais.onestopclick.Constant;
 import com.example.mitrais.onestopclick.R;
+import com.example.mitrais.onestopclick.adapter.CommentAdapter;
 import com.example.mitrais.onestopclick.custom_view.CustomImageView;
 import com.example.mitrais.onestopclick.custom_view.CustomMusicView;
+import com.example.mitrais.onestopclick.model.Comment;
 import com.example.mitrais.onestopclick.model.Product;
+import com.example.mitrais.onestopclick.model.Profile;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -35,7 +40,11 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -55,10 +64,12 @@ public class EditMusicActivity extends AppCompatActivity {
     private Uri thumbnailUri = Uri.parse("");
     private Uri musicUri = Uri.parse("");
     private ExoPlayer musicPlayer;
+    private Profile profile;
     private String productId;
     private Product product;
     private boolean isAdmin;
     private ArrayAdapter<CharSequence> genreAdapter;
+    private CommentAdapter commentAdapter;
 
     @Inject
     EditMusicViewModel viewModel;
@@ -93,6 +104,12 @@ public class EditMusicActivity extends AppCompatActivity {
     @BindView(R.id.btn_upload_music)
     AppCompatButton btnUploadMusic;
 
+    @BindView(R.id.txt_comment)
+    TextInputLayout txtComment;
+
+    @BindView(R.id.rec_comments)
+    RecyclerView recComments;
+
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
@@ -103,11 +120,40 @@ public class EditMusicActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initDagger();
         initSpinner();
+        initRecyclerView();
 
         if (getIntent() != null) {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
+            viewModel.sync(productId);
+            viewModel.getCommentReference(productId).addSnapshotListener((queryDocumentSnapshots, e) -> {
+                if (queryDocumentSnapshots != null) {
+                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                        DocumentSnapshot documentSnapshot = dc.getDocument();
+                        Comment comment = documentSnapshot.toObject(Comment.class);
+                        comment.setProductId(productId);
+
+                        switch (dc.getType()) {
+                            case ADDED: {
+                                viewModel.insertComment(comment);
+                                break;
+                            }
+                            case MODIFIED: {
+                                viewModel.insertComment(comment);
+                                break;
+                            }
+                            case REMOVED: {
+                                viewModel.deleteComment(comment);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+            viewModel.syncProfiles();
+            observeProfile();
             observeProduct(productId);
+            observeComments(productId);
 
             if (!isAdmin) {
                 ratingBar.setVisibility(View.VISIBLE);
@@ -154,7 +200,7 @@ public class EditMusicActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    @OnClick({R.id.btn_save, R.id.btn_upload_music, R.id.img_thumbnail})
+    @OnClick({R.id.btn_add_comment, R.id.btn_save, R.id.btn_upload_music, R.id.img_thumbnail})
     void onButtonClicked(View view) {
         if (isSaveProductInProgress())
             Toasty.info(this, getString(R.string.save_product_in_progress), Toast.LENGTH_SHORT).show();
@@ -162,6 +208,25 @@ public class EditMusicActivity extends AppCompatActivity {
             Toasty.info(this, getString(R.string.upload_in_progress), Toast.LENGTH_SHORT).show();
         else {
             switch (view.getId()) {
+                case R.id.btn_add_comment: {
+                    if (isCommentValid()) {
+                        hideSoftKeyboard();
+                        Comment comment = new Comment();
+                        comment.setContent(txtComment.getEditText().getText().toString().trim());
+                        comment.setDate(new Date());
+                        comment.setEmail(profile.getEmail());
+
+                        showProgressBar();
+
+                        viewModel.addComment(productId, comment)
+                                .addOnCompleteListener(task -> hideProgressBar())
+                                .addOnSuccessListener(documentReference -> {
+                                    txtComment.getEditText().setText("");
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(this, getString(R.string.failed_to_add_comment), Toast.LENGTH_SHORT).show());
+                    }
+                    break;
+                }
                 case R.id.btn_save:
                     if (isArtistValid() & isTitleValid() & isDescriptionValid())
                         saveProduct(productId);
@@ -192,12 +257,29 @@ public class EditMusicActivity extends AppCompatActivity {
         }
     }
 
+    private void observeProfile() {
+        String email = viewModel.getUser().getEmail();
+        viewModel.getProfile(email).observe(this, profile -> {
+            this.profile = profile;
+        });
+    }
+
     private void observeProduct(String id) {
         viewModel.getProductById(id).observe(this, product -> {
             if (product != null) {
                 bindProduct(product);
             } else
                 Toasty.error(this, getString(R.string.product_not_found), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void observeComments(String productId) {
+        viewModel.getCommentsByProductId(productId).observe(this, comments -> {
+            if (comments != null) {
+                // sort comments by date
+                Collections.sort(comments, (o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+                commentAdapter.submitList(comments);
+            }
         });
     }
 
@@ -391,6 +473,13 @@ public class EditMusicActivity extends AppCompatActivity {
         spGenre.setAdapter(genreAdapter);
     }
 
+    private void initRecyclerView() {
+        commentAdapter = new CommentAdapter();
+        recComments.setHasFixedSize(true);
+        recComments.setAdapter(commentAdapter);
+        recComments.setLayoutManager(new LinearLayoutManager(this));
+    }
+
     private boolean isTitleValid() {
         String title = txtTitle.getEditText().getText().toString().trim();
         if (title.isEmpty()) {
@@ -418,6 +507,16 @@ public class EditMusicActivity extends AppCompatActivity {
             return false;
         }
         txtDescription.setError("");
+        return true;
+    }
+
+    private boolean isCommentValid() {
+        String comment = txtComment.getEditText().getText().toString().trim();
+        if (comment.isEmpty()) {
+            txtComment.setError(getString(R.string.comment_cant_be_empty));
+            return false;
+        }
+        txtComment.setError("");
         return true;
     }
 
