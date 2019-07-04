@@ -17,6 +17,7 @@ import com.example.mitrais.onestopclick.model.room.OwnershipDao;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -158,7 +159,7 @@ public class ProductRepository {
                 });
     }
 
-    private void insertComment(Comment comment) {
+    public void insertComment(Comment comment) {
         Completable.fromAction(() -> commentDao.insert(comment))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -179,7 +180,7 @@ public class ProductRepository {
                 });
     }
 
-    private void deleteComment(Comment comment) {
+    public void deleteComment(Comment comment) {
         Completable.fromAction(() -> commentDao.delete(comment))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -351,6 +352,10 @@ public class ProductRepository {
 
     public Task<Void> saveComment(String productId, Comment comment) {
         return productService.saveComment(productId, comment);
+    }
+
+    public CollectionReference getCommentReference(String productId) {
+        return productService.getCommentReference(productId);
     }
 
     private void addListener() {

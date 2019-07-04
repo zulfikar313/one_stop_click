@@ -33,6 +33,8 @@ import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.Collections;
 import java.util.Date;
@@ -125,7 +127,31 @@ public class EditBookActivity extends AppCompatActivity {
             productId = getIntent().getStringExtra(Constant.EXTRA_PRODUCT_ID);
             isAdmin = getIntent().getBooleanExtra(Constant.EXTRA_IS_ADMIN, false);
             viewModel.sync(productId);
-            viewModel.syncComments(productId);
+//            viewModel.syncComments(productId);
+            viewModel.getCommentReference(productId).addSnapshotListener((queryDocumentSnapshots, e) -> {
+                if (queryDocumentSnapshots != null) {
+                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                        DocumentSnapshot documentSnapshot = dc.getDocument();
+                        Comment comment = documentSnapshot.toObject(Comment.class);
+                        comment.setProductId(productId);
+
+                        switch (dc.getType()) {
+                            case ADDED: {
+                                viewModel.insertComment(comment);
+                                break;
+                            }
+                            case MODIFIED: {
+                                viewModel.insertComment(comment);
+                                break;
+                            }
+                            case REMOVED: {
+                                viewModel.deleteComment(comment);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
             viewModel.syncProfiles();
             observeProfile();
             observeProduct(productId);
@@ -200,7 +226,7 @@ public class EditBookActivity extends AppCompatActivity {
                                 .addOnCompleteListener(task -> hideProgressBar())
                                 .addOnSuccessListener(documentReference -> {
                                     txtComment.getEditText().setText("");
-                                    viewModel.syncComments(productId);
+//                                    viewModel.syncComments(productId);
                                 })
                                 .addOnFailureListener(e -> Toast.makeText(EditBookActivity.this, getString(R.string.failed_to_add_comment), Toast.LENGTH_SHORT).show());
                     }

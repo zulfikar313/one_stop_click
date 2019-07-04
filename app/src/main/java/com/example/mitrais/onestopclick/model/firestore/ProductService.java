@@ -113,4 +113,8 @@ public class ProductService {
     public static CollectionReference getReference() {
         return productRef;
     }
+
+    public CollectionReference getCommentReference(String productId) {
+        return productRef.document(productId).collection(REF_COMMENT);
+    }
 }

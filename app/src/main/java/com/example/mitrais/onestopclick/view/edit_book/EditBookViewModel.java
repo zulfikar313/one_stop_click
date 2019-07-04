@@ -17,6 +17,7 @@ import com.example.mitrais.onestopclick.model.repository.ProfileRepository;
 import com.example.mitrais.onestopclick.model.repository.StorageRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -59,6 +60,18 @@ public class EditBookViewModel extends AndroidViewModel {
 
     Task<QuerySnapshot> syncComments(String productId) {
         return productRepo.syncComments(productId);
+    }
+
+    CollectionReference getCommentReference(String productId) {
+        return productRepo.getCommentReference(productId);
+    }
+
+    void insertComment(Comment comment) {
+        productRepo.insertComment(comment);
+    }
+
+    void deleteComment(Comment comment) {
+        productRepo.deleteComment(comment);
     }
 
     Task<QuerySnapshot> syncProfiles() {
