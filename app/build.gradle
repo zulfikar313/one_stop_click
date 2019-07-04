@@ -114,4 +114,6 @@ dependencies {
     // WordUtils
     implementation 'org.apache.commons:commons-text:1.4'
 
+    // Debug-Database
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }

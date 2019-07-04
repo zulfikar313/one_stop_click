@@ -8,10 +8,12 @@ import android.util.Log;
 import com.example.mitrais.onestopclick.dagger.component.DaggerRepositoryComponent;
 import com.example.mitrais.onestopclick.dagger.component.RepositoryComponent;
 import com.example.mitrais.onestopclick.model.Comment;
+import com.example.mitrais.onestopclick.model.Ownership;
 import com.example.mitrais.onestopclick.model.Product;
 import com.example.mitrais.onestopclick.model.firestore.AuthService;
 import com.example.mitrais.onestopclick.model.firestore.ProductService;
 import com.example.mitrais.onestopclick.model.room.CommentDao;
+import com.example.mitrais.onestopclick.model.room.OwnershipDao;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -39,6 +42,9 @@ public class ProductRepository {
 
     @Inject
     ProductDao productDao;
+
+    @Inject
+    OwnershipDao ownershipDao;
 
     @Inject
     CommentDao commentDao;
@@ -128,6 +134,28 @@ public class ProductRepository {
 
     public LiveData<List<Product>> getOwned() {
         return productDao.getOwned();
+    }
+
+
+    private void insertOwnership(Ownership ownership) {
+        Completable.fromAction(() -> ownershipDao.insert(ownership))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                });
     }
 
     private void insertComment(Comment comment) {
@@ -227,10 +255,13 @@ public class ProductRepository {
 
                 insert(product);
 
-                if (product.getComments() != null && product.getComments().size() > 0) {
-                    for (Comment comment : product.getComments()) {
-                        comment.setProductId(product.getId());
-                        insertComment(comment);
+                if (product.getRating() != null && product.getRating().size() > 0) {
+                    for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
+                        Ownership ownership = new Ownership();
+                        ownership.setEmail(entry.getKey());
+                        ownership.setProductId(product.getId());
+                        ownership.setRating(entry.getValue());
+                        insertOwnership(ownership);
                     }
                 }
             }
@@ -259,10 +290,13 @@ public class ProductRepository {
 
                     insert(product);
 
-                    if (product.getComments() != null && product.getComments().size() > 0) {
-                        for (Comment comment : product.getComments()) {
-                            comment.setProductId(product.getId());
-                            insertComment(comment);
+                    if (product.getRating() != null && product.getRating().size() > 0) {
+                        for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
+                            Ownership ownership = new Ownership();
+                            ownership.setEmail(entry.getKey());
+                            ownership.setProductId(product.getId());
+                            ownership.setRating(entry.getValue());
+                            insertOwnership(ownership);
                         }
                     }
                 });
@@ -273,7 +307,6 @@ public class ProductRepository {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                         Comment comment = queryDocumentSnapshot.toObject(Comment.class);
-                        comment.setId(queryDocumentSnapshot.getId());
                         comment.setProductId(productId);
                         insertComment(comment);
                     }
@@ -346,10 +379,13 @@ public class ProductRepository {
                         case ADDED: {
                             insert(product);
 
-                            if (product.getComments() != null && product.getComments().size() > 0) {
-                                for (Comment comment : product.getComments()) {
-                                    comment.setProductId(product.getId());
-                                    insertComment(comment);
+                            if (product.getRating() != null && product.getRating().size() > 0) {
+                                for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
+                                    Ownership ownership = new Ownership();
+                                    ownership.setEmail(entry.getKey());
+                                    ownership.setProductId(product.getId());
+                                    ownership.setRating(entry.getValue());
+                                    insertOwnership(ownership);
                                 }
                             }
                             break;
@@ -357,18 +393,21 @@ public class ProductRepository {
                         case MODIFIED: {
                             insert(product);
 
-                            if (product.getComments() != null && product.getComments().size() > 0) {
-                                for (Comment comment : product.getComments()) {
-                                    comment.setProductId(product.getId());
-                                    insertComment(comment);
+                            if (product.getRating() != null && product.getRating().size() > 0) {
+                                for (Map.Entry<String, Float> entry : product.getRating().entrySet()) {
+                                    Ownership ownership = new Ownership();
+                                    ownership.setEmail(entry.getKey());
+                                    ownership.setProductId(product.getId());
+                                    ownership.setRating(entry.getValue());
+                                    insertOwnership(ownership);
                                 }
                             }
                             break;
                         }
                         case REMOVED: {
                             delete(product);
-
                             deleteCommentByProductId(product.getId());
+
                             break;
                         }
                     }

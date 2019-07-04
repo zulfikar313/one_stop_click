@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.mitrais.onestopclick.model.room.CommentDao;
 import com.example.mitrais.onestopclick.model.room.MainDatabase;
+import com.example.mitrais.onestopclick.model.room.OwnershipDao;
 import com.example.mitrais.onestopclick.model.room.ProductDao;
 import com.example.mitrais.onestopclick.model.room.ProfileDao;
 
@@ -28,5 +29,11 @@ public class DaoModule {
     CommentDao provideCommentDao(Application application) {
         MainDatabase db = MainDatabase.getInstance(application);
         return db.commentDao();
+    }
+
+    @Provides
+    OwnershipDao provideOwnershipDao(Application application) {
+        MainDatabase db = MainDatabase.getInstance(application);
+        return db.ownershipDao();
     }
 }

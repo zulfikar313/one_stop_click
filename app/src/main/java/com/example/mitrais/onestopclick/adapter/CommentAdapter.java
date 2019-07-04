@@ -27,17 +27,16 @@ public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentV
         super(new DiffUtil.ItemCallback<Comment>() {
             @Override
             public boolean areItemsTheSame(@NonNull Comment comment, @NonNull Comment t1) {
-                return comment.getId().equals(t1.getId());
+                return comment.getProductId().equals(t1.getProductId()) &&
+                        comment.getEmail().equals(t1.getEmail()) &&
+                        comment.getDate().equals(t1.getDate());
             }
 
             @Override
             public boolean areContentsTheSame(@NonNull Comment comment, @NonNull Comment t1) {
-                return comment.getEmail().equals(t1.getEmail()) &&
-                        comment.getUsername().equals(t1.getUsername()) &&
+                return comment.getUsername().equals(t1.getUsername()) &&
                         comment.getUserImageUri().equals(t1.getUserImageUri()) &&
-                        comment.getContent().equals(t1.getContent()) &&
-                        comment.getProductId().equals(t1.getProductId()) &&
-                        comment.getDate().equals(t1.getDate());
+                        comment.getContent().equals(t1.getContent());
             }
         });
     }
@@ -87,7 +86,7 @@ public class CommentAdapter extends ListAdapter<Comment, CommentAdapter.CommentV
             }
             txtContent.setText(comment.getContent());
             ratingBar.setRating(comment.getUserRate());
-            String date = DateFormat.format("M/d/yyyy", comment.getDate()).toString();
+            String date = DateFormat.format("M/d/yy", comment.getDate()).toString();
             txtDate.setText(date);
         }
     }

@@ -22,11 +22,18 @@ public interface CommentDao {
     @Query("DELETE FROM comment WHERE productId = :productId")
     void deleteByProductId(String productId);
 
-    @Query("SELECT comment.id, comment.productId, comment.email, profile.username, profile.imageUri as userImageUri, comment.date, comment.content " +
-            "FROM comment LEFT JOIN profile ON comment.email = profile.email")
+    @Query("SELECT comment.productId, comment.email, profile.username, profile.imageUri as userImageUri, ownership.rating as userRate, comment.date, comment.content " +
+            "FROM comment " +
+            "INNER JOIN profile ON comment.email = profile.email " +
+            "INNER JOIN ownership ON comment.productId == ownership.productId AND comment.email == ownership.email AND profile.email == ownership.email " +
+            "ORDER BY date")
     LiveData<List<Comment>> getAll();
 
-    @Query("SELECT comment.id, comment.productId, comment.email, profile.username, profile.imageUri as userImageUri, comment.date, comment.content " +
-            "FROM comment LEFT JOIN profile ON comment.email = profile.email WHERE comment.productId = :productId ORDER BY date")
+    @Query("SELECT comment.productId, comment.email, comment.date, profile.username as username, profile.imageUri as userImageUri, ownership.rating as userRate, comment.content " +
+            "FROM comment " +
+            "INNER JOIN ownership ON comment.productId == ownership.productId AND comment.email == ownership.email " +
+            "INNER JOIN profile ON comment.email = profile.email " +
+            "WHERE comment.productId = :productId " +
+            "ORDER BY date")
     LiveData<List<Comment>> getByProductId(String productId);
 }

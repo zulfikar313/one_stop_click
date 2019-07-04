@@ -2,65 +2,69 @@ package com.example.mitrais.onestopclick.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 
 import java.util.Date;
 
-@Entity(tableName = "comment")
+@Entity(tableName = "comment", primaryKeys = {"productId", "email", "date"})
 public class Comment {
-    @PrimaryKey
+    @Ignore
+    private String id;
     @NonNull
-    private String id = "";
-    private String productId;
-    private String email;
+    private String productId = "";
+    @NonNull
+    private String email = "";
+    @NonNull
+    private Date date = new Date();
     private String username;
     private String userImageUri;
-    @Ignore
     private float userRate;
-    private Date date;
+
     private String content;
 
     @Ignore
     public Comment() {
     }
 
-    public Comment(@NonNull String id, String productId, String email, String username, String userImageUri, Date date, String content) {
-        this.id = id;
+    public Comment(String productId, String email, String username, String userImageUri, float userRate, Date date, String content) {
         this.productId = productId != null ? productId : "";
         this.email = email != null ? email : "";
         this.username = username != null ? username : "";
         this.userImageUri = userImageUri != null ? userImageUri : "";
+        this.userRate = userRate;
         this.date = date != null ? date : new Date();
         this.content = content != null ? content : "";
     }
 
-    @NonNull
+    @Exclude
     public String getId() {
         return id;
     }
 
-    public void setId(@NonNull String id) {
+    @Exclude
+    public void setId(String id) {
         this.id = id;
     }
 
     @Exclude
+    @NonNull
     public String getProductId() {
         return productId;
     }
 
     @Exclude
-    public void setProductId(String productId) {
+    public void setProductId(@NonNull String productId) {
         this.productId = productId;
     }
 
+    @NonNull
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@NonNull String email) {
         this.email = email;
     }
 
@@ -85,22 +89,21 @@ public class Comment {
     }
 
     @Exclude
-    @Ignore
     public float getUserRate() {
         return userRate;
     }
 
     @Exclude
-    @Ignore
     public void setUserRate(float userRate) {
         this.userRate = userRate;
     }
 
+    @NonNull
     public Date getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(@NonNull Date date) {
         this.date = date;
     }
 
