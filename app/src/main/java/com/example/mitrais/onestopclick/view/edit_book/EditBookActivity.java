@@ -236,6 +236,7 @@ public class EditBookActivity extends AppCompatActivity {
         viewModel.getProductById(id).observe(this, product -> {
             if (product != null) {
                 bindProduct(product);
+                commentAdapter.notifyDataSetChanged();
             } else
                 Toasty.error(this, getString(R.string.product_not_found), Toast.LENGTH_SHORT).show();
         });
