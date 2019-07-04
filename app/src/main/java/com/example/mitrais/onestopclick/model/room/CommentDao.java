@@ -31,7 +31,7 @@ public interface CommentDao {
 
     @Query("SELECT comment.productId, comment.email, comment.date, profile.username as username, profile.imageUri as userImageUri, ownership.rating as userRate, comment.content " +
             "FROM comment " +
-            "INNER JOIN ownership ON comment.productId == ownership.productId AND comment.email == ownership.email " +
+            "LEFT JOIN ownership ON comment.productId == ownership.productId AND comment.email == ownership.email " +
             "INNER JOIN profile ON comment.email = profile.email " +
             "WHERE comment.productId = :productId")
     LiveData<List<Comment>> getByProductId(String productId);

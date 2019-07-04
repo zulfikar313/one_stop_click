@@ -188,6 +188,7 @@ public class EditBookActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.btn_add_comment: {
                     if (isCommentValid()) {
+                        hideSoftKeyboard();
                         Comment comment = new Comment();
                         comment.setContent(txtComment.getEditText().getText().toString().trim());
                         comment.setDate(new Date());
