@@ -34,6 +34,7 @@ import com.example.mitrais.onestopclick.model.Profile;
 import com.example.mitrais.onestopclick.view.read_book.ReadBookActivity;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -245,6 +246,8 @@ public class EditBookActivity extends AppCompatActivity {
     private void observeComments(String productId) {
         viewModel.getCommentsByProductId(productId).observe(this, comments -> {
             if (comments != null) {
+                // sort comments by date
+                Collections.sort(comments, (o1, o2) -> o2.getDate().compareTo(o1.getDate()));
                 commentAdapter.submitList(comments);
             }
         });

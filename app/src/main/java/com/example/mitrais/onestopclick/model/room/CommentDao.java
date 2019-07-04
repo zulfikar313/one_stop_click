@@ -33,7 +33,6 @@ public interface CommentDao {
             "FROM comment " +
             "INNER JOIN ownership ON comment.productId == ownership.productId AND comment.email == ownership.email " +
             "INNER JOIN profile ON comment.email = profile.email " +
-            "WHERE comment.productId = :productId " +
-            "ORDER BY date")
+            "WHERE comment.productId = :productId")
     LiveData<List<Comment>> getByProductId(String productId);
 }
